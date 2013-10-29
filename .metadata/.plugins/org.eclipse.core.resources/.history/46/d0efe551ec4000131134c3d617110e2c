@@ -14,7 +14,7 @@ CommandBuffer::CommandBuffer()
 
 void CommandBuffer::Init()
 {
-  commandPointer = 0;
+  gcodePointer = 0;
   readPointer = -1;
   inComment = false;
 }
@@ -22,26 +22,26 @@ void CommandBuffer::Init()
 bool CommandBuffer::Put(char c)
 {
   bool result = false;
-  commandBuffer[commandPointer] = c;
+  commandBuffer[gcodePointer] = c;
 
   if(c == ';')
     inComment = true;
 
   if(c == '\n' || !c)
   {
-    commandBuffer[commandPointer] = 0;
+    commandBuffer[gcodePointer] = 0;
     Init();
     result = true;
   } else
   {
     if(!inComment)
-      commandPointer++;
+      gcodePointer++;
   }
 
-  if(commandPointer >= COMMAND_LENGTH)
+  if(gcodePointer >= COMMAND_LENGTH)
   {
     Serial.print("Command buffer length overflow.\n");
-    commandPointer = 0;
+    gcodePointer = 0;
     commandBuffer[0] = 0;
   }
 

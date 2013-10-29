@@ -1,8 +1,8 @@
 // Do not remove the include below
 #include "Control.h"
 
-#define MY_ADDRESS 4
-#define THEIR_ADDRESS 5
+#define MY_ADDRESS 5
+#define THEIR_ADDRESS 4
 
 char data[60];
 int8_t dataPointer;
@@ -62,9 +62,12 @@ void setup()
 	  blinkQueued = false;
 }
 
-void talk()
+
+void loop()
 {
 	byte address;
+
+	blinkInLoop();
 
 	char* input = communicator->Receive(address);
 	if(input)
@@ -89,11 +92,4 @@ void talk()
 		return;
 	}
 	dataPointer++;
-}
-
-
-void loop()
-{
-	blinkInLoop();
-	talk();
 }

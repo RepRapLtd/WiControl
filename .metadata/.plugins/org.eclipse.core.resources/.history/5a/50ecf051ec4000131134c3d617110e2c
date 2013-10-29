@@ -22,13 +22,16 @@ class CommandBuffer
     long GetLValue();
     char* GetString();
     char* Buffer();
+    bool Finished();
+    void SetFinished(bool f);
 
   private:
 
     char commandBuffer[COMMAND_LENGTH];
-    int commandPointer;
+    int gcodePointer;
     int readPointer;
     bool inComment;
+    bool finished;
 };
 
 // Get an Int after a G Code letter
@@ -43,7 +46,15 @@ inline char* CommandBuffer::Buffer()
   return commandBuffer;
 }
 
+inline bool CommandBuffer::Finished()
+{
+  return finished;
+}
 
+inline void CommandBuffer::SetFinished(bool f)
+{
+  finished = f;
+}
 
 
 
