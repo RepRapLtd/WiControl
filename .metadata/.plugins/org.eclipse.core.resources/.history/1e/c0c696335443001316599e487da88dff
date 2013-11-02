@@ -11,7 +11,6 @@
 
 #include "Communicator.h"
 #include "Command.h"
-#include "Control.h"
 
 #define ABS_ZERO -273.15  // Celsius
 #define TEMP_SENSE_PIN 0   // Analogue pin number

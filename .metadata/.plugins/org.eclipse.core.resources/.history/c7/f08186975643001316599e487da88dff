@@ -77,22 +77,18 @@ void Interpret(CommandBuffer* cb, int address)
 	{
 		switch(cb->GetIValue())
 		{
-		case 0: // Some sort of sleep or reset
-
-			break;
-
-		case 1:
+		case 0:
 			if(cb->Seen('H'))
 				SetHeater(cb->GetIValue());
 			break;
 
-		case 2:
+		case 1:
 			t = GetTemperature();
 			sprintf(data, "C2 %f\n", t);
 			communicator->Send(address, data);
 			break;
 
-		case 3:
+		case 2:
 			break;
 
 
@@ -131,7 +127,7 @@ void loop()
 	if(!Serial.available())
 		return;
 
-	char b = (char)Serial.read();
+	char b = (char)Serial.read());
 	if(serialInput->Put(b))
 		Interpret(serialInput, -1);
 

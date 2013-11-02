@@ -31,13 +31,6 @@ class CommandBuffer
     bool inComment;
 };
 
-
-class Command
-{
-	Command();
-
-};
-
 // Get an Int after a G Code letter
 
 inline int CommandBuffer::GetIValue()

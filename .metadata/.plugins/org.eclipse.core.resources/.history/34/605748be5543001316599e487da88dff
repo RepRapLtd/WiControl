@@ -57,7 +57,7 @@ void setup()
 	  digitalWrite(LEDOUTPUT, LOW);
 	  pinMode(TEMP_SENSE_PIN, INPUT);
 	  pinMode(HEAT_ON_PIN, OUTPUT);
-	  SetHeater(0);
+	  digitalWrite(HEAT_ON_PIN, 0);
 	  communicator = new Communicator(MY_ADDRESS);
 	  communicator->SetDebug(true);
 	  dataPointer = 0;
@@ -71,29 +71,11 @@ void Message(char* m)
 
 void Interpret(CommandBuffer* cb, int address)
 {
-	float t;
-
 	if(cb->Seen('C'))
 	{
 		switch(cb->GetIValue())
 		{
-		case 0: // Some sort of sleep or reset
-
-			break;
-
-		case 1:
-			if(cb->Seen('H'))
-				SetHeater(cb->GetIValue());
-			break;
-
-		case 2:
-			t = GetTemperature();
-			sprintf(data, "C2 %f\n", t);
-			communicator->Send(address, data);
-			break;
-
-		case 3:
-			break;
+		case 0:
 
 
 		default:
@@ -131,7 +113,7 @@ void loop()
 	if(!Serial.available())
 		return;
 
-	char b = (char)Serial.read();
+	char b = (char)Serial.read());
 	if(serialInput->Put(b))
 		Interpret(serialInput, -1);
 

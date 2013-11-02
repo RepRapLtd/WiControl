@@ -131,7 +131,7 @@ void loop()
 	if(!Serial.available())
 		return;
 
-	char b = (char)Serial.read();
+	char b = (char)Serial.read());
 	if(serialInput->Put(b))
 		Interpret(serialInput, -1);
 
