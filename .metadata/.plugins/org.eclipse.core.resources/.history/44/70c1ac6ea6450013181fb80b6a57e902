@@ -66,11 +66,6 @@ void Message(char* m)
 	Serial.print(m);
 }
 
-void Message(int i)
-{
-	Serial.print(i);
-}
-
 void Interpret(CommandBuffer* cb, int address)
 {
 	float t;

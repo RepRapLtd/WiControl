@@ -15,8 +15,6 @@
 #define MY_ADDRESS 4
 #define THEIR_ADDRESS 5
 
-#define DATA_LENGTH 60
-
 // The LED is wired to the Arduino Output 4 (physical panStamp pin 19)
 #define LEDOUTPUT 4
 

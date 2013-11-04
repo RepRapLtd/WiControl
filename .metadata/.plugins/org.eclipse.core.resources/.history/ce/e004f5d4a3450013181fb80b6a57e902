@@ -66,17 +66,11 @@ void Message(char* m)
 	Serial.print(m);
 }
 
-void Message(int i)
-{
-	Serial.print(i);
-}
-
 void Interpret(CommandBuffer* cb, int address)
 {
 	float t;
-	int sendAddress;
 
-	if(cb->Seen('C')) // Command
+	if(cb->Seen('C'))
 	{
 		switch(cb->GetIValue())
 		{
@@ -93,44 +87,16 @@ void Interpret(CommandBuffer* cb, int address)
 			t = GetTemperature();
 			Serial.print("Temp: ");
 			Serial.println(t);
-			snprintf(data, DATA_LENGTH, "R2 T%d\n", (int)t);
+			snprintf(data, DATA_LENGTH, "C2 %f\n", t);
 			communicator->Send(address, data);
 			break;
 
 		case 3:
-			if(cb->Seen('A'))
-			{
-				sendAddress = cb->GetIValue();
-				if(cb->Seen('S'))
-					communicator->Send(sendAddress, cb->GetString());
-			}
 			break;
 
 
 		default:
 			Message("Unknown command: ");
-			Message(cb->Buffer());
-			Message("\n");
-		}
-	}
-
-	if(cb->Seen('R')) // Reply
-	{
-		switch(cb->GetIValue())
-		{
-		case 2:
-			if(cb->Seen('T'))
-			{
-				Message("Temp returned from: ");
-				Message(address);
-				Message(" was ");
-				Message(cb->GetIValue());
-				Message("\n");
-			}
-			break;
-
-		default:
-			Message("Unknown reply: ");
 			Message(cb->Buffer());
 			Message("\n");
 		}

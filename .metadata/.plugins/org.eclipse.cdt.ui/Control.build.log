@@ -1,5 +1,10 @@
-00:35:14 **** Incremental Build of configuration Release for project Control ****
+23:02:37 **** Incremental Build of configuration Release for project Control ****
 make all 
+Building file: ../Command.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Command.cpp.d" -MT"Command.cpp.d" -x c++ "../Command.cpp"  -o  "Command.cpp.o"
+Finished building: ../Command.cpp
+ 
 Building file: ../Control.cpp
 Starting C++ compile
 "/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
@@ -22,12 +27,12 @@ Printing size:
 "/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
 /home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
 section    size   addr
-.sec1   10936      0
-Total   10936
+.sec1   11996      0
+Total   11996
 
 
 Finished building target: Control
  
 
-00:35:15 Build Finished (took 1s.262ms)
+23:02:38 Build Finished (took 1s.563ms)
 

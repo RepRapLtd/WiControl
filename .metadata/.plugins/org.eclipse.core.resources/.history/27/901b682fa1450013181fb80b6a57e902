@@ -11,23 +11,17 @@
 
 #include "Communicator.h"
 #include "Command.h"
-
-#define MY_ADDRESS 4
-#define THEIR_ADDRESS 5
-
-#define DATA_LENGTH 60
-
-// The LED is wired to the Arduino Output 4 (physical panStamp pin 19)
-#define LEDOUTPUT 4
+#include "Control.h"
 
 #define ABS_ZERO -273.15  // Celsius
 #define TEMP_SENSE_PIN 0   // Analogue pin number
-#define HEAT_ON_PIN LEDOUTPUT
+#define HEAT_ON_PIN 6
 #define THERMISTOR_BETA 3480.0 // thermistor: RS 484-0149; EPCOS B57550G103J; Extruder thermistor: RS 198-961
 #define THERMISTOR_SERIES_R 1000 // Ohms in series with the thermistors
 #define THERMISTOR_25_R 10000.0 // Thermistor ohms at 25 C = 298.15 K
 #define AD_RANGE 1023.0 // The A->D converter that measures temperatures gives an int this big as its max value
-
+// The LED is wired to the Arduino Output 4 (physical panStamp pin 19)
+#define LEDOUTPUT 4
 
 void IncommingInterrupt();
 void blink();

@@ -14,7 +14,7 @@ CommandBuffer::CommandBuffer()
 
 void CommandBuffer::Init()
 {
-  gcodePointer = 0;
+  commandPointer = 0;
   readPointer = -1;
   inComment = false;
 }
@@ -22,27 +22,27 @@ void CommandBuffer::Init()
 bool CommandBuffer::Put(char c)
 {
   bool result = false;
-  gcodeBuffer[gcodePointer] = c;
+  commandBuffer[commandPointer] = c;
 
   if(c == ';')
     inComment = true;
 
   if(c == '\n' || !c)
   {
-    gcodeBuffer[gcodePointer] = 0;
+    commandBuffer[commandPointer] = 0;
     Init();
     result = true;
   } else
   {
     if(!inComment)
-      gcodePointer++;
+      commandPointer++;
   }
 
-  if(gcodePointer >= COMMAND_LENGTH)
+  if(commandPointer >= COMMAND_LENGTH)
   {
     Serial.print("Command buffer length overflow.\n");
-    gcodePointer = 0;
-    gcodeBuffer[0] = 0;
+    commandPointer = 0;
+    commandBuffer[0] = 0;
   }
 
   return result;
@@ -54,9 +54,9 @@ bool CommandBuffer::Put(char c)
 bool CommandBuffer::Seen(char c)
 {
   readPointer = 0;
-  while(gcodeBuffer[readPointer])
+  while(commandBuffer[readPointer])
   {
-    if(gcodeBuffer[readPointer] == c)
+    if(commandBuffer[readPointer] == c)
       return true;
     readPointer++;
   }
@@ -73,7 +73,7 @@ float CommandBuffer::GetFValue()
      Serial.print("Command: Attempt to read a GCode float before a search.\n");
      return 0.0;
   }
-  float result = (float)strtod(&gcodeBuffer[readPointer + 1], 0);
+  float result = (float)strtod(&commandBuffer[readPointer + 1], 0);
   readPointer = -1;
   return result;
 }
@@ -87,16 +87,16 @@ float CommandBuffer::GetFValue()
 char* CommandBuffer::GetString()
 {
   readPointer = 0;
-  while(gcodeBuffer[readPointer] && gcodeBuffer[readPointer] != ' ')
+  while(commandBuffer[readPointer] && commandBuffer[readPointer] != ' ')
 	  readPointer++;
 
-  if(!gcodeBuffer[readPointer])
+  if(!commandBuffer[readPointer])
   {
      Serial.print("Command: String expected but not seen.\n");
-     return gcodeBuffer; // Good idea?
+     return commandBuffer; // Good idea?
   }
 
-  char* result = &gcodeBuffer[readPointer+1];
+  char* result = &commandBuffer[readPointer+1];
   readPointer = -1;
   return result;
 }
@@ -111,7 +111,7 @@ long CommandBuffer::GetLValue()
     Serial.print("Command: Attempt to read a command long before a search.\n");
     return 0;
   }
-  long result = strtol(&gcodeBuffer[readPointer + 1], 0, 0);
+  long result = strtol(&commandBuffer[readPointer + 1], 0, 0);
   readPointer = -1;
   return result;
 }

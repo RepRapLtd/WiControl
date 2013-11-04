@@ -66,11 +66,6 @@ void Message(char* m)
 	Serial.print(m);
 }
 
-void Message(int i)
-{
-	Serial.print(i);
-}
-
 void Interpret(CommandBuffer* cb, int address)
 {
 	float t;
@@ -123,7 +118,6 @@ void Interpret(CommandBuffer* cb, int address)
 			{
 				Message("Temp returned from: ");
 				Message(address);
-				Message(" was ");
 				Message(cb->GetIValue());
 				Message("\n");
 			}

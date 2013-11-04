@@ -84,11 +84,6 @@ float CommandBuffer::GetFValue()
 
 char* CommandBuffer::GetString()
 {
-  if(readPointer < 0)
-  {
-	    Serial.print("Command: Attempt to read a string before a search.\n");
-	    return commandBuffer;
-  }
   char* result = &commandBuffer[readPointer + 1];
   readPointer = -1;
   return result;
