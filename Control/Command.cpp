@@ -80,7 +80,7 @@ float CommandBuffer::GetFValue()
 
 // This returns a pointer to the byte in the buffer where a
 // string starts.  It assumes that a search has been done for 'S', so readPointer will
-// point to the byte after the S.
+// point to the S.
 
 char* CommandBuffer::GetString()
 {

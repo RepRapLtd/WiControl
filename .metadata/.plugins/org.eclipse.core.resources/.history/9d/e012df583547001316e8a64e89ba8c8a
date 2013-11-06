@@ -49,8 +49,7 @@ float SetHeater(int val)
 void setup()
 {
 	  Serial.begin(38400);
-	  Serial.print((int)MY_ADDRESS);
-	  Serial.println(" starting");
+	  Serial.println("start");
 	  pinMode(LEDOUTPUT, OUTPUT);
 	  digitalWrite(LEDOUTPUT, LOW);
 	  pinMode(TEMP_SENSE_PIN, INPUT);
@@ -167,10 +166,12 @@ void loop()
 		do
 		{
 			if(wirelessInput->Put(input[point]))
+			{
+				communicator->FreeReadData();
 				Interpret(wirelessInput, address);
+			}
 			point++;
 		} while (input[point]);
-		communicator->FreeReadData();
 	}
 
 	if(!Serial.available())

@@ -167,10 +167,13 @@ void loop()
 		do
 		{
 			if(wirelessInput->Put(input[point]))
+			{
+				communicator->FreeReadData();
 				Interpret(wirelessInput, address);
+				return;
+			}
 			point++;
 		} while (input[point]);
-		communicator->FreeReadData();
 	}
 
 	if(!Serial.available())

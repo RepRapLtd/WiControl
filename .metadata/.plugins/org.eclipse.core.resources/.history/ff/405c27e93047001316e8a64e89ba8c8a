@@ -12,7 +12,8 @@
 #include "Communicator.h"
 #include "Command.h"
 
-#define MY_ADDRESS 4
+#define MY_ADDRESS 5
+//#define THEIR_ADDRESS 5
 
 #define DATA_LENGTH 60
 
