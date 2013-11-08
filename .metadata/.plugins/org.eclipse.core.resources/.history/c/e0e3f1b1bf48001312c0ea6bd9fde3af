@@ -163,9 +163,14 @@ void loop()
 		Serial.print(address);
 		Serial.print(": ");
 		Serial.println(input);
-		wirelessInput->Fill(input);
+		byte point = 0;
+		do
+		{
+			if(wirelessInput->Put(input[point]))
+				Interpret(wirelessInput, address);
+			point++;
+		} while (input[point]);
 		communicator->FreeReadData();
-		Interpret(wirelessInput, address);
 	}
 
 	if(!Serial.available())

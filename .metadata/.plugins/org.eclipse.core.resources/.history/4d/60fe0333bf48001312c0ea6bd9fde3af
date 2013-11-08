@@ -22,20 +22,12 @@ void CommandBuffer::Init()
 void CommandBuffer::Fill(char* s)
 {
 	commandPointer = 0;
-	while(s[commandPointer] && (s[commandPointer] != ';'))
+	while(s[commandPointer])
 	{
-		if(commandPointer >= COMMAND_LENGTH)
-		{
-			Serial.print("CommandBuffer.Fill(): length overflow.\n");
-			commandBuffer[0] = 0;
-			Init();
-			return;
-		}
 		commandBuffer[commandPointer] = s[commandPointer];
 		commandPointer++;
 	}
 	commandBuffer[commandPointer] = 0;
-	Init();
 }
 
 bool CommandBuffer::Put(char c)
@@ -59,7 +51,7 @@ bool CommandBuffer::Put(char c)
 
   if(commandPointer >= COMMAND_LENGTH)
   {
-    Serial.print("CommandBuffer.Put(): length overflow.\n");
+    Serial.print("Command buffer length overflow.\n");
     commandPointer = 0;
     commandBuffer[0] = 0;
   }

@@ -16,7 +16,6 @@ class CommandBuffer
     CommandBuffer();
     void Init();
     bool Put(char c);
-    void Fill(char* s);
     bool Seen(char c);
     float GetFValue();
     int GetIValue();

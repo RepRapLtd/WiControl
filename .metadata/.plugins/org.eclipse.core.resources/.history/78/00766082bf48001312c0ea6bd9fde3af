@@ -27,9 +27,8 @@ void CommandBuffer::Fill(char* s)
 		if(commandPointer >= COMMAND_LENGTH)
 		{
 			Serial.print("CommandBuffer.Fill(): length overflow.\n");
+			commandPointer = 0;
 			commandBuffer[0] = 0;
-			Init();
-			return;
 		}
 		commandBuffer[commandPointer] = s[commandPointer];
 		commandPointer++;

@@ -1,4 +1,4 @@
-22:53:35 **** Incremental Build of configuration Release for project Control ****
+21:58:51 **** Incremental Build of configuration Release for project Control ****
 make all 
 Building file: ../Command.cpp
 Starting C++ compile
@@ -32,12 +32,12 @@ Printing size:
 "/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
 /home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
 section    size   addr
-.sec1   12290      0
-Total   12290
+.sec1   12436      0
+Total   12436
 
 
 Finished building target: Control
  
 
-22:53:37 Build Finished (took 1s.812ms)
+21:58:53 Build Finished (took 1s.869ms)
 
