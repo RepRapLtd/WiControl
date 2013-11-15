@@ -1,4 +1,5 @@
-Communicator.cpp.d Communicator.cpp.o: ../Communicator.cpp ../Control.h \
+CommandBuffer.cpp.d CommandBuffer.cpp.o: ../CommandBuffer.cpp \
+  ../Control.h \
   /usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino/Arduino.h \
   /usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino/binary.h \
   /usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino/WCharacter.h \

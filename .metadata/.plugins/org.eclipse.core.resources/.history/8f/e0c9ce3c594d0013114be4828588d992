@@ -93,14 +93,10 @@ void Interpret(CommandBuffer* cb, int address)
 
 			break;
 
-		// Turn the heater on
-
 		case 1:
 			if(cb->Seen('H'))
 				SetHeater(cb->GetIValue());
 			break;
-
-		// Print the temperature, and return it
 
 		case 2:
 			t = GetTemperature();
@@ -112,8 +108,6 @@ void Interpret(CommandBuffer* cb, int address)
 				communicator->Send(address, data);
 			}
 			break;
-
-		// Send a command to another device
 
 		case 3:
 			if(cb->Seen('A'))
@@ -136,8 +130,6 @@ void Interpret(CommandBuffer* cb, int address)
 	{
 		switch(cb->GetIValue())
 		{
-		// Reply from a request for a temperature
-
 		case 2:
 			if(cb->Seen('T'))
 			{

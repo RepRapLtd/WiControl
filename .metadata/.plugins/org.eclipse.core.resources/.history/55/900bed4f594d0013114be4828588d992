@@ -136,8 +136,6 @@ void Interpret(CommandBuffer* cb, int address)
 	{
 		switch(cb->GetIValue())
 		{
-		// Reply from a request for a temperature
-
 		case 2:
 			if(cb->Seen('T'))
 			{

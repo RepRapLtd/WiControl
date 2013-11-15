@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;Control/Command.cpp&apos; to &apos;CommandBuffer.cpp&apos;" description="Rename resource &apos;Command.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Command.cpp" name="CommandBuffer.cpp" stamp="1384452724844" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;Control/Command.h&apos; to &apos;CommandBuffer.h&apos;" description="Rename resource &apos;Command.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Command.h" name="CommandBuffer.h" stamp="1384452736411" updateReferences="true"/>
+</session>

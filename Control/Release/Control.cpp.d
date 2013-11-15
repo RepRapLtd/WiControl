@@ -11,7 +11,8 @@ Control.cpp.d Control.cpp.o: ../Control.cpp ../Control.h \
   /usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard/pins_arduino.h \
   ../Communicator.h /usr/local/arduino-1.0.5/libraries/panstamp/cc1101.h \
   /usr/local/arduino-1.0.5/libraries/panstamp/spi.h \
-  /usr/local/arduino-1.0.5/libraries/panstamp/ccpacket.h ../Command.h
+  /usr/local/arduino-1.0.5/libraries/panstamp/ccpacket.h \
+  ../CommandBuffer.h
 
 ../Control.h:
 
@@ -43,4 +44,4 @@ Control.cpp.d Control.cpp.o: ../Control.cpp ../Control.h \
 
 /usr/local/arduino-1.0.5/libraries/panstamp/ccpacket.h:
 
-../Command.h:
+../CommandBuffer.h:
