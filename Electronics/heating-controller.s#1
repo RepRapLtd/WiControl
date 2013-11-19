@@ -15529,7 +15529,6 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <segment>
 <pinref part="JP3" gate="A" pin="3"/>
 <wire x1="-35.56" y1="45.72" x2="-25.4" y2="45.72" width="0.1524" layer="91"/>
-<label x="-27.94" y="45.72" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
