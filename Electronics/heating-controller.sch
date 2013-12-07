@@ -14902,75 +14902,6 @@ grid 2.54 mm</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="v-reg">
-<description>&lt;b&gt;Voltage Regulators&lt;/b&gt;&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-<package name="79XXS">
-<description>&lt;b&gt;VOLTAGE REGULATOR&lt;/b&gt;</description>
-<wire x1="4.826" y1="-4.318" x2="5.08" y2="-4.064" width="0.1524" layer="21"/>
-<wire x1="4.826" y1="-4.318" x2="-4.826" y2="-4.318" width="0.1524" layer="21"/>
-<wire x1="-5.08" y1="-4.064" x2="-4.826" y2="-4.318" width="0.1524" layer="21"/>
-<wire x1="5.08" y1="-1.143" x2="5.08" y2="-4.064" width="0.1524" layer="21"/>
-<wire x1="-5.08" y1="-4.064" x2="-5.08" y2="-1.143" width="0.1524" layer="21"/>
-<circle x="-4.6228" y="-3.7084" radius="0.254" width="0" layer="21"/>
-<pad name="GND" x="-2.54" y="-2.54" drill="1.016" shape="long" rot="R90"/>
-<pad name="IN" x="0" y="-2.54" drill="1.016" shape="long" rot="R90"/>
-<pad name="OUT" x="2.54" y="-2.54" drill="1.016" shape="long" rot="R90"/>
-<text x="-5.08" y="-6.0452" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="-5.08" y="-7.62" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
-<text x="-3.175" y="-3.81" size="1.27" layer="51" ratio="10">+</text>
-<text x="-0.635" y="-3.81" size="1.27" layer="51" ratio="10">I</text>
-<text x="1.905" y="-3.81" size="1.27" layer="51" ratio="10">O</text>
-<rectangle x1="-5.334" y1="-1.27" x2="-3.429" y2="0" layer="21"/>
-<rectangle x1="-3.429" y1="-0.762" x2="-1.651" y2="0" layer="21"/>
-<rectangle x1="-1.651" y1="-1.27" x2="-0.889" y2="0" layer="21"/>
-<rectangle x1="-0.889" y1="-0.762" x2="0.889" y2="0" layer="21"/>
-<rectangle x1="0.889" y1="-1.27" x2="1.651" y2="0" layer="21"/>
-<rectangle x1="1.651" y1="-0.762" x2="3.429" y2="0" layer="21"/>
-<rectangle x1="3.429" y1="-1.27" x2="5.334" y2="0" layer="21"/>
-<rectangle x1="-3.429" y1="-1.27" x2="-1.651" y2="-0.762" layer="51"/>
-<rectangle x1="-0.889" y1="-1.27" x2="0.889" y2="-0.762" layer="51"/>
-<rectangle x1="1.651" y1="-1.27" x2="3.429" y2="-0.762" layer="51"/>
-</package>
-</packages>
-<symbols>
-<symbol name="79XX">
-<wire x1="-5.08" y1="-2.54" x2="5.08" y2="-2.54" width="0.4064" layer="94"/>
-<wire x1="5.08" y1="-2.54" x2="5.08" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="5.08" y1="5.08" x2="-5.08" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="-5.08" y1="5.08" x2="-5.08" y2="-2.54" width="0.4064" layer="94"/>
-<text x="2.54" y="8.89" size="1.778" layer="95">&gt;NAME</text>
-<text x="2.54" y="6.35" size="1.778" layer="96">&gt;VALUE</text>
-<text x="-2.032" y="2.794" size="1.524" layer="95">GND</text>
-<text x="0.635" y="-0.635" size="1.524" layer="95">OUT</text>
-<text x="-4.445" y="-0.635" size="1.524" layer="95">IN</text>
-<pin name="IN" x="-7.62" y="0" visible="off" length="short" direction="in"/>
-<pin name="GND" x="0" y="7.62" visible="off" length="short" direction="in" rot="R270"/>
-<pin name="OUT" x="7.62" y="0" visible="off" length="short" direction="pas" rot="R180"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="79XXS" prefix="IC" uservalue="yes">
-<description>&lt;b&gt;VOLTAGE REGULATOR&lt;/b&gt;</description>
-<gates>
-<gate name="1" symbol="79XX" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="79XXS">
-<connects>
-<connect gate="1" pin="GND" pad="GND"/>
-<connect gate="1" pin="IN" pad="IN"/>
-<connect gate="1" pin="OUT" pad="OUT"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="rectifier">
 <description>&lt;b&gt;Rectifiers&lt;/b&gt;&lt;p&gt;
 General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
@@ -15066,6 +14997,125 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 </deviceset>
 </devicesets>
 </library>
+<library name="v-reg">
+<description>&lt;b&gt;Voltage Regulators&lt;/b&gt;&lt;p&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="TO92">
+<description>&lt;b&gt;TO 92&lt;/b&gt;</description>
+<wire x1="-2.0946" y1="-1.651" x2="-2.6549" y2="-0.254" width="0.127" layer="21" curve="-32.78104"/>
+<wire x1="-2.6549" y1="-0.254" x2="-0.7863" y2="2.5485" width="0.127" layer="21" curve="-78.318477"/>
+<wire x1="0.7863" y1="2.5484" x2="2.0945" y2="-1.651" width="0.127" layer="21" curve="-111.09954"/>
+<wire x1="-2.0945" y1="-1.651" x2="2.0945" y2="-1.651" width="0.127" layer="21"/>
+<wire x1="-2.2537" y1="-0.254" x2="-0.2863" y2="-0.254" width="0.127" layer="51"/>
+<wire x1="-2.6549" y1="-0.254" x2="-2.2537" y2="-0.254" width="0.127" layer="21"/>
+<wire x1="-0.2863" y1="-0.254" x2="0.2863" y2="-0.254" width="0.127" layer="21"/>
+<wire x1="2.2537" y1="-0.254" x2="2.6549" y2="-0.254" width="0.127" layer="21"/>
+<wire x1="0.2863" y1="-0.254" x2="2.2537" y2="-0.254" width="0.127" layer="51"/>
+<wire x1="-0.7863" y1="2.5485" x2="0.7863" y2="2.5485" width="0.127" layer="51" curve="-34.293591"/>
+<pad name="3" x="1.27" y="0" drill="0.8128" shape="octagon"/>
+<pad name="2" x="0" y="1.905" drill="0.8128" shape="octagon"/>
+<pad name="1" x="-1.27" y="0" drill="0.8128" shape="octagon"/>
+<text x="3.175" y="0.635" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="3.175" y="-1.27" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+</package>
+<package name="DPACK">
+<description>&lt;b&gt;DPAK&lt;/b&gt;&lt;p&gt;
+PLASTIC PACKAGE CASE 369C-01&lt;br&gt;
+Source: http://www.onsemi.co.jp .. LM317M-D.PDF</description>
+<wire x1="3.2766" y1="3.8354" x2="3.277" y2="-2.159" width="0.2032" layer="21"/>
+<wire x1="3.277" y1="-2.159" x2="-3.277" y2="-2.159" width="0.2032" layer="21"/>
+<wire x1="-3.277" y1="-2.159" x2="-3.2766" y2="3.8354" width="0.2032" layer="21"/>
+<wire x1="-3.277" y1="3.835" x2="3.2774" y2="3.8346" width="0.2032" layer="51"/>
+<wire x1="-2.5654" y1="3.937" x2="-2.5654" y2="4.6482" width="0.2032" layer="51"/>
+<wire x1="-2.5654" y1="4.6482" x2="-2.1082" y2="5.1054" width="0.2032" layer="51"/>
+<wire x1="-2.1082" y1="5.1054" x2="2.1082" y2="5.1054" width="0.2032" layer="51"/>
+<wire x1="2.1082" y1="5.1054" x2="2.5654" y2="4.6482" width="0.2032" layer="51"/>
+<wire x1="2.5654" y1="4.6482" x2="2.5654" y2="3.937" width="0.2032" layer="51"/>
+<wire x1="2.5654" y1="3.937" x2="-2.5654" y2="3.937" width="0.2032" layer="51"/>
+<smd name="4" x="0" y="2.38" dx="5.8" dy="6.2" layer="1"/>
+<smd name="1" x="-2.28" y="-4.8" dx="1.6" dy="3" layer="1"/>
+<smd name="3" x="2.28" y="-4.8" dx="1.6" dy="3" layer="1"/>
+<text x="-3.81" y="-2.54" size="1.27" layer="25" rot="R90">&gt;NAME</text>
+<text x="5.08" y="-2.54" size="1.27" layer="27" rot="R90">&gt;VALUE</text>
+<rectangle x1="-2.7178" y1="-5.1562" x2="-1.8542" y2="-2.2606" layer="51"/>
+<rectangle x1="1.8542" y1="-5.1562" x2="2.7178" y2="-2.2606" layer="51"/>
+<rectangle x1="-0.4318" y1="-3.0226" x2="0.4318" y2="-2.2606" layer="21"/>
+<polygon width="0.1998" layer="51">
+<vertex x="-2.5654" y="3.937"/>
+<vertex x="-2.5654" y="4.6482"/>
+<vertex x="-2.1082" y="5.1054"/>
+<vertex x="2.1082" y="5.1054"/>
+<vertex x="2.5654" y="4.6482"/>
+<vertex x="2.5654" y="3.937"/>
+</polygon>
+</package>
+</packages>
+<symbols>
+<symbol name="78XX">
+<wire x1="-5.08" y1="-5.08" x2="5.08" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="5.08" y1="-5.08" x2="5.08" y2="2.54" width="0.4064" layer="94"/>
+<wire x1="5.08" y1="2.54" x2="-5.08" y2="2.54" width="0.4064" layer="94"/>
+<wire x1="-5.08" y1="2.54" x2="-5.08" y2="-5.08" width="0.4064" layer="94"/>
+<text x="2.54" y="-7.62" size="1.778" layer="95">&gt;NAME</text>
+<text x="2.54" y="-10.16" size="1.778" layer="96">&gt;VALUE</text>
+<text x="-2.032" y="-4.318" size="1.524" layer="95">GND</text>
+<text x="-4.445" y="-0.635" size="1.524" layer="95">IN</text>
+<text x="0.635" y="-0.635" size="1.524" layer="95">OUT</text>
+<pin name="IN" x="-7.62" y="0" visible="off" length="short" direction="in"/>
+<pin name="GND" x="0" y="-7.62" visible="off" length="short" direction="in" rot="R90"/>
+<pin name="OUT" x="7.62" y="0" visible="off" length="short" direction="pas" rot="R180"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="LP2950?*" prefix="IC">
+<description>Source: http://cache.national.com/ds/LP/LP2950.pdf</description>
+<gates>
+<gate name="G$1" symbol="78XX" x="0" y="0"/>
+</gates>
+<devices>
+<device name="CZ" package="TO92">
+<connects>
+<connect gate="G$1" pin="GND" pad="2"/>
+<connect gate="G$1" pin="IN" pad="3"/>
+<connect gate="G$1" pin="OUT" pad="1"/>
+</connects>
+<technologies>
+<technology name="-3.0"/>
+<technology name="-3.3"/>
+<technology name="-5.0"/>
+</technologies>
+</device>
+<device name="CDT" package="DPACK">
+<connects>
+<connect gate="G$1" pin="GND" pad="4"/>
+<connect gate="G$1" pin="IN" pad="1"/>
+<connect gate="G$1" pin="OUT" pad="3"/>
+</connects>
+<technologies>
+<technology name="-3.0"/>
+<technology name="-3.3"/>
+<technology name="-5.0"/>
+<technology name="X-3.0"/>
+<technology name="X-3.3"/>
+</technologies>
+</device>
+<device name="ACZ" package="TO92">
+<connects>
+<connect gate="G$1" pin="GND" pad="2"/>
+<connect gate="G$1" pin="IN" pad="3"/>
+<connect gate="G$1" pin="OUT" pad="1"/>
+</connects>
+<technologies>
+<technology name="-3.0"/>
+<technology name="-3.3"/>
+<technology name="-5.0"/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -15086,7 +15136,6 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <part name="R1" library="rcl" deviceset="R-EU_" device="0207/7" value="220R"/>
 <part name="R2" library="rcl" deviceset="R-EU_" device="0207/7" value="1K"/>
 <part name="R3" library="rcl" deviceset="R-EU_" device="0207/7" value="220R"/>
-<part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="P+1" library="supply1" deviceset="+12V" device=""/>
 <part name="P+2" library="supply1" deviceset="+12V" device=""/>
@@ -15115,11 +15164,12 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <part name="H3" library="holes" deviceset="MOUNT-PAD-ROUND" device="2.8"/>
 <part name="H4" library="holes" deviceset="MOUNT-PAD-ROUND" device="2.8"/>
 <part name="GND10" library="supply1" deviceset="GND" device=""/>
-<part name="IC1" library="v-reg" deviceset="79XXS" device="" value="AP1117 (3v3)"/>
 <part name="B1" library="rectifier" deviceset="B-DIL" device=""/>
-<part name="P+8" library="supply1" deviceset="VCC" device=""/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="JP3" library="pinhead" deviceset="PINHD-1X7" device=""/>
+<part name="IC1" library="v-reg" deviceset="LP2950?*" device="ACZ" technology="-3.0" value="TS2950-3v3"/>
+<part name="GND1" library="supply1" deviceset="GND" device=""/>
+<part name="P+8" library="supply1" deviceset="+12V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -15143,7 +15193,6 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <instance part="R1" gate="G$1" x="15.24" y="81.28"/>
 <instance part="R2" gate="G$1" x="101.6" y="27.94" rot="R90"/>
 <instance part="R3" gate="G$1" x="91.44" y="48.26" rot="R90"/>
-<instance part="GND1" gate="1" x="2.54" y="63.5"/>
 <instance part="GND2" gate="1" x="111.76" y="83.82"/>
 <instance part="P+1" gate="1" x="-22.86" y="88.9"/>
 <instance part="P+2" gate="1" x="111.76" y="104.14"/>
@@ -15172,14 +15221,15 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <instance part="H3" gate="G$1" x="27.94" y="91.44"/>
 <instance part="H4" gate="G$1" x="35.56" y="91.44"/>
 <instance part="GND10" gate="1" x="20.32" y="96.52"/>
-<instance part="IC1" gate="1" x="-12.7" y="81.28" rot="R180"/>
 <instance part="B1" gate="1" x="111.76" y="93.98" smashed="yes" rot="MR90">
 <attribute name="VALUE" x="106.68" y="99.06" size="1.778" layer="96" rot="MR90"/>
 <attribute name="NAME" x="104.14" y="96.52" size="1.778" layer="95" rot="MR180"/>
 </instance>
-<instance part="P+8" gate="VCC" x="-25.4" y="58.42"/>
 <instance part="GND11" gate="1" x="-22.86" y="53.34" rot="R90"/>
 <instance part="JP3" gate="A" x="-38.1" y="48.26" rot="R180"/>
+<instance part="IC1" gate="G$1" x="-12.7" y="81.28"/>
+<instance part="GND1" gate="1" x="2.54" y="63.5"/>
+<instance part="P+8" gate="1" x="-25.4" y="60.96"/>
 </instances>
 <busses>
 </busses>
@@ -15192,7 +15242,7 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <wire x1="-22.86" y1="81.28" x2="-20.32" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="-22.86" y1="86.36" x2="-22.86" y2="81.28" width="0.1524" layer="91"/>
 <junction x="-22.86" y="81.28"/>
-<pinref part="IC1" gate="1" pin="OUT"/>
+<pinref part="IC1" gate="G$1" pin="IN"/>
 </segment>
 <segment>
 <pinref part="R2" gate="G$1" pin="2"/>
@@ -15208,6 +15258,12 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <wire x1="124.46" y1="101.6" x2="111.76" y2="101.6" width="0.1524" layer="91"/>
 <junction x="111.76" y="101.6"/>
 <junction x="111.76" y="99.06"/>
+</segment>
+<segment>
+<pinref part="JP3" gate="A" pin="7"/>
+<wire x1="-35.56" y1="55.88" x2="-25.4" y2="55.88" width="0.1524" layer="91"/>
+<pinref part="P+8" gate="1" pin="+12V"/>
+<wire x1="-25.4" y1="55.88" x2="-25.4" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -15241,28 +15297,6 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <segment>
 <pinref part="LED3" gate="G$1" pin="C"/>
 <pinref part="GND4" gate="1" pin="GND"/>
-</segment>
-<segment>
-<pinref part="C1" gate="G$1" pin="-"/>
-<wire x1="-27.94" y1="73.66" x2="-27.94" y2="66.04" width="0.1524" layer="91"/>
-<pinref part="GND1" gate="1" pin="GND"/>
-<wire x1="-27.94" y1="66.04" x2="-12.7" y2="66.04" width="0.1524" layer="91"/>
-<wire x1="-12.7" y1="66.04" x2="0" y2="66.04" width="0.1524" layer="91"/>
-<wire x1="0" y1="66.04" x2="2.54" y2="66.04" width="0.1524" layer="91"/>
-<wire x1="2.54" y1="66.04" x2="10.16" y2="66.04" width="0.1524" layer="91"/>
-<pinref part="LED1" gate="G$1" pin="C"/>
-<wire x1="10.16" y1="66.04" x2="20.32" y2="66.04" width="0.1524" layer="91"/>
-<wire x1="20.32" y1="66.04" x2="20.32" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="-12.7" y1="73.66" x2="-12.7" y2="66.04" width="0.1524" layer="91"/>
-<pinref part="C2" gate="G$1" pin="-"/>
-<wire x1="10.16" y1="73.66" x2="10.16" y2="66.04" width="0.1524" layer="91"/>
-<junction x="-12.7" y="66.04"/>
-<junction x="2.54" y="66.04"/>
-<junction x="10.16" y="66.04"/>
-<pinref part="C5" gate="G$1" pin="1"/>
-<wire x1="0" y1="73.66" x2="0" y2="66.04" width="0.1524" layer="91"/>
-<junction x="0" y="66.04"/>
-<pinref part="IC1" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="JP1" gate="A" pin="2"/>
@@ -15309,6 +15343,28 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <pinref part="GND11" gate="1" pin="GND"/>
 <pinref part="JP3" gate="A" pin="6"/>
 </segment>
+<segment>
+<pinref part="C1" gate="G$1" pin="-"/>
+<wire x1="-27.94" y1="73.66" x2="-27.94" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="-27.94" y1="66.04" x2="-12.7" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="-12.7" y1="66.04" x2="0" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="0" y1="66.04" x2="2.54" y2="66.04" width="0.1524" layer="91"/>
+<pinref part="LED1" gate="G$1" pin="C"/>
+<wire x1="2.54" y1="66.04" x2="10.16" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="10.16" y1="66.04" x2="20.32" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="20.32" y1="66.04" x2="20.32" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="-12.7" y1="73.66" x2="-12.7" y2="66.04" width="0.1524" layer="91"/>
+<pinref part="C2" gate="G$1" pin="-"/>
+<wire x1="10.16" y1="73.66" x2="10.16" y2="66.04" width="0.1524" layer="91"/>
+<junction x="-12.7" y="66.04"/>
+<junction x="10.16" y="66.04"/>
+<pinref part="C5" gate="G$1" pin="1"/>
+<wire x1="0" y1="73.66" x2="0" y2="66.04" width="0.1524" layer="91"/>
+<junction x="0" y="66.04"/>
+<pinref part="IC1" gate="G$1" pin="GND"/>
+<pinref part="GND1" gate="1" pin="GND"/>
+<junction x="2.54" y="66.04"/>
+</segment>
 </net>
 <net name="N$4" class="0">
 <segment>
@@ -15346,17 +15402,12 @@ General Instrument, Semikron, Diotec, Fagor&lt;p&gt;
 <junction x="5.08" y="81.28"/>
 <pinref part="C5" gate="G$1" pin="2"/>
 <junction x="0" y="81.28"/>
-<pinref part="IC1" gate="1" pin="IN"/>
+<pinref part="IC1" gate="G$1" pin="OUT"/>
 </segment>
 <segment>
 <pinref part="R4" gate="G$1" pin="2"/>
 <wire x1="88.9" y1="91.44" x2="88.9" y2="93.98" width="0.1524" layer="91"/>
 <pinref part="P+4" gate="VCC" pin="VCC"/>
-</segment>
-<segment>
-<wire x1="-35.56" y1="55.88" x2="-25.4" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="P+8" gate="VCC" pin="VCC"/>
-<pinref part="JP3" gate="A" pin="7"/>
 </segment>
 </net>
 <net name="N$1" class="0">
