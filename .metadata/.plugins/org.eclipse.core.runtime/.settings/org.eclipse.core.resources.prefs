@@ -1,3 +1,4 @@
+description.autobuilding=false
 eclipse.preferences.version=1
 pathvariable.ArduinoLibPath=/usr/local/arduino-1.0.5/libraries
 pathvariable.ArduinoPath=/usr/local/arduino-1.0.5
