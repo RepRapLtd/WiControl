@@ -21,7 +21,7 @@
 
 #define ABS_ZERO -273.15  // Celsius
 #define TEMP_SENSE_PIN 0   // Analogue pin number
-#define HEAT_ON_PIN LEDOUTPUT
+#define HEAT_ON_PIN 3
 #define THERMISTOR_BETA 3528.0 // thermistor: RS 538-0806
 #define THERMISTOR_SERIES_R 1000 // Ohms in series with the thermistors
 #define THERMISTOR_25_R 1000.0 // Thermistor ohms at 25 C = 298.15 K
