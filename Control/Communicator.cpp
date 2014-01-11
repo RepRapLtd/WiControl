@@ -43,7 +43,7 @@ void Communicator::Send(byte address, char* data)
 	{
 		Serial.print(transmitPacket.data[1]);
 		Serial.print(" sending: ");
-		Serial.print((char*)&transmitPacket.data[2]);
+		Serial.println((char*)&transmitPacket.data[2]);
 	}
 	if(!cc1101.sendData(transmitPacket))
 		Serial.println("Transmit failed!");
