@@ -1,4 +1,4 @@
-src/Heating.d: ../src/Heating.cpp ../src/Heating.h ../src/Line.h \
+src/HeatProfile.d: ../src/HeatProfile.cpp ../src/Heating.h ../src/Line.h \
  ../src/HeatProfile.h
 
 ../src/Heating.h:

@@ -4,14 +4,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/HeatProfile.cpp \
 ../src/Heating.cpp \
 ../src/Line.cpp 
 
 OBJS += \
+./src/HeatProfile.o \
 ./src/Heating.o \
 ./src/Line.o 
 
 CPP_DEPS += \
+./src/HeatProfile.d \
 ./src/Heating.d \
 ./src/Line.d 
 

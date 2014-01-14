@@ -11,37 +11,25 @@
 
 #include "Heating.h"
 
-void loop(Line* usb)
+
+
+void Error(char* message)
 {
-	char b;
-
-	if(usb->ByteAvailable())
-		std::cout << usb->GetByte();
-
-//	struct pollfd fds;
-//	        int ret;
-//	        fds.fd = 0; /* this is STDIN */
-//	        fds.events = POLLIN;
-//	        ret = poll(&fds, 1, 0);
-//
-//	if(_kbhit())
-//	{
-//		std::cin.get(b);
-//		if(b == '\r')
-//			b = '\n';
-//		std::cout << b;
-//		usb->PutByte(b);
-//	}
+	cerr << message;
 }
 
 int
 main(int argc, char** argv)
 {
 	Line* usb = new Line();
+	time_t rawtime;
 
-	for(;;) loop(usb);
+	struct tm * timeinfo;
 
-    std::cerr << std::endl ;
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	cout << "Current local time and date: " << asctime (timeinfo) ;
+
     return EXIT_SUCCESS ;
 }
 

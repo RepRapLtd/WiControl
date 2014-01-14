@@ -14,7 +14,11 @@
 #include <cstdlib>
 #include <string>
 #include <stdio.h>
+#include <sstream>
 #include "Line.h"
+#include "HeatProfile.h"
+
+void Error(char* message);
 
 
 #endif /* HEATING_H_ */
