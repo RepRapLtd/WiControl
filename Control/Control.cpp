@@ -57,7 +57,7 @@ void setup()
 	  pinMode(HEAT_ON_PIN, OUTPUT);
 	  SetHeater(0);
 	  communicator = new Communicator(MY_ADDRESS);
-	  communicator->SetDebug(true);
+	  communicator->SetDebug(false);
 	  dataPointer = 0;
 	  blinkQueued = false;
 	  serialInput = new CommandBuffer();
@@ -104,11 +104,12 @@ void Interpret(CommandBuffer* cb, int address)
 
 		case 2:
 			t = GetTemperature();
-			Serial.print("Temp: ");
-			Serial.println(t);
+			Message("Temp: ");
+			Message(t);
+			Message("\n");
 			if(address >= 0)
 			{
-				snprintf(data, DATA_LENGTH, "R2 T%d\n", (int)t);
+				snprintf(data, DATA_LENGTH, "R2 T%d\n", 10*(int)t);
 				communicator->Send(address, data);
 			}
 			break;
@@ -121,6 +122,20 @@ void Interpret(CommandBuffer* cb, int address)
 				sendAddress = cb->GetIValue();
 				if(cb->Seen('S'))
 					communicator->Send(sendAddress, cb->GetString());
+			}
+			break;
+
+		case 4:
+			snprintf(data, DATA_LENGTH, "%s, version: %s, date: %s, address: %d\n",
+					NAME, VERSION, DATE, MY_ADDRESS);
+			Message("\n");
+			Message(data);
+			Message("\n");
+			if(address >= 0)
+			{
+				snprintf(data, DATA_LENGTH, "R4 S%s, version: %s, date: %s, address: %d\n",
+									NAME, VERSION, DATE, MY_ADDRESS);
+				communicator->Send(address, data);
 			}
 			break;
 
@@ -144,7 +159,18 @@ void Interpret(CommandBuffer* cb, int address)
 				Message("Temp returned from: ");
 				Message(address);
 				Message(" was ");
-				Message(cb->GetIValue());
+				Message(0.1*(float)cb->GetIValue());
+				Message("\n");
+			}
+			break;
+
+		case 4:
+			if(cb->Seen('S'))
+			{
+				Message("Identifier from: ");
+				Message(address);
+				Message(" was ");
+				Message(cb->GetString());
 				Message("\n");
 			}
 			break;
@@ -169,10 +195,10 @@ void loop()
 	char* input = communicator->Receive(address);
 	if(input)
 	{
-		Serial.print("From ");
-		Serial.print(address);
-		Serial.print(": ");
-		Serial.println(input);
+//		Serial.print("From ");
+//		Serial.print(address);
+//		Serial.print(": ");
+//		Serial.println(input);
 		wirelessInput->Fill(input);
 		communicator->FreeReadData();
 		Interpret(wirelessInput, address);
