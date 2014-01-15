@@ -8,7 +8,7 @@
 #ifndef HEATPROFILE_H_
 #define HEATPROFILE_H_
 
-#define PROFILE_FILE "/home/ensab/Panstamp/WiControl/heat-profile.dat"
+
 
 class TimeAndTemperature
 {
@@ -35,6 +35,7 @@ private:
 	TimeAndTemperature* list;
 	int panStampNumber;
 	HeatProfile* next;
+	char roomName[NAME_LENGTH];
 };
 
 inline TimeAndTemperature::TimeAndTemperature(long ds, float t, TimeAndTemperature* previous)

@@ -13,15 +13,29 @@ HeatProfile::HeatProfile(std::stringstream profileFileLine, HeatProfile* previou
 	if(previous != 0)
 		previous->next = this;
 
+	profileFileLine >> roomName;
+
 	profileFileLine >> panStampNumber;
 
-	char dummy = ' ';
+	list = 0;
+	TimeAndTemperature* tat = 0;
 
-	while(isspace(dummy) || dummy == ',')
+	long hours, minutes, seconds;
+	char dummy;
+	float temperature;
+
+	while(!profileFileLine.eof())
+	{
+		profileFileLine >> hours;
 		profileFileLine >> dummy;
-
-
-
+		profileFileLine >> minutes;
+		profileFileLine >> dummy;
+		profileFileLine >> seconds;
+		profileFileLine >> temperature;
+		tat = new TimeAndTemperature(hours*3600 + minutes*60 + seconds, temperature, tat);
+		if(list == 0)
+			list = tat;
+	}
 }
 
 float HeatProfile::Temperature(long time)
