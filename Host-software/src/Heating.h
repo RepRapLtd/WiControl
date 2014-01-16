@@ -11,6 +11,7 @@
 #define NAME_LENGTH 50
 
 #define PROFILE_FILE "/home/ensab/Panstamp/WiControl/heat-profile.dat"
+#define SERIAL_PORT "/dev/ttyUSB0"
 
 #include <SerialStream.h>
 #include <iostream>

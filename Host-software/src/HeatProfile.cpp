@@ -7,6 +7,7 @@
 
 #include "Heating.h"
 
+
 HeatProfile::HeatProfile(std::stringstream profileFileLine, HeatProfile* previous)
 {
 	next = 0;
@@ -36,6 +37,29 @@ HeatProfile::HeatProfile(std::stringstream profileFileLine, HeatProfile* previou
 		if(list == 0)
 			list = tat;
 	}
+}
+
+void HeatProfile::PrintProfile(std::ostream os)
+{
+	os << roomName << ' ' <<  panStampNumber << ' ';
+
+	long time;
+	long hours, minutes, seconds;
+	TimeAndTemperature* tat = list;
+
+	while(tat)
+	{
+		time = tat->Time();
+		hours = time/3600;
+		minutes = (time - hours*3600)/60;
+		seconds = time - hours*3600 - minutes*60;
+		os << hours << ':' << minutes << ':' << seconds << ' ';
+		os << tat->Temperature();
+		tat = tat->Next();
+		if(tat)
+			os << ' ';
+	}
+	os << '\n';
 }
 
 float HeatProfile::Temperature(long time)

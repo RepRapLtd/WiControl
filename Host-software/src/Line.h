@@ -14,7 +14,6 @@ using namespace LibSerial ;
 class Line
 {
 
-
 public:
 	Line();
 	bool ByteAvailable();

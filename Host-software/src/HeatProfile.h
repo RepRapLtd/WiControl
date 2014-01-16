@@ -30,6 +30,7 @@ public:
 	HeatProfile(std::stringstream profileFileLine, HeatProfile* previous);
 	float Temperature(long time);
 	int PanStampNumber();
+	void PrintProfile(std::ostream);
 
 private:
 	TimeAndTemperature* list;

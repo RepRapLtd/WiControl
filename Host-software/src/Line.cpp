@@ -9,7 +9,7 @@
 
 Line::Line()
 {
-    serial_port.Open( "/dev/ttyUSB0" ) ;
+    serial_port.Open( SERIAL_PORT ) ;
     if ( ! serial_port.good() )
     {
         std::cerr << "[" << __FILE__ << ":" << __LINE__ << "] "
