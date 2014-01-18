@@ -78,7 +78,7 @@ void Heating::Run(struct tm* timeinfo)
 	while(hp)
 	{
 		setTemperature = hp->Temperature(timeinfo);
-		if(wireless->GetTemperature(hp->PanStampNumber()) < setTemperature)
+		if(wireless->GetTemperature(hp->PanStampNumber(), setTemperature, hp->Name()) < setTemperature)
 		{
 			wireless->SetHeatOn(hp->PanStampNumber());
 			boilerOn = true;

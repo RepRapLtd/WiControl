@@ -12,7 +12,7 @@ class Wireless
 {
 public:
 	Wireless(char* port);
-	float GetTemperature(int panStampNumber);
+	float GetTemperature(int panStampNumber, float set, char* name);
 	void SetHeatOn(int panStampNumber);
 	void SetHeatOff(int panStampNumber);
 

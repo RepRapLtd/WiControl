@@ -12,7 +12,7 @@ Wireless::Wireless(char* port)
 	line = new Line(port);
 }
 
-float Wireless::GetTemperature(int panStampNumber)
+float Wireless::GetTemperature(int panStampNumber, float set, char* name)
 {
 	float result = DEFAULT_TEMPERATURE;
 	std::stringstream ss;
@@ -58,14 +58,14 @@ float Wireless::GetTemperature(int panStampNumber)
 	ss << &scratchString[i];
 	ss >> result;
 
-	cout << "Temperature of " << panStampNumber << " is " << result << endl;
+	cout << "Temperature of " << name << " (" << panStampNumber << ") is " << result << " (set temperature: " << set << ").  ";
 
 	return result;
 }
 
 void Wireless::SetHeatOn(int panStampNumber)
 {
-	cout << "Setting " << panStampNumber << " on." << endl;
+	cout << "Turning " << panStampNumber << " on." << endl;
 	std::stringstream ss;
 	ss << "C3 A" << panStampNumber << " SC1 H1";
 	ss.getline(scratchString, LINE_LENGTH);
@@ -75,7 +75,7 @@ void Wireless::SetHeatOn(int panStampNumber)
 
 void Wireless::SetHeatOff(int panStampNumber)
 {
-	cout << "Setting " << panStampNumber << " off." << endl;
+	cout << "Turning " << panStampNumber << " off." << endl;
 	std::stringstream ss;
 	ss << "C3 A" << panStampNumber << " SC1 H0";
 	ss.getline(scratchString, LINE_LENGTH);

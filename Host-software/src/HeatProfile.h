@@ -31,6 +31,7 @@ public:
 	float Temperature(struct tm* timeinfo);
 	int PanStampNumber();
 	void PrintProfile(std::ostream& os);
+	char* Name();
 	HeatProfile* Next();
 
 private:
@@ -72,6 +73,11 @@ inline int HeatProfile::PanStampNumber()
 inline HeatProfile* HeatProfile::Next()
 {
 	return next;
+}
+
+inline char* HeatProfile::Name()
+{
+	return roomName;
 }
 
 #endif /* HEATPROFILE_H_ */
