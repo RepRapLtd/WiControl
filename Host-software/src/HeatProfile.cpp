@@ -8,13 +8,14 @@
 #include "Heating.h"
 
 
-HeatProfile::HeatProfile(std::stringstream profileFileLine, HeatProfile* previous)
+HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previous)
 {
 	next = 0;
 	if(previous != 0)
 		previous->next = this;
 
 	profileFileLine >> roomName;
+
 
 	profileFileLine >> panStampNumber;
 
@@ -33,13 +34,14 @@ HeatProfile::HeatProfile(std::stringstream profileFileLine, HeatProfile* previou
 		profileFileLine >> dummy;
 		profileFileLine >> seconds;
 		profileFileLine >> temperature;
+
 		tat = new TimeAndTemperature(hours*3600 + minutes*60 + seconds, temperature, tat);
 		if(list == 0)
 			list = tat;
 	}
 }
 
-void HeatProfile::PrintProfile(std::ostream os)
+void HeatProfile::PrintProfile(std::ostream& os)
 {
 	os << roomName << ' ' <<  panStampNumber << ' ';
 
@@ -62,21 +64,23 @@ void HeatProfile::PrintProfile(std::ostream os)
 	os << '\n';
 }
 
-float HeatProfile::Temperature(long time)
+float HeatProfile::Temperature(struct tm* timeinfo)
 {
 	float result = 0.0;
+
+	long t = timeinfo->tm_hour*3600 + timeinfo->tm_min*60 + timeinfo->tm_sec;
 
 	TimeAndTemperature* timeTempEntry = list;
 	if(timeTempEntry == 0)
 	{
-		Error("HeatProfile contains an empty list.\n");
+		Error("HeatProfile contains an empty list.");
 		return result;
 	}
 
 	result = timeTempEntry->Temperature();
 	while(timeTempEntry)
 	{
-		if(timeTempEntry->Time() >= time)
+		if(timeTempEntry->Time() >= t)
 			return result;
 		result = timeTempEntry->Temperature();
 		timeTempEntry = timeTempEntry->Next();

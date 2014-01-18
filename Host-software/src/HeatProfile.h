@@ -27,10 +27,11 @@ private:
 class HeatProfile
 {
 public:
-	HeatProfile(std::stringstream profileFileLine, HeatProfile* previous);
-	float Temperature(long time);
+	HeatProfile(std::stringstream& profileFileLine, HeatProfile* previous);
+	float Temperature(struct tm* timeinfo);
 	int PanStampNumber();
-	void PrintProfile(std::ostream);
+	void PrintProfile(std::ostream& os);
+	HeatProfile* Next();
 
 private:
 	TimeAndTemperature* list;
@@ -66,6 +67,11 @@ inline TimeAndTemperature* TimeAndTemperature::Next()
 inline int HeatProfile::PanStampNumber()
 {
 	return panStampNumber;
+}
+
+inline HeatProfile* HeatProfile::Next()
+{
+	return next;
 }
 
 #endif /* HEATPROFILE_H_ */

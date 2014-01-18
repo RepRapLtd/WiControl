@@ -6,17 +6,20 @@
 CPP_SRCS += \
 ../src/HeatProfile.cpp \
 ../src/Heating.cpp \
-../src/Line.cpp 
+../src/Line.cpp \
+../src/Wireless.cpp 
 
 OBJS += \
 ./src/HeatProfile.o \
 ./src/Heating.o \
-./src/Line.o 
+./src/Line.o \
+./src/Wireless.o 
 
 CPP_DEPS += \
 ./src/HeatProfile.d \
 ./src/Heating.d \
-./src/Line.d 
+./src/Line.d \
+./src/Wireless.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
