@@ -15,7 +15,7 @@
 
 void Error(char* message)
 {
-	cerr << message << endl;
+	cout << message << endl;
 }
 
 Heating::Heating(char* profileFile, char* port)
@@ -78,7 +78,12 @@ void Heating::Run(struct tm* timeinfo)
 	while(hp)
 	{
 		setTemperature = hp->Temperature(timeinfo);
-		if(wireless->GetTemperature(hp->PanStampNumber(), setTemperature, hp->Name()) < setTemperature)
+		float temp;
+		int retries = 0;
+		while(!wireless->GetTemperature(hp->PanStampNumber(), setTemperature, hp->Name(), temp) && retries < 3)
+			retries++;
+
+		if(temp < setTemperature)
 		{
 			wireless->SetHeatOn(hp->PanStampNumber());
 			boilerOn = true;

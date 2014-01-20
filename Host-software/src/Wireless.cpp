@@ -12,9 +12,9 @@ Wireless::Wireless(char* port)
 	line = new Line(port);
 }
 
-float Wireless::GetTemperature(int panStampNumber, float set, char* name)
+bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& result)
 {
-	float result = DEFAULT_TEMPERATURE;
+	result = DEFAULT_TEMPERATURE;
 	std::stringstream ss;
 	ss << "C3 A" << panStampNumber << " SC2";
 	ss.getline(scratchString, LINE_LENGTH);
@@ -38,7 +38,7 @@ float Wireless::GetTemperature(int panStampNumber, float set, char* name)
 				i++;
 		}
 		time ( &now );
-	} while (now - startTime < 5 && notDone);
+	} while (now - startTime < 4 && notDone);
 
 	ss.clear();
 	ss.str(std::string());
@@ -48,7 +48,8 @@ float Wireless::GetTemperature(int panStampNumber, float set, char* name)
 		ss << "Timeout on temperature read from: " << panStampNumber << endl;
 		ss.getline(scratchString, LINE_LENGTH);
 		Error(scratchString);
-		return result;
+		result = 1000.0;
+		return false;
 	}
 
 	ss.clear();
