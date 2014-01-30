@@ -1,0 +1,12 @@
+10:19:59 **** Build of configuration Debug for project Host-software ****
+make all 
+Building file: ../src/HeatProfile.cpp
+Invoking: Cross G++ Compiler
+g++ -I/usr/lib -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/HeatProfile.d" -MT"src/HeatProfile.d" -o "src/HeatProfile.o" "../src/HeatProfile.cpp"
+In file included from ../src/HeatProfile.cpp:8:0:
+../src/Heating.h:16:26: fatal error: SerialStream.h: No such file or directory
+compilation terminated.
+make: *** [src/HeatProfile.o] Error 1
+
+10:19:59 Build Finished (took 261ms)
+

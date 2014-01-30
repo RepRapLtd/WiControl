@@ -7,21 +7,23 @@
 #ifndef Control_H_
 #define Control_H_
 #include "Arduino.h"
-
+#include <avr/wdt.h>
 
 #include "Communicator.h"
 #include "CommandBuffer.h"
+
+#define MY_ADDRESS 7
 
 #define NAME "WiControl"
 #define DATE "2014-01-11"
 #define VERSION "0.1"
 
-#define MY_ADDRESS 3
-
 #define DATA_LENGTH 60
 
 // The LED is wired to the Arduino Output 4 (physical panStamp pin 19)
 #define LEDOUTPUT 4
+
+#define RESET_SECONDS 90
 
 #define ABS_ZERO -273.15  // Celsius
 #define TEMP_SENSE_PIN 0   // Analogue pin number

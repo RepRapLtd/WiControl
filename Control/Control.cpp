@@ -4,6 +4,8 @@
 char data[DATA_LENGTH];
 int8_t dataPointer;
 
+long resetTime;
+
 Communicator* communicator = 0;
 CommandBuffer* serialInput;
 CommandBuffer* wirelessInput;
@@ -48,6 +50,8 @@ float SetHeater(int val)
 
 void setup()
 {
+	  wdt_disable();
+	  resetTime = millis();
 	  Serial.begin(38400);
 	  Serial.print((int)MY_ADDRESS);
 	  Serial.println(" starting");
@@ -62,6 +66,8 @@ void setup()
 	  blinkQueued = false;
 	  serialInput = new CommandBuffer();
 	  wirelessInput = new CommandBuffer();
+	  wdt_enable(WDTO_8S);
+	  wdt_reset();
 }
 
 void Message(char* m)
@@ -126,14 +132,14 @@ void Interpret(CommandBuffer* cb, int address)
 			break;
 
 		case 4:
-			snprintf(data, DATA_LENGTH, "%s, version: %s, date: %s, address: %d\n",
+			snprintf(data, DATA_LENGTH, "%s, ver: %s, date: %s, addr: %d\n",
 					NAME, VERSION, DATE, MY_ADDRESS);
 			Message("\n");
 			Message(data);
 			Message("\n");
 			if(address >= 0)
 			{
-				snprintf(data, DATA_LENGTH, "R4 S%s, version: %s, date: %s, address: %d\n",
+				snprintf(data, DATA_LENGTH, "R4 S%s, ver: %s, date: %s, addr: %d\n",
 									NAME, VERSION, DATE, MY_ADDRESS);
 				communicator->Send(address, data);
 			}
@@ -156,7 +162,7 @@ void Interpret(CommandBuffer* cb, int address)
 		case 2:
 			if(cb->Seen('T'))
 			{
-				Message("Temp returned from: ");
+				Message("Temp returned from ");
 				Message(address);
 				Message(" was ");
 				Message(0.1*(float)cb->GetIValue());
@@ -190,6 +196,9 @@ void loop()
 
 	byte address;
 
+	if(millis() - resetTime < ((long)RESET_SECONDS - (long)8)*(long)1000)
+		wdt_reset();
+
 	blinkInLoop();
 
 	char* input = communicator->Receive(address);
@@ -202,6 +211,8 @@ void loop()
 		wirelessInput->Fill(input);
 		communicator->FreeReadData();
 		Interpret(wirelessInput, address);
+		// If something has talked to us, we are working OK; reset the reset timer
+		resetTime = millis();
 	}
 
 	if(!Serial.available())

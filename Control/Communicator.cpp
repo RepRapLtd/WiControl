@@ -9,13 +9,14 @@
 
 Communicator::Communicator(byte address)
 {
-	networkAdress = NETWORK_ADDRESS;
+	networkAddress[0] = NETWORK_ADDRESS_0;
+	networkAddress[1] = NETWORK_ADDRESS_1;
 	myAddress = address;
 	lastReceivedFrom = 0;
 	dataAvailable = false;
 	debug = false;
 	cc1101.init();
-	cc1101.setSyncWord(&networkAdress, false);
+	cc1101.setSyncWord(networkAddress, false);
 	cc1101.setDevAddress(myAddress, false);
 	cc1101.enableAddressCheck();
 	cc1101.setRxState();

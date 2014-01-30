@@ -10,7 +10,8 @@
 
 #include "cc1101.h"
 
-#define NETWORK_ADDRESS 199
+#define NETWORK_ADDRESS_0 199
+#define NETWORK_ADDRESS_1 0
 
 class Communicator
 {
@@ -27,7 +28,7 @@ private:
 	CCPACKET transmitPacket;
 	CCPACKET receivePacket;
 	volatile bool dataAvailable;
-	byte networkAdress;
+	byte networkAddress[2];
 	byte myAddress;
 	byte lastReceivedFrom;
 	bool debug;
