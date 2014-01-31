@@ -15,7 +15,7 @@ class Line
 {
 
 public:
-	Line();
+	Line(char* port);
 	bool ByteAvailable();
 	char GetByte();
 	void PutByte(char byte);

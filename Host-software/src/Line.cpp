@@ -7,14 +7,13 @@
 
 #include "Heating.h"
 
-Line::Line()
+Line::Line(char* port)
 {
-    serial_port.Open( SERIAL_PORT ) ;
+    serial_port.Open(port) ;
     if ( ! serial_port.good() )
     {
-        std::cerr << "[" << __FILE__ << ":" << __LINE__ << "] "
-                  << "Error: Could not open serial port."
-                  << std::endl ;
+    	Error("Cannot open port:");
+    	Error(port);
         exit(1) ;
     }
     //
@@ -23,7 +22,7 @@ Line::Line()
     serial_port.SetBaudRate( SerialStreamBuf::BAUD_38400 ) ;
     if ( ! serial_port.good() )
     {
-        std::cerr << "Error: Could not set the baud rate." << std::endl ;
+    	Error("Cannot set the baud rate.");
         exit(1) ;
     }
     //
@@ -32,7 +31,7 @@ Line::Line()
     serial_port.SetCharSize( SerialStreamBuf::CHAR_SIZE_8 ) ;
     if ( ! serial_port.good() )
     {
-        std::cerr << "Error: Could not set the character size." << std::endl ;
+    	Error("Cannot set the character size.");
         exit(1) ;
     }
     //
@@ -41,7 +40,7 @@ Line::Line()
     serial_port.SetParity( SerialStreamBuf::PARITY_NONE ) ;
     if ( ! serial_port.good() )
     {
-        std::cerr << "Error: Could not disable the parity." << std::endl ;
+    	Error("Cannot set parity.");
         exit(1) ;
     }
     //
@@ -50,7 +49,7 @@ Line::Line()
     serial_port.SetNumOfStopBits( 1 ) ;
     if ( ! serial_port.good() )
     {
-        std::cerr << "Error: Could not set the number of stop bits." << std::endl ;
+    	Error("Cannot set number of stop bits.");
         exit(1) ;
     }
     //
@@ -59,7 +58,7 @@ Line::Line()
     serial_port.SetFlowControl( SerialStreamBuf::FLOW_CONTROL_NONE ) ;
     if ( ! serial_port.good() )
     {
-        std::cerr << "Error: Could not use hardware flow control." << std::endl ;
+    	Error("Cannot set hardware flow control.");
         exit(1) ;
     }
 
