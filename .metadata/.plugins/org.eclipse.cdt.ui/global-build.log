@@ -5992,3 +5992,403 @@ Total   12378
 
 Finished building target: Control
  
+22:55:17 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 
+12:34:44 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 
+12:37:17 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 
+12:45:51 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 
+12:49:53 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 
+12:54:47 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 
+12:58:31 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 
+13:03:34 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 
+16:16:05 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 
+16:23:27 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Starting combiner
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-gcc" -Os -Wl,--gc-sections -mmcu=atmega328p -o "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf"    ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o  ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o   /home/ensab/Panstamp/WiControl/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom "/home/ensab/Panstamp/WiControl/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+Finished building: Release/Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
+/home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
+section    size   addr
+.sec1   12378      0
+Total   12378
+
+
+Finished building target: Control
+ 

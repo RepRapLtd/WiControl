@@ -12,11 +12,11 @@
 #include "Communicator.h"
 #include "CommandBuffer.h"
 
-#define MY_ADDRESS 8
+#define MY_ADDRESS 7
 
 #define NAME "WiControl"
-#define DATE "2014-02-01"
-#define VERSION "0.11"
+#define DATE "2014-01-11"
+#define VERSION "0.1"
 
 #define DATA_LENGTH 60
 
