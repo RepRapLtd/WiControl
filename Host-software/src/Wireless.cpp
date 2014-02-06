@@ -36,7 +36,8 @@ bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& 
 				notDone = false;
 			} else
 				i++;
-		}
+		} else
+			usleep(2000); // Don't hog the processor
 		time ( &now );
 	} while (now - startTime < 4 && notDone);
 
