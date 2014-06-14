@@ -14,10 +14,18 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 	if(previous != 0)
 		previous->next = this;
 
+	invert = false;
+
 	profileFileLine >> roomName;
 
+	profileFileLine >> sensorNumber;
+	if(sensorNumber < 0)
+	{
+		invert = true;
+		sensorNumber = -sensorNumber;
+	}
 
-	profileFileLine >> panStampNumber;
+	profileFileLine >> switchNumber;
 
 	list = 0;
 	TimeAndTemperature* tat = 0;
@@ -43,7 +51,7 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 
 void HeatProfile::PrintProfile(std::ostream& os)
 {
-	os << roomName << ' ' <<  panStampNumber << ' ';
+	os << roomName << ' ' <<  sensorNumber << ' ';
 
 	long time;
 	long hours, minutes, seconds;

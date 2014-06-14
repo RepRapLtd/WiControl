@@ -65,7 +65,7 @@ bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& 
 	return result;
 }
 
-void Wireless::SetHeatOn(int panStampNumber)
+void Wireless::SetSwitchOn(int panStampNumber)
 {
 	cout << "Turning " << panStampNumber << " on." << endl;
 	std::stringstream ss;
@@ -75,7 +75,7 @@ void Wireless::SetHeatOn(int panStampNumber)
 	line->PutString("\n");
 }
 
-void Wireless::SetHeatOff(int panStampNumber)
+void Wireless::SetSwitchOff(int panStampNumber)
 {
 	cout << "Turning " << panStampNumber << " off." << endl;
 	std::stringstream ss;

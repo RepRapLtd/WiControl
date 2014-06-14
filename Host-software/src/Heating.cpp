@@ -80,22 +80,22 @@ void Heating::Run(struct tm* timeinfo)
 		setTemperature = hp->Temperature(timeinfo);
 		float temp;
 		int retries = 0;
-		while(!wireless->GetTemperature(hp->PanStampNumber(), setTemperature, hp->Name(), temp) && retries < 3)
+		while(!wireless->GetTemperature(hp->SensorNumber(), setTemperature, hp->Name(), temp) && retries < 3)
 			retries++;
 
-		if(temp < setTemperature)
+		if((temp < setTemperature) != hp->Invert())
 		{
-			wireless->SetHeatOn(hp->PanStampNumber());
+			wireless->SetSwitchOn(hp->SwitchNumber());
 			boilerOn = true;
 		} else
-			wireless->SetHeatOff(hp->PanStampNumber());
+			wireless->SetSwitchOff(hp->SwitchNumber());
 		hp = hp->Next();
 	}
 
 	if(boilerOn)
-		wireless->SetHeatOn(boilerNumber);
+		wireless->SetSwitchOn(boilerNumber);
 	else
-		wireless->SetHeatOff(boilerNumber);
+		wireless->SetSwitchOff(boilerNumber);
 }
 
 int main(int argc, char** argv)

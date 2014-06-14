@@ -13,8 +13,8 @@ class Wireless
 public:
 	Wireless(char* port);
 	bool GetTemperature(int panStampNumber, float set, char* name, float& result);
-	void SetHeatOn(int panStampNumber);
-	void SetHeatOff(int panStampNumber);
+	void SetSwitchOn(int panStampNumber);
+	void SetSwitchOff(int panStampNumber);
 
 private:
 	Line* line;

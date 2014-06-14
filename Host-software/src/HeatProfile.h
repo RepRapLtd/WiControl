@@ -29,14 +29,18 @@ class HeatProfile
 public:
 	HeatProfile(std::stringstream& profileFileLine, HeatProfile* previous);
 	float Temperature(struct tm* timeinfo);
-	int PanStampNumber();
+	int SensorNumber();
+	int SwitchNumber();
+	bool Invert();
 	void PrintProfile(std::ostream& os);
 	char* Name();
 	HeatProfile* Next();
 
 private:
 	TimeAndTemperature* list;
-	int panStampNumber;
+	int sensorNumber;
+	int switchNumber;
+	bool invert;
 	HeatProfile* next;
 	char roomName[NAME_LENGTH];
 };
@@ -65,9 +69,19 @@ inline TimeAndTemperature* TimeAndTemperature::Next()
 	return next;
 }
 
-inline int HeatProfile::PanStampNumber()
+inline int HeatProfile::SensorNumber()
 {
-	return panStampNumber;
+	return sensorNumber;
+}
+
+inline int HeatProfile::SwitchNumber()
+{
+	return switchNumber;
+}
+
+inline bool HeatProfile::Invert()
+{
+	return invert;
 }
 
 inline HeatProfile* HeatProfile::Next()
