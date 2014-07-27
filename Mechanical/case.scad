@@ -1,8 +1,18 @@
-xcen = 53;
-ycen = 54;
+
+//cubex=120; //71;
+//cubey=130; //73;
+cubex=71;
+cubey=73;
+xcen = cubex-18;
+ycen = cubey-19;
 dia = 3.5;
 thick=8;
 lid=true;
+ribbonNotch=true;
+//offx=cubex/2-71/2;
+//offy=cubey/2-73/2;
+offx = 0;
+offy=0;
 
 case();
 
@@ -19,6 +29,8 @@ module slot()
 
 module corner(box, rr)
 {
+	translate([offx, offy, 0])
+	{
 	for(x=[-1,1])for(y=[-1,1])
 		translate([x*xcen/2,y*ycen/2,0])
 		{
@@ -37,13 +49,15 @@ module corner(box, rr)
 			}
 		}
 }
+}
 
 module case()
 {
+
 difference()
 {
-
-	cube([71,73,thick], center=true);
+	translate([offx, offy, 0])
+		cube([cubex,cubey,thick], center=true);
 
 
 	if(lid)
@@ -65,6 +79,11 @@ difference()
 			cylinder(r=1, h=40, center=true, $fn=20);
 		}
 		corner(box=false, rr=dia/2);
+		if(ribbonNotch)
+		{
+			translate([-xcen/2-5,12,7.5])
+				cube([10,17,10], center=true);
+		}
 	} else
 	{
 		translate([xcen/2,-ycen/2,12.5-1-4])
@@ -92,11 +111,11 @@ difference()
 	}
 
 
-
+translate([offx, offy, 0])
 	difference()
 	{
 		translate([0,0,3])
-		cube([65,67,thick], center=true, r=dia/2);
+		cube([cubex-6,cubey-6,thick], center=true, r=dia/2);
 		corner(box=true, rr=dia/2);
 	}
 
