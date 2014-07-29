@@ -9,7 +9,7 @@
 #define HEATING_H_
 
 #define NAME_LENGTH 50
-#define PROFILE_FILE "/home/ensab/Panstamp/WiControl/heat-profile.dat"
+#define PROFILE_FILE "/home/pi/Panstamp/WiControl/heat-profile.dat"
 #define SERIAL_PORT "/dev/ttyUSB0"
 #define LINE_LENGTH 300
 #define MIN_INPUT_LENGTH 11
