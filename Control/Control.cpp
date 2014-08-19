@@ -52,13 +52,19 @@ void setup()
 {
 	  wdt_disable();
 	  resetTime = millis();
-	  Serial.begin(38400);
+	  Serial.begin(BAUD_RATE);
 	  Serial.print((int)MY_ADDRESS);
 	  Serial.println(" starting");
 	  pinMode(LEDOUTPUT, OUTPUT);
 	  digitalWrite(LEDOUTPUT, LOW);
 	  pinMode(TEMP_SENSE_PIN, INPUT);
 	  pinMode(HEAT_ON_PIN, OUTPUT);
+	  pinMode(RED_PWM, OUTPUT);
+	  pinMode(GREEN_PWM, OUTPUT);
+	  pinMode(BLUE_PWM, OUTPUT);
+	  analogWrite(RED_PWM, 0);
+	  analogWrite(GREEN_PWM, 0);
+	  analogWrite(BLUE_PWM, 0);
 	  SetHeater(0);
 	  communicator = new Communicator(MY_ADDRESS);
 	  communicator->SetDebug(false);
@@ -66,8 +72,10 @@ void setup()
 	  blinkQueued = false;
 	  serialInput = new CommandBuffer();
 	  wirelessInput = new CommandBuffer();
+#ifdef WATCDOG
 	  wdt_enable(WDTO_8S);
 	  wdt_reset();
+#endif
 }
 
 void Message(char* m)
@@ -145,6 +153,39 @@ void Interpret(CommandBuffer* cb, int address)
 			}
 			break;
 
+		case 5:
+			if(cb->Seen('P'))
+			{
+				int pin = cb->GetIValue();
+				if(cb->Seen('S'))
+				{
+					pinMode(pin, OUTPUT);
+					digitalWrite(pin,cb->GetIValue());
+				}
+			}
+			break;
+
+		case 6:
+		{
+			unsigned char c;
+			if(cb->Seen('r'))
+			{
+				c = cb->GetIValue();
+				analogWrite(RED_PWM, c);
+			}
+			if(cb->Seen('g'))
+			{
+				c = cb->GetIValue();
+				analogWrite(GREEN_PWM, c);
+			}
+			if(cb->Seen('b'))
+			{
+				c = cb->GetIValue();
+				analogWrite(BLUE_PWM, c);
+			}
+
+		}
+		break;
 
 		default:
 			Message("Unknown command: ");
@@ -195,9 +236,10 @@ void loop()
 {
 
 	byte address;
-
+#ifdef WATCHDOG
 	if(millis() - resetTime < ((long)RESET_SECONDS - (long)8)*(long)1000)
 		wdt_reset();
+#endif
 
 	blinkInLoop();
 

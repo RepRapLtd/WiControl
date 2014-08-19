@@ -5,13 +5,13 @@
 		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
 	</section>
 	<section name="CleanDialogSettings">
-		<item value="567" key="DIALOG_WIDTH"/>
+		<item value="569" key="DIALOG_WIDTH"/>
 		<item value="false" key="BUILD_NOW"/>
 		<item value="true" key="BUILD_ALL"/>
 		<item value="68" key="DIALOG_Y_ORIGIN"/>
-		<item value="475" key="DIALOG_HEIGHT"/>
+		<item value="476" key="DIALOG_HEIGHT"/>
 		<item value="231" key="DIALOG_X_ORIGIN"/>
-		<item value="false" key="TOGGLE_SELECTED"/>
+		<item value="true" key="TOGGLE_SELECTED"/>
 	</section>
 	<section name="NewWizardAction">
 		<item value="it.baeyens.arduino.eclipse.NewArduinoSketchWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>

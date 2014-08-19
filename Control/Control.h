@@ -12,16 +12,27 @@
 #include "Communicator.h"
 #include "CommandBuffer.h"
 
-#define MY_ADDRESS 8
+#define MY_ADDRESS 10
+
+#define BAUD_RATE 9600
 
 #define NAME "WiControl"
 #define DATE "2014-02-01"
 #define VERSION "0.11"
 
+// Comment this out to turn off the watchdog reset
+//#define WATCHDOG
+
 #define DATA_LENGTH 60
 
 // The LED is wired to the Arduino Output 4 (physical panStamp pin 19)
 #define LEDOUTPUT 4
+
+// RGB PWM outputs
+
+#define RED_PWM 6
+#define GREEN_PWM 5
+#define BLUE_PWM 9
 
 #define RESET_SECONDS 90
 
