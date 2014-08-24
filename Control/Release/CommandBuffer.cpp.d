@@ -13,7 +13,7 @@ CommandBuffer.cpp.d CommandBuffer.cpp.o: ../CommandBuffer.cpp \
   ../Communicator.h /usr/local/arduino-1.0.5/libraries/panstamp/cc1101.h \
   /usr/local/arduino-1.0.5/libraries/panstamp/spi.h \
   /usr/local/arduino-1.0.5/libraries/panstamp/ccpacket.h \
-  ../CommandBuffer.h
+  ../CommandBuffer.h ../Switch.h
 
 ../Control.h:
 
@@ -46,3 +46,5 @@ CommandBuffer.cpp.d CommandBuffer.cpp.o: ../CommandBuffer.cpp \
 /usr/local/arduino-1.0.5/libraries/panstamp/ccpacket.h:
 
 ../CommandBuffer.h:
+
+../Switch.h:

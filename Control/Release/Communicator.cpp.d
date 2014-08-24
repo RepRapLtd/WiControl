@@ -12,7 +12,7 @@ Communicator.cpp.d Communicator.cpp.o: ../Communicator.cpp ../Control.h \
   ../Communicator.h /usr/local/arduino-1.0.5/libraries/panstamp/cc1101.h \
   /usr/local/arduino-1.0.5/libraries/panstamp/spi.h \
   /usr/local/arduino-1.0.5/libraries/panstamp/ccpacket.h \
-  ../CommandBuffer.h
+  ../CommandBuffer.h ../Switch.h
 
 ../Control.h:
 
@@ -45,3 +45,5 @@ Communicator.cpp.d Communicator.cpp.o: ../Communicator.cpp ../Control.h \
 /usr/local/arduino-1.0.5/libraries/panstamp/ccpacket.h:
 
 ../CommandBuffer.h:
+
+../Switch.h:

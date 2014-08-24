@@ -1,0 +1,21 @@
+/*
+ * Switch.cpp
+ *
+ *  Created on: 24 Aug 2014
+ *      Author: ensab
+ */
+
+Switch::Switch(int p, Switch* n)
+{
+	pin = p;
+	next = n;
+}
+
+bool Switch::Spin()
+{
+
+}
+
+
+
+

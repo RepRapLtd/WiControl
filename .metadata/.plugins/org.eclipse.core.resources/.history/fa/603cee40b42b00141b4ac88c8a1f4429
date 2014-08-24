@@ -1,0 +1,27 @@
+/*
+ * Switch.h
+ *
+ *  Created on: 24 Aug 2014
+ *      Author: ensab
+ */
+
+#ifndef SWITCH_H_
+#define SWITCH_H_
+
+class Switch
+{
+public:
+	Switch(int p, Switch* n);
+	void On(float delay);
+	void Off(float delay);
+	bool Spin();
+
+private:
+	Switch* next;
+	int pin;
+	bool waiting;
+	long time;
+};
+
+
+#endif /* SWITCH_H_ */

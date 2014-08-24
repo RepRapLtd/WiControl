@@ -30,7 +30,7 @@ SIZEDUMMY :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 arduino/core \
+. \
 Libraries/panstamp \
 Libraries/EEPROM \
-. \
 

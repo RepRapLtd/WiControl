@@ -11,6 +11,7 @@
 
 #include "Communicator.h"
 #include "CommandBuffer.h"
+#include "Switch.h"
 
 #define MY_ADDRESS 10
 
@@ -49,14 +50,14 @@
 // 12v, Gnd, D8, D9, A3 = D17, A1 = D15, A2 = D16
 // D_OUTPUT_3 is not available if LEDS are being controlled
 
-#define D_OUTPUT_1 3
-#define D_OUTPUT_2 8
 #ifndef USE_LEDS
-#define D_OUTPUT_3 9
+ #define SWITCHES 7
+ #define OUT_PINS {3, 8, 9, 17, 15, 16, LEDOUTPUT}
+#else
+ #define SWITCHES 6
+ #define OUT_PINS {3, 8, 17, 15, 16, LEDOUTPUT};
 #endif
-#define D_OUTPUT_4 17
-#define D_OUTPUT_5 15
-#define D_OUTPUT_6 16
+
 #define THERMISTOR_BETA 3528.0 // thermistor: RS 538-0806
 #define THERMISTOR_SERIES_R 1000 // Ohms in series with the thermistors
 #define THERMISTOR_25_R 1000.0 // Thermistor ohms at 25 C = 298.15 K
@@ -66,7 +67,6 @@
 void IncommingInterrupt();
 void blink();
 
-//end of add your includes here
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -76,10 +76,4 @@ void setup();
 } // extern "C"
 #endif
 
-//add your function definitions for the project Control here
-
-
-
-
-//Do not add code below this line
 #endif /* Control_H_ */

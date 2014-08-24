@@ -4,29 +4,23 @@
 char data[DATA_LENGTH];
 int8_t dataPointer;
 
+byte pins[SWITCHES] = OUT_PINS;
+
+Switch* switches[SWITCHES];
+
 long resetTime;
 
 Communicator* communicator = 0;
 CommandBuffer* serialInput;
 CommandBuffer* wirelessInput;
 
-volatile bool blinkQueued = false;
 
 void blink()
 {
-	blinkQueued = true;
+	switches[SWITCHES-1]->On(0.0);
+	switches[SWITCHES-1]->Off(0.1);
 }
 
-void blinkInLoop()
-{
-	if(!blinkQueued)
-		return;
-	digitalWrite(LEDOUTPUT, !digitalRead(LEDOUTPUT));
-	delay(100);
-	digitalWrite(LEDOUTPUT, !digitalRead(LEDOUTPUT));
-	delay(100);
-	blinkQueued = false;
-}
 
 void IncommingInterrupt()
 {
@@ -58,20 +52,10 @@ void setup()
 	  pinMode(LEDOUTPUT, OUTPUT);
 	  digitalWrite(LEDOUTPUT, LOW);
 	  pinMode(TEMP_SENSE_PIN, INPUT);
-	  pinMode(D_OUTPUT_1, OUTPUT);
-	  digitalWrite(D_OUTPUT_1, LOW);
-	  pinMode(D_OUTPUT_2, OUTPUT);
-	  digitalWrite(D_OUTPUT_2, LOW);
-#ifndef USE_LEDS
-	  pinMode(D_OUTPUT_3, OUTPUT);
-	  digitalWrite(D_OUTPUT_3, LOW);
-#endif
-	  pinMode(D_OUTPUT_4, OUTPUT);
-	  digitalWrite(D_OUTPUT_4, LOW);
-	  pinMode(D_OUTPUT_5, OUTPUT);
-	  digitalWrite(D_OUTPUT_5, LOW);
-	  pinMode(D_OUTPUT_6, OUTPUT);
-	  digitalWrite(D_OUTPUT_6, LOW);
+
+	  for(byte s = 0; s < SWITCHES; s++)
+		  switches[s] = new Switch(pins[s]);
+
 #ifdef USE_LEDS
 	  pinMode(RED_PWM, OUTPUT);
 	  pinMode(GREEN_PWM, OUTPUT);
@@ -80,13 +64,13 @@ void setup()
 	  analogWrite(GREEN_PWM, 0);
 	  analogWrite(BLUE_PWM, 0);
 #endif
+
 	  communicator = new Communicator(MY_ADDRESS);
 	  communicator->SetDebug(false);
 	  dataPointer = 0;
-	  blinkQueued = false;
 	  serialInput = new CommandBuffer();
 	  wirelessInput = new CommandBuffer();
-#ifdef WATCDOG
+#ifdef WATCHDOG
 	  wdt_enable(WDTO_8S);
 	  wdt_reset();
 #endif
@@ -128,35 +112,16 @@ void Interpret(CommandBuffer* cb, int address)
 			{
 				int value = cb->GetIValue();
 				if(cb->Seen('P'))
-					switch(cb->GetIValue())
-					{
-					case 1:
-						SetOutput(D_OUTPUT_1, value);
-						break;
-					case 2:
-						SetOutput(D_OUTPUT_2, value);
-						break;
-#ifndef USE_LEDS
-					case 3:
-						SetOutput(D_OUTPUT_3, value);
-						break;
-#endif
-					case 4:
-						SetOutput(D_OUTPUT_4, value);
-						break;
-					case 5:
-						SetOutput(D_OUTPUT_5, value);
-						break;
-					case 6:
-						SetOutput(D_OUTPUT_6, value);
-						break;
-					default:
-						Message("Attempt to write to non-existent output: ");
-						Message(cb->Buffer());
-						Message("\n");
-
-					}
-
+				{
+					int s = cb->GetIValue();
+					float delay = 0.0;
+					if(cb->Seen('D'))
+						delay = cb->GetFValue();
+					if(value)
+						switches[s]->On(delay);
+					else
+						switches[s]->Off(delay);
+				}
 			}
 			break;
 
@@ -284,17 +249,19 @@ void Interpret(CommandBuffer* cb, int address)
 }
 
 
-
 void loop()
 {
 
 	byte address;
+	unsigned long time = millis();
+
 #ifdef WATCHDOG
-	if(millis() - resetTime < ((long)RESET_SECONDS - (long)8)*(long)1000)
+	if(time - resetTime < ((long)RESET_SECONDS - (long)8)*(long)1000)
 		wdt_reset();
 #endif
 
-	blinkInLoop();
+	for(byte s = 0; s < SWITCHES; s++)
+		switches[s]->Spin(time);
 
 	char* input = communicator->Receive(address);
 	if(input)
@@ -307,7 +274,7 @@ void loop()
 		communicator->FreeReadData();
 		Interpret(wirelessInput, address);
 		// If something has talked to us, we are working OK; reset the reset timer
-		resetTime = millis();
+		resetTime = time;
 	}
 
 	if(!Serial.available())
