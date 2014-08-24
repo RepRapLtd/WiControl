@@ -147,9 +147,6 @@ void Interpret(CommandBuffer* cb, int address)
 					case 5:
 						SetOutput(D_OUTPUT_5, value);
 						break;
-					case 6:
-						SetOutput(D_OUTPUT_6, value);
-						break;
 					default:
 						Message("Attempt to write to non-existent output: ");
 						Message(cb->Buffer());

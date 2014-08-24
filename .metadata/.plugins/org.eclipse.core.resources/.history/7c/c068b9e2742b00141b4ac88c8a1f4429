@@ -14,14 +14,14 @@
 
 #define MY_ADDRESS 10
 
-#define BAUD_RATE 38400
+#define BAUD_RATE 9600
 
 #define NAME "WiControl"
 #define DATE "2014-08-24"
 #define VERSION "0.12"
 
 // Comment this out to turn off the watchdog reset
-#define WATCHDOG
+//#define WATCHDOG
 
 // Uncomment this to use LED control
 //#define USE_LEDS

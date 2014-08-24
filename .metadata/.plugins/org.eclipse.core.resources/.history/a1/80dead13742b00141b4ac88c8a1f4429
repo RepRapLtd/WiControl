@@ -14,46 +14,33 @@
 
 #define MY_ADDRESS 10
 
-#define BAUD_RATE 38400
+#define BAUD_RATE 9600
 
 #define NAME "WiControl"
 #define DATE "2014-08-24"
 #define VERSION "0.12"
 
 // Comment this out to turn off the watchdog reset
-#define WATCHDOG
-
-// Uncomment this to use LED control
-//#define USE_LEDS
+//#define WATCHDOG
 
 #define DATA_LENGTH 60
 
 // The LED is wired to the Arduino Output 4 (physical panStamp pin 19)
 #define LEDOUTPUT 4
 
-#ifdef USE_LEDS
 // RGB PWM outputs
 
 #define RED_PWM 6
 #define GREEN_PWM 5
 #define BLUE_PWM 9
-#endif
 
 #define RESET_SECONDS 90
 
 #define ABS_ZERO -273.15  // Celsius
 #define TEMP_SENSE_PIN 0   // Analogue pin number
-
-// Outputs for controlling various things.  D_OUTPUT_1 is the MOSFET
-// D_OUTPUT_2 is the first output on the 7 pin header, which from the top goes:
-// 12v, Gnd, D8, D9, A3 = D17, A1 = D15, A2 = D16
-// D_OUTPUT_3 is not available if LEDS are being controlled
-
-#define D_OUTPUT_1 3
-#define D_OUTPUT_2 8
-#ifndef USE_LEDS
-#define D_OUTPUT_3 9
-#endif
+#define D_OUTPUT_1 3       // Outputs for controlling various things.  This is the MOSFET
+#define D_OUTPUT_2 8       // 1st output on the 7 pin header, which from the top goes:
+#define D_OUTPUT_3 9       // 12v, Gnd, D8, D9, A3 = D17, A1 = D15, A2 = D16
 #define D_OUTPUT_4 17
 #define D_OUTPUT_5 15
 #define D_OUTPUT_6 16

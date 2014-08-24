@@ -62,24 +62,20 @@ void setup()
 	  digitalWrite(D_OUTPUT_1, LOW);
 	  pinMode(D_OUTPUT_2, OUTPUT);
 	  digitalWrite(D_OUTPUT_2, LOW);
-#ifndef USE_LEDS
 	  pinMode(D_OUTPUT_3, OUTPUT);
 	  digitalWrite(D_OUTPUT_3, LOW);
-#endif
 	  pinMode(D_OUTPUT_4, OUTPUT);
 	  digitalWrite(D_OUTPUT_4, LOW);
 	  pinMode(D_OUTPUT_5, OUTPUT);
 	  digitalWrite(D_OUTPUT_5, LOW);
 	  pinMode(D_OUTPUT_6, OUTPUT);
 	  digitalWrite(D_OUTPUT_6, LOW);
-#ifdef USE_LEDS
 	  pinMode(RED_PWM, OUTPUT);
 	  pinMode(GREEN_PWM, OUTPUT);
 	  pinMode(BLUE_PWM, OUTPUT);
 	  analogWrite(RED_PWM, 0);
 	  analogWrite(GREEN_PWM, 0);
 	  analogWrite(BLUE_PWM, 0);
-#endif
 	  communicator = new Communicator(MY_ADDRESS);
 	  communicator->SetDebug(false);
 	  dataPointer = 0;
@@ -136,19 +132,14 @@ void Interpret(CommandBuffer* cb, int address)
 					case 2:
 						SetOutput(D_OUTPUT_2, value);
 						break;
-#ifndef USE_LEDS
 					case 3:
 						SetOutput(D_OUTPUT_3, value);
 						break;
-#endif
 					case 4:
 						SetOutput(D_OUTPUT_4, value);
 						break;
 					case 5:
 						SetOutput(D_OUTPUT_5, value);
-						break;
-					case 6:
-						SetOutput(D_OUTPUT_6, value);
 						break;
 					default:
 						Message("Attempt to write to non-existent output: ");
@@ -207,7 +198,7 @@ void Interpret(CommandBuffer* cb, int address)
 			if(cb->Seen('P'))
 			{
 				int pin = cb->GetIValue();
-				if(cb->Seen('H'))
+				if(cb->Seen('S'))
 				{
 					pinMode(pin, OUTPUT);
 					digitalWrite(pin,cb->GetIValue());
@@ -216,29 +207,28 @@ void Interpret(CommandBuffer* cb, int address)
 			break;
 
 			// Set LED rgb values
-#ifdef USE_LEDS
+
 		case 6:
 		{
-			float c;
+			unsigned char c;
 			if(cb->Seen('r'))
 			{
-				c = cb->GetFValue();
-				analogWrite(RED_PWM, (unsigned char)(c*255.0));
+				c = cb->GetIValue();
+				analogWrite(RED_PWM, c);
 			}
 			if(cb->Seen('g'))
 			{
-				c = cb->GetFValue();
-				analogWrite(GREEN_PWM, (unsigned char)(c*255.0));
+				c = cb->GetIValue();
+				analogWrite(GREEN_PWM, c);
 			}
 			if(cb->Seen('b'))
 			{
-				c = cb->GetFValue();
-				analogWrite(BLUE_PWM, (unsigned char)(c*255.0));
+				c = cb->GetIValue();
+				analogWrite(BLUE_PWM, c);
 			}
 
 		}
 		break;
-#endif
 
 		default:
 			Message("Unknown command: ");

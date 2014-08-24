@@ -136,19 +136,14 @@ void Interpret(CommandBuffer* cb, int address)
 					case 2:
 						SetOutput(D_OUTPUT_2, value);
 						break;
-#ifndef USE_LEDS
 					case 3:
 						SetOutput(D_OUTPUT_3, value);
 						break;
-#endif
 					case 4:
 						SetOutput(D_OUTPUT_4, value);
 						break;
 					case 5:
 						SetOutput(D_OUTPUT_5, value);
-						break;
-					case 6:
-						SetOutput(D_OUTPUT_6, value);
 						break;
 					default:
 						Message("Attempt to write to non-existent output: ");
@@ -207,7 +202,7 @@ void Interpret(CommandBuffer* cb, int address)
 			if(cb->Seen('P'))
 			{
 				int pin = cb->GetIValue();
-				if(cb->Seen('H'))
+				if(cb->Seen('S'))
 				{
 					pinMode(pin, OUTPUT);
 					digitalWrite(pin,cb->GetIValue());
@@ -219,21 +214,21 @@ void Interpret(CommandBuffer* cb, int address)
 #ifdef USE_LEDS
 		case 6:
 		{
-			float c;
+			unsigned char c;
 			if(cb->Seen('r'))
 			{
-				c = cb->GetFValue();
-				analogWrite(RED_PWM, (unsigned char)(c*255.0));
+				c = cb->GetIValue();
+				analogWrite(RED_PWM, c);
 			}
 			if(cb->Seen('g'))
 			{
-				c = cb->GetFValue();
-				analogWrite(GREEN_PWM, (unsigned char)(c*255.0));
+				c = cb->GetIValue();
+				analogWrite(GREEN_PWM, c);
 			}
 			if(cb->Seen('b'))
 			{
-				c = cb->GetFValue();
-				analogWrite(BLUE_PWM, (unsigned char)(c*255.0));
+				c = cb->GetIValue();
+				analogWrite(BLUE_PWM, c);
 			}
 
 		}

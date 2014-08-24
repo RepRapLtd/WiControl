@@ -1,5 +1,15 @@
-23:08:04 **** Incremental Build of configuration Release for project Control ****
+11:58:08 **** Incremental Build of configuration Release for project Control ****
 make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
 Building file: ../Control.cpp
 Starting C++ compile
 "/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=152    -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.2/hardware/arduino/avr/variants/standard" -I"/usr/local/arduino-1.0.5/libraries/EEPROM" -I"/usr/local/arduino-1.0.5/libraries/panstamp" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -x c++ "../Control.cpp"  -o  "Control.cpp.o"
@@ -22,12 +32,12 @@ Printing size:
 "/usr/local/arduino-1.5.2/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Release/Control.hex"
 /home/ensab/Panstamp/WiControl/Control/Release/Control.hex  :
 section    size   addr
-.sec1   12708      0
-Total   12708
+.sec1   12624      0
+Total   12624
 
 
 Finished building target: Control
  
 
-23:08:05 Build Finished (took 1s.270ms)
+11:58:10 Build Finished (took 1s.864ms)
 
