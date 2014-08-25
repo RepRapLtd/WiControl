@@ -8,7 +8,7 @@ byte pins[SWITCHES] = OUT_PINS;
 
 Switch* switches[SWITCHES];
 
-unsigned long resetTime;
+long resetTime;
 
 Communicator* communicator = 0;
 CommandBuffer* serialInput;
@@ -153,8 +153,8 @@ void Interpret(CommandBuffer* cb, int address)
 			// Say who I am
 
 		case 4:
-			snprintf(data, DATA_LENGTH, "\"%s\" %d, %s, ver: %s, date: %s\n",
-					PLACE, MY_ADDRESS, NAME, VERSION, DATE);
+			snprintf(data, DATA_LENGTH, "%s, ver: %s, date: %s, addr: %d\n",
+					NAME, VERSION, DATE, MY_ADDRESS);
 			Message("\n");
 			Message(data);
 			Message("\n");
@@ -256,9 +256,8 @@ void loop()
 	unsigned long time = millis();
 
 #ifdef WATCHDOG
-	if( time - resetTime < ((unsigned long)RESET_SECONDS -
-			(unsigned long)8)*(unsigned long)1000 )
-		         wdt_reset();
+	if(time - resetTime < ((long)RESET_SECONDS - (long)8)*(long)1000)
+		wdt_reset();
 #endif
 
 	for(byte s = 0; s < SWITCHES; s++)

@@ -24,7 +24,7 @@
 // Comment this out to turn off the watchdog reset
 #define WATCHDOG
 
-// Uncomment this to enable LED control
+// Uncomment this to use LED control
 //#define USE_LEDS
 
 #define DATA_LENGTH 60

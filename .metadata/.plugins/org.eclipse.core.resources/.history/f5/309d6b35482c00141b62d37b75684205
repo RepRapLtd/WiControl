@@ -8,7 +8,7 @@ byte pins[SWITCHES] = OUT_PINS;
 
 Switch* switches[SWITCHES];
 
-unsigned long resetTime;
+long resetTime;
 
 Communicator* communicator = 0;
 CommandBuffer* serialInput;
@@ -256,9 +256,8 @@ void loop()
 	unsigned long time = millis();
 
 #ifdef WATCHDOG
-	if( time - resetTime < ((unsigned long)RESET_SECONDS -
-			(unsigned long)8)*(unsigned long)1000 )
-		         wdt_reset();
+	if(time - resetTime < ((long)RESET_SECONDS - (long)8)*(long)1000)
+		wdt_reset();
 #endif
 
 	for(byte s = 0; s < SWITCHES; s++)

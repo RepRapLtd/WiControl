@@ -8,7 +8,7 @@ byte pins[SWITCHES] = OUT_PINS;
 
 Switch* switches[SWITCHES];
 
-unsigned long resetTime;
+//unsigned long resetTime;
 
 Communicator* communicator = 0;
 CommandBuffer* serialInput;

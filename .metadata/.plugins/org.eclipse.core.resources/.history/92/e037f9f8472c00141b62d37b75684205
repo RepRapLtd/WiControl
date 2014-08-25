@@ -14,17 +14,18 @@
 #include "Switch.h"
 
 #define MY_ADDRESS 10
-#define PLACE "Tack Room"
-#define NAME "WiControl"
-#define DATE "2014-08-25"
-#define VERSION "0.12"
 
 #define BAUD_RATE 38400
+
+#define PLACE "Tack Room"
+#define NAME "WiControl"
+#define DATE "2014-08-24"
+#define VERSION "0.12"
 
 // Comment this out to turn off the watchdog reset
 #define WATCHDOG
 
-// Uncomment this to enable LED control
+// Uncomment this to use LED control
 //#define USE_LEDS
 
 #define DATA_LENGTH 60
