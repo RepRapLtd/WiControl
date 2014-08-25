@@ -20,7 +20,7 @@ Device* deviceList;
 void ReadQuotedString(std::stringstream& profileFileLine, char* s)
 {
 	char c = ' ';
-	while(c != '"'  && !profileFileLine.eof()) profileFileLine >> c;
+	while(c != SD  && !profileFileLine.eof()) c = profileFileLine.get();
 	if(profileFileLine.eof())
 	{
 		// No start quote found.
@@ -38,8 +38,8 @@ void ReadQuotedString(std::stringstream& profileFileLine, char* s)
 			cerr << "Name too long: " << s << endl;
 			return;
 		}
-		profileFileLine >> s[i];
-	} while(s[i] != '"' && !profileFileLine.eof());
+		s[i] = profileFileLine.get();
+	} while(s[i] != SD && !profileFileLine.eof());
 	s[i] = 0;
 }
 
@@ -105,11 +105,14 @@ Heating::Heating(char* profileFile, char* port)
 
 	wireless = new Wireless(port);
 
+	if(!wireless->Valid())
+		cerr << "No wireless communications available." << endl;
+
 }
 
 void Heating::PrintHeating(std::ostream& os)
 {
-	os << "Heating settings:\n";
+	os << "Heating settings:\n Devices:\n";
 
 	Device* d = deviceList;
 	while(d)
@@ -119,6 +122,7 @@ void Heating::PrintHeating(std::ostream& os)
 		d = d->Next();
 	}
 
+	os << " Profiles:\n";
 	HeatProfile* hp = heatProfileList;
 	while(hp)
 	{
@@ -148,6 +152,7 @@ void Heating::Run(struct tm* timeinfo)
 		setTemperature = hp->Temperature(timeinfo);
 		float temp;
 		int retries = 0;
+
 		while(!wireless->GetTemperature(hp->SensorNumber(), setTemperature, hp->Name(), temp) && retries < 3)
 			retries++;
 
@@ -208,7 +213,7 @@ int main(int argc, char** argv)
 
 	Heating* heating = new Heating(argv[profileArg], argv[serialPortArg]);
 
-	//heating->PrintHeating(cout);
+	heating->PrintHeating(cout); cout << "\n";
 
 	heating->Run(timeinfo);
 

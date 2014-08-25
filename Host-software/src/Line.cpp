@@ -9,11 +9,12 @@
 
 Line::Line(char* port)
 {
-    serial_port.Open(port) ;
+	valid = true;
+    serial_port.Open(port);
     if ( ! serial_port.good() )
     {
     	cerr << "Cannot open port: " << port << endl;
-        exit(1) ;
+        valid = false;
     }
     //
     // Set the baud rate of the serial port.
@@ -22,7 +23,7 @@ Line::Line(char* port)
     if ( ! serial_port.good() )
     {
     	cerr << "Cannot set the baud rate." << endl;
-        exit(1) ;
+    	valid = false;
     }
     //
     // Set the number of data bits.
@@ -31,7 +32,7 @@ Line::Line(char* port)
     if ( ! serial_port.good() )
     {
     	cerr << "Cannot set the character size." << endl;
-        exit(1) ;
+    	valid = false;
     }
     //
     // Disable parity.
@@ -40,7 +41,7 @@ Line::Line(char* port)
     if ( ! serial_port.good() )
     {
     	cerr << "Cannot set parity." << endl;
-        exit(1) ;
+    	valid = false;
     }
     //
     // Set the number of stop bits.
@@ -49,7 +50,7 @@ Line::Line(char* port)
     if ( ! serial_port.good() )
     {
     	cerr << "Cannot set number of stop bits." << endl;
-        exit(1) ;
+    	valid = false;
     }
     //
     // Turn off hardware flow control.
@@ -58,9 +59,14 @@ Line::Line(char* port)
     if ( ! serial_port.good() )
     {
     	cerr << "Cannot set hardware flow control." << endl;
-        exit(1) ;
+    	valid = false;
     }
 
+}
+
+bool Line::Valid()
+{
+	return valid;
 }
 
 bool Line::ByteAvailable()

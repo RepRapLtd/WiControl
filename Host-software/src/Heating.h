@@ -15,6 +15,7 @@
 #define MIN_INPUT_LENGTH 11
 #define DEFAULT_TEMPERATURE 15.0
 #define TOP_PAN 100
+#define SD '*'
 
 class Line;
 class HeatProfile;

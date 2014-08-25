@@ -25,7 +25,7 @@ Device::Device(std::stringstream& profileFileLine, Device* previous)
 
 void Device::PrintDevice(std::ostream& os)
 {
-	os << '"' << name << '"' << " " << panStampNumber << " " << port << " " << onDelay << " " << offDelay << endl;
+	os << SD << name << SD << " " << panStampNumber << " " << port << " " << onDelay << " " << offDelay << endl;
 }
 
 void Device::On()

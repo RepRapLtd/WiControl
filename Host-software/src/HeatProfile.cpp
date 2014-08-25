@@ -57,7 +57,7 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 	{
 		char c;
 		profileFileLine >> std::skipws >> c;
-		if(c == '"')
+		if(c == SD)
 		{
 			profileFileLine.putback(c);
 			ReadQuotedString(profileFileLine, scratchString);
@@ -66,8 +66,8 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 			{
 				cerr << "Device " << scratchString << " not found. \n" << endl;
 				readingDevices = false;
-			}
-			deviceCount++;
+			} else
+				deviceCount++;
 		} else
 			readingDevices = false;
 	}
@@ -131,7 +131,9 @@ char* HeatProfile::Name()
 
 void HeatProfile::PrintProfile(std::ostream& os)
 {
-	os << roomName << ' ' <<  temperatureSensorPanstamp << ' ';
+	os << SD << roomName << SD  << ' ' <<  temperatureSensorPanstamp << ' ';
+	for(int d = 0; d < deviceCount; d++)
+		os << SD << devices[d]->Name() << SD << ' ';
 
 	long time;
 	long hours, minutes, seconds;

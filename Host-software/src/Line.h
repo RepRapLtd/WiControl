@@ -20,10 +20,11 @@ public:
 	char GetByte();
 	void PutByte(char byte);
 	void PutString(char* string);
+	bool Valid();
 
 private:
 	SerialStream serial_port ;
-
+	bool valid;
 };
 
 #endif /* LINE_H_ */

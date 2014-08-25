@@ -18,6 +18,13 @@ bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& 
 	std::stringstream ss;
 	ss << "C3 A" << panStampNumber << " SC2";
 	ss.getline(scratchString, LINE_LENGTH);
+
+	if(!Valid())
+	{
+		result = 1000.0;
+		return false;
+	}
+
 	line->PutString(scratchString);
 	line->PutString("\n");
 	time_t startTime;
@@ -65,9 +72,18 @@ bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& 
 	return result;
 }
 
+bool Wireless::Valid()
+{
+	return line->Valid();
+}
+
 void Wireless::SetSwitchOn(int panStampNumber, int port, float delay)
 {
 	cout << "Turning " << panStampNumber << " on." << endl;
+
+	if(!Valid())
+		return;
+
 	std::stringstream ss;
 	ss << "C3 A" << panStampNumber << " SC1" << " P" << port << " H1" << " D" << delay;
 	ss.getline(scratchString, LINE_LENGTH);
@@ -78,6 +94,10 @@ void Wireless::SetSwitchOn(int panStampNumber, int port, float delay)
 void Wireless::SetSwitchOff(int panStampNumber, int port, float delay)
 {
 	cout << "Turning " << panStampNumber << " off." << endl;
+
+	if(!Valid())
+		return;
+
 	std::stringstream ss;
 	ss << "C3 A" << panStampNumber << " SC1" << " P" << port << " H0" << " D" << delay;
 	ss.getline(scratchString, LINE_LENGTH);
