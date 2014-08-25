@@ -213,7 +213,7 @@ int main(int argc, char** argv)
 
 	Heating* heating = new Heating(argv[profileArg], argv[serialPortArg]);
 
-	heating->PrintHeating(cout); cout << "\n";
+	// heating->PrintHeating(cout); cout << "\n";
 
 	heating->Run(timeinfo);
 

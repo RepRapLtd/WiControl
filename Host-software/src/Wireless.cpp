@@ -67,7 +67,7 @@ bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& 
 	ss << &scratchString[i];
 	ss >> result;
 
-	cout << "Temperature of " << name << " (" << panStampNumber << ") is " << result << " (set temperature: " << set << ").  ";
+	cout << "Temperature of " << name << " (" << panStampNumber << ") is " << result << " (set temperature: " << set << ").  " << endl;
 
 	return result;
 }
