@@ -24,6 +24,8 @@ private:
 	TimeAndTemperature* next;
 };
 
+//************************************************************************************************
+
 class HeatProfile
 {
 public:
@@ -33,65 +35,21 @@ public:
 	int SwitchNumber();
 	bool Invert();
 	void PrintProfile(std::ostream& os);
+	void On();
 	char* Name();
 	HeatProfile* Next();
 
+
 private:
-	TimeAndTemperature* list;
-	int sensorNumber;
+	TimeAndTemperature* timeAndTemperatureList;
+	int temperatureSensorPanstamp;
 	int switchNumber;
 	bool invert;
 	HeatProfile* next;
 	char roomName[NAME_LENGTH];
+	Device** devices;
+	int deviceCount;
 };
 
-inline TimeAndTemperature::TimeAndTemperature(long ds, float t, TimeAndTemperature* previous)
-{
-	daySeconds = ds;
-	temperature = t;
-	next = 0;
-	if(previous != 0)
-		previous->next = this;
-}
-
-inline float TimeAndTemperature::Temperature()
-{
-	return temperature;
-}
-
-inline long TimeAndTemperature::Time()
-{
-	return daySeconds;
-}
-
-inline TimeAndTemperature* TimeAndTemperature::Next()
-{
-	return next;
-}
-
-inline int HeatProfile::SensorNumber()
-{
-	return sensorNumber;
-}
-
-inline int HeatProfile::SwitchNumber()
-{
-	return switchNumber;
-}
-
-inline bool HeatProfile::Invert()
-{
-	return invert;
-}
-
-inline HeatProfile* HeatProfile::Next()
-{
-	return next;
-}
-
-inline char* HeatProfile::Name()
-{
-	return roomName;
-}
 
 #endif /* HEATPROFILE_H_ */

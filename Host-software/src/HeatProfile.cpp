@@ -7,6 +7,32 @@
 
 #include "Heating.h"
 
+TimeAndTemperature::TimeAndTemperature(long ds, float t, TimeAndTemperature* previous)
+{
+	daySeconds = ds;
+	temperature = t;
+	next = 0;
+	if(previous != 0)
+		previous->next = this;
+}
+
+float TimeAndTemperature::Temperature()
+{
+	return temperature;
+}
+
+long TimeAndTemperature::Time()
+{
+	return daySeconds;
+}
+
+TimeAndTemperature* TimeAndTemperature::Next()
+{
+	return next;
+}
+
+//***************************************************************************************************
+
 
 HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previous)
 {
@@ -16,18 +42,41 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 
 	invert = false;
 
-	profileFileLine >> roomName;
+	ReadQuotedString(profileFileLine, roomName);
 
-	profileFileLine >> sensorNumber;
-	if(sensorNumber < 0)
+	profileFileLine >> temperatureSensorPanstamp;
+	if(temperatureSensorPanstamp < 0)
 	{
 		invert = true;
-		sensorNumber = -sensorNumber;
+		temperatureSensorPanstamp = -temperatureSensorPanstamp;
 	}
 
-	profileFileLine >> switchNumber;
+	bool readingDevices = true;
+	deviceCount = 0;
+	while(readingDevices)
+	{
+		char c;
+		profileFileLine >> std::skipws >> c;
+		if(c == '"')
+		{
+			profileFileLine.putback(c);
+			ReadQuotedString(profileFileLine, scratchString);
+			scratchDevices[deviceCount] = FindDevice(scratchString);
+			if(scratchDevices[deviceCount] == NULL)
+			{
+				cerr << "Device " << scratchString << " not found. \n" << endl;
+				readingDevices = false;
+			}
+			deviceCount++;
+		} else
+			readingDevices = false;
+	}
 
-	list = 0;
+	devices = new Device*[deviceCount];
+	for(int d = 0; d < deviceCount; d++)
+		devices[d] = scratchDevices[d];
+
+	timeAndTemperatureList = 0;
 	TimeAndTemperature* tat = 0;
 
 	long hours, minutes, seconds;
@@ -44,18 +93,49 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 		profileFileLine >> temperature;
 
 		tat = new TimeAndTemperature(hours*3600 + minutes*60 + seconds, temperature, tat);
-		if(list == 0)
-			list = tat;
+		if(timeAndTemperatureList == 0)
+			timeAndTemperatureList = tat;
 	}
+}
+
+void HeatProfile::On()
+{
+	for(int d = 0; d < deviceCount; d++)
+		devices[d]->On();
+}
+
+int HeatProfile::SensorNumber()
+{
+	return temperatureSensorPanstamp;
+}
+
+int HeatProfile::SwitchNumber()
+{
+	return switchNumber;
+}
+
+bool HeatProfile::Invert()
+{
+	return invert;
+}
+
+HeatProfile* HeatProfile::Next()
+{
+	return next;
+}
+
+char* HeatProfile::Name()
+{
+	return roomName;
 }
 
 void HeatProfile::PrintProfile(std::ostream& os)
 {
-	os << roomName << ' ' <<  sensorNumber << ' ';
+	os << roomName << ' ' <<  temperatureSensorPanstamp << ' ';
 
 	long time;
 	long hours, minutes, seconds;
-	TimeAndTemperature* tat = list;
+	TimeAndTemperature* tat = timeAndTemperatureList;
 
 	while(tat)
 	{
@@ -78,10 +158,10 @@ float HeatProfile::Temperature(struct tm* timeinfo)
 
 	long t = timeinfo->tm_hour*3600 + timeinfo->tm_min*60 + timeinfo->tm_sec;
 
-	TimeAndTemperature* timeTempEntry = list;
+	TimeAndTemperature* timeTempEntry = timeAndTemperatureList;
 	if(timeTempEntry == 0)
 	{
-		Error("HeatProfile contains an empty list.");
+		cerr << "HeatProfile contains an empty list.\n";
 		return result;
 	}
 

@@ -48,7 +48,7 @@ bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& 
 	{
 		ss << "Timeout on temperature read from: " << panStampNumber << endl;
 		ss.getline(scratchString, LINE_LENGTH);
-		Error(scratchString);
+		cerr << scratchString << endl;
 		result = 1000.0;
 		return false;
 	}
@@ -65,21 +65,21 @@ bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& 
 	return result;
 }
 
-void Wireless::SetSwitchOn(int panStampNumber)
+void Wireless::SetSwitchOn(int panStampNumber, int port, float delay)
 {
 	cout << "Turning " << panStampNumber << " on." << endl;
 	std::stringstream ss;
-	ss << "C3 A" << panStampNumber << " SC1 H1";
+	ss << "C3 A" << panStampNumber << " SC1" << " P" << port << " H1" << " D" << delay;
 	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");
 }
 
-void Wireless::SetSwitchOff(int panStampNumber)
+void Wireless::SetSwitchOff(int panStampNumber, int port, float delay)
 {
 	cout << "Turning " << panStampNumber << " off." << endl;
 	std::stringstream ss;
-	ss << "C3 A" << panStampNumber << " SC1 H0";
+	ss << "C3 A" << panStampNumber << " SC1" << " P" << port << " H0" << " D" << delay;
 	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");

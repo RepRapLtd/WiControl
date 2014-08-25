@@ -12,8 +12,7 @@ Line::Line(char* port)
     serial_port.Open(port) ;
     if ( ! serial_port.good() )
     {
-    	Error("Cannot open port:");
-    	Error(port);
+    	cerr << "Cannot open port: " << port << endl;
         exit(1) ;
     }
     //
@@ -22,7 +21,7 @@ Line::Line(char* port)
     serial_port.SetBaudRate( SerialStreamBuf::BAUD_38400 ) ;
     if ( ! serial_port.good() )
     {
-    	Error("Cannot set the baud rate.");
+    	cerr << "Cannot set the baud rate." << endl;
         exit(1) ;
     }
     //
@@ -31,7 +30,7 @@ Line::Line(char* port)
     serial_port.SetCharSize( SerialStreamBuf::CHAR_SIZE_8 ) ;
     if ( ! serial_port.good() )
     {
-    	Error("Cannot set the character size.");
+    	cerr << "Cannot set the character size." << endl;
         exit(1) ;
     }
     //
@@ -40,7 +39,7 @@ Line::Line(char* port)
     serial_port.SetParity( SerialStreamBuf::PARITY_NONE ) ;
     if ( ! serial_port.good() )
     {
-    	Error("Cannot set parity.");
+    	cerr << "Cannot set parity." << endl;
         exit(1) ;
     }
     //
@@ -49,7 +48,7 @@ Line::Line(char* port)
     serial_port.SetNumOfStopBits( 1 ) ;
     if ( ! serial_port.good() )
     {
-    	Error("Cannot set number of stop bits.");
+    	cerr << "Cannot set number of stop bits." << endl;
         exit(1) ;
     }
     //
@@ -58,7 +57,7 @@ Line::Line(char* port)
     serial_port.SetFlowControl( SerialStreamBuf::FLOW_CONTROL_NONE ) ;
     if ( ! serial_port.good() )
     {
-    	Error("Cannot set hardware flow control.");
+    	cerr << "Cannot set hardware flow control." << endl;
         exit(1) ;
     }
 
