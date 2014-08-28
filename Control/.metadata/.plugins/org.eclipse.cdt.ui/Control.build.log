@@ -1,0 +1,238 @@
+18:07:56 **** Incremental Build of configuration Release for project Control ****
+make all 
+Building file: ../CommandBuffer.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"CommandBuffer.cpp.d" -MT"CommandBuffer.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "../CommandBuffer.cpp"  -o  "CommandBuffer.cpp.o"
+Finished building: ../CommandBuffer.cpp
+ 
+Building file: ../Communicator.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Communicator.cpp.d" -MT"Communicator.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "../Communicator.cpp"  -o  "Communicator.cpp.o"
+Finished building: ../Communicator.cpp
+ 
+Building file: ../Control.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "../Control.cpp"  -o  "Control.cpp.o"
+Finished building: ../Control.cpp
+ 
+Building file: ../Switch.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Switch.cpp.d" -MT"Switch.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "../Switch.cpp"  -o  "Switch.cpp.o"
+Finished building: ../Switch.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/avrrtc.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/avrrtc.cpp.d" -MT"Libraries/panstamp/avrrtc.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/avrrtc.cpp"  -o  "Libraries/panstamp/avrrtc.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/avrrtc.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/calibration.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/calibration.cpp.d" -MT"Libraries/panstamp/calibration.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/calibration.cpp"  -o  "Libraries/panstamp/calibration.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/calibration.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/cc1101.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/cc1101.cpp.d" -MT"Libraries/panstamp/cc1101.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/cc1101.cpp"  -o  "Libraries/panstamp/cc1101.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/cc1101.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/panstamp.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/panstamp.cpp.d" -MT"Libraries/panstamp/panstamp.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/panstamp.cpp"  -o  "Libraries/panstamp/panstamp.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/panstamp.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/register.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/register.cpp.d" -MT"Libraries/panstamp/register.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/register.cpp"  -o  "Libraries/panstamp/register.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/register.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/repeater.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/repeater.cpp.d" -MT"Libraries/panstamp/repeater.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/repeater.cpp"  -o  "Libraries/panstamp/repeater.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/repeater.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/spi.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/spi.cpp.d" -MT"Libraries/panstamp/spi.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/spi.cpp"  -o  "Libraries/panstamp/spi.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/spi.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/swcommand.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/swcommand.cpp.d" -MT"Libraries/panstamp/swcommand.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/swcommand.cpp"  -o  "Libraries/panstamp/swcommand.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/swcommand.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/swpacket.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/swpacket.cpp.d" -MT"Libraries/panstamp/swpacket.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/swpacket.cpp"  -o  "Libraries/panstamp/swpacket.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/swpacket.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/swquery.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/swquery.cpp.d" -MT"Libraries/panstamp/swquery.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/swquery.cpp"  -o  "Libraries/panstamp/swquery.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/swquery.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/libraries/panstamp/swstatus.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/panstamp/swstatus.cpp.d" -MT"Libraries/panstamp/swstatus.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/libraries/panstamp/swstatus.cpp"  -o  "Libraries/panstamp/swstatus.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/libraries/panstamp/swstatus.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM/EEPROM.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Libraries/EEPROM/EEPROM.cpp.d" -MT"Libraries/EEPROM/EEPROM.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM/EEPROM.cpp"  -o  "Libraries/EEPROM/EEPROM.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM/EEPROM.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/CDC.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/CDC.cpp.d" -MT"arduino/CDC.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/CDC.cpp"  -o  "arduino/CDC.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/CDC.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HID.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/HID.cpp.d" -MT"arduino/HID.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HID.cpp"  -o  "arduino/HID.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HID.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/HardwareSerial.cpp.d" -MT"arduino/HardwareSerial.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial.cpp"  -o  "arduino/HardwareSerial.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial0.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/HardwareSerial0.cpp.d" -MT"arduino/HardwareSerial0.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial0.cpp"  -o  "arduino/HardwareSerial0.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial0.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial1.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/HardwareSerial1.cpp.d" -MT"arduino/HardwareSerial1.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial1.cpp"  -o  "arduino/HardwareSerial1.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial1.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial2.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/HardwareSerial2.cpp.d" -MT"arduino/HardwareSerial2.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial2.cpp"  -o  "arduino/HardwareSerial2.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial2.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial3.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/HardwareSerial3.cpp.d" -MT"arduino/HardwareSerial3.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial3.cpp"  -o  "arduino/HardwareSerial3.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/HardwareSerial3.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/IPAddress.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/IPAddress.cpp.d" -MT"arduino/IPAddress.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/IPAddress.cpp"  -o  "arduino/IPAddress.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/IPAddress.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/Print.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/Print.cpp.d" -MT"arduino/Print.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/Print.cpp"  -o  "arduino/Print.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/Print.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/Stream.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/Stream.cpp.d" -MT"arduino/Stream.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/Stream.cpp"  -o  "arduino/Stream.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/Stream.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/Tone.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/Tone.cpp.d" -MT"arduino/Tone.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/Tone.cpp"  -o  "arduino/Tone.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/Tone.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/USBCore.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/USBCore.cpp.d" -MT"arduino/USBCore.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/USBCore.cpp"  -o  "arduino/USBCore.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/USBCore.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/WInterrupts.c
+Starting C compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -c -g -Os -w -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/WInterrupts.c.d" -MT"arduino/WInterrupts.c.d" -D__IN_ECLIPSE__=1 "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/WInterrupts.c"  -o  "arduino/WInterrupts.c.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/WInterrupts.c
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/WMath.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/WMath.cpp.d" -MT"arduino/WMath.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/WMath.cpp"  -o  "arduino/WMath.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/WMath.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/WString.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/WString.cpp.d" -MT"arduino/WString.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/WString.cpp"  -o  "arduino/WString.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/WString.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/hooks.c
+Starting C compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -c -g -Os -w -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/hooks.c.d" -MT"arduino/hooks.c.d" -D__IN_ECLIPSE__=1 "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/hooks.c"  -o  "arduino/hooks.c.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/hooks.c
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/main.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/main.cpp.d" -MT"arduino/main.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/main.cpp"  -o  "arduino/main.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/main.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/new.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/new.cpp.d" -MT"arduino/new.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/new.cpp"  -o  "arduino/new.cpp.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/new.cpp
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring.c
+Starting C compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -c -g -Os -w -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/wiring.c.d" -MT"arduino/wiring.c.d" -D__IN_ECLIPSE__=1 "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring.c"  -o  "arduino/wiring.c.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring.c
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_analog.c
+Starting C compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -c -g -Os -w -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/wiring_analog.c.d" -MT"arduino/wiring_analog.c.d" -D__IN_ECLIPSE__=1 "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_analog.c"  -o  "arduino/wiring_analog.c.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_analog.c
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_digital.c
+Starting C compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -c -g -Os -w -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/wiring_digital.c.d" -MT"arduino/wiring_digital.c.d" -D__IN_ECLIPSE__=1 "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_digital.c"  -o  "arduino/wiring_digital.c.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_digital.c
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_pulse.c
+Starting C compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -c -g -Os -w -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/wiring_pulse.c.d" -MT"arduino/wiring_pulse.c.d" -D__IN_ECLIPSE__=1 "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_pulse.c"  -o  "arduino/wiring_pulse.c.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_pulse.c
+ 
+Building file: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_shift.c
+Starting C compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -c -g -Os -w -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"arduino/wiring_shift.c.d" -MT"arduino/wiring_shift.c.d" -D__IN_ECLIPSE__=1 "/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_shift.c"  -o  "arduino/wiring_shift.c.o"
+Finished building: /usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino/wiring_shift.c
+ 
+Starting archiver
+"/usr/local/arduino/hardware/tools/avr/bin/avr-ar" rcs  "/home/ensab/Panstamp/WiControl/Control/Control/Release/arduino.ar"    ./arduino/CDC.cpp.o ./arduino/HID.cpp.o ./arduino/HardwareSerial.cpp.o ./arduino/HardwareSerial0.cpp.o ./arduino/HardwareSerial1.cpp.o ./arduino/HardwareSerial2.cpp.o ./arduino/HardwareSerial3.cpp.o ./arduino/IPAddress.cpp.o ./arduino/Print.cpp.o ./arduino/Stream.cpp.o ./arduino/Tone.cpp.o ./arduino/USBCore.cpp.o ./arduino/WInterrupts.c.o ./arduino/WMath.cpp.o ./arduino/WString.cpp.o ./arduino/hooks.c.o ./arduino/main.cpp.o ./arduino/new.cpp.o ./arduino/wiring.c.o ./arduino/wiring_analog.c.o ./arduino/wiring_digital.c.o ./arduino/wiring_pulse.c.o ./arduino/wiring_shift.c.o 
+Finished building: /home/ensab/Panstamp/WiControl/Control/Control/Release/arduino.ar
+ 
+Starting combiner
+"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -w -Os -Wl,--gc-sections -mmcu=atmega328p  -o "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf"    ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o ./Switch.cpp.o  ./Libraries/panstamp/avrrtc.cpp.o ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o   /home/ensab/Panstamp/WiControl/Control/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Control/Release" -lm
+Finished building: Control.elf
+ 
+Create eeprom image
+"/usr/local/arduino/hardware/tools/avr/bin/avr-objcopy" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0  "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.eep"
+Finished building: Control.eep
+ 
+Create Flash image (ihex format)
+"/usr/local/arduino/hardware/tools/avr/bin/avr-objcopy" -O ihex -R .eeprom  "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf" "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.hex"
+Finished building: Control.hex
+ 
+Building target: Control
+Printing size:
+"/usr/local/arduino/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf"
+/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf  :
+section            size      addr
+.data               572   8388864
+.text             13028         0
+.bss                297   8389436
+.comment             17         0
+.debug_aranges     1824         0
+.debug_info       69662         0
+.debug_abbrev     16359         0
+.debug_line       14219         0
+.debug_frame       5524         0
+.debug_str        11786         0
+.debug_loc        26568         0
+.debug_ranges      1752         0
+Total            161608
+
+
+Finished building target: Control
+ 
+
+18:08:17 Build Finished (took 21s.676ms)
+

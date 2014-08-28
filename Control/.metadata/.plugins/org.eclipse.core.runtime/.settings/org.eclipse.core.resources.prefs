@@ -1,0 +1,6 @@
+description.autobuilding=false
+eclipse.preferences.version=1
+pathvariable.ArduinoLibPath=/usr/local/arduino-1.5.7/libraries
+pathvariable.ArduinoPath=/usr/local/arduino-1.5.7
+pathvariable.ArduinoPivateLibPath=/home/ensab/Panstamp/WiControl/libraries
+version=1
