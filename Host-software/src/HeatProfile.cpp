@@ -44,13 +44,6 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 
 	ReadQuotedString(profileFileLine, roomName);
 
-	profileFileLine >> temperatureSensorPanstamp;
-	if(temperatureSensorPanstamp < 0)
-	{
-		invert = true;
-		temperatureSensorPanstamp = -temperatureSensorPanstamp;
-	}
-
 	bool readingDevices = true;
 	deviceCount = 0;
 	while(readingDevices)
@@ -72,9 +65,11 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 			readingDevices = false;
 	}
 
-	devices = new Device*[deviceCount];
-	for(int d = 0; d < deviceCount; d++)
-		devices[d] = scratchDevices[d];
+	tempDevice = scratchDevices[0];
+
+	devices = new Device*[deviceCount-1];
+	for(int d = 1; d < deviceCount; d++)
+		devices[d-1] = scratchDevices[d];
 
 	timeAndTemperatureList = 0;
 	TimeAndTemperature* tat = 0;
@@ -104,15 +99,20 @@ void HeatProfile::On()
 		devices[d]->On();
 }
 
-int HeatProfile::SensorNumber()
+Device* HeatProfile::TemperatureSensor()
 {
-	return temperatureSensorPanstamp;
+	return tempDevice;
 }
 
-int HeatProfile::SwitchNumber()
-{
-	return switchNumber;
-}
+//int HeatProfile::SensorNumber()
+//{
+//	return temperatureSensorPanstamp;
+//}
+//
+//int HeatProfile::SwitchNumber()
+//{
+//	return switchNumber;
+//}
 
 bool HeatProfile::Invert()
 {

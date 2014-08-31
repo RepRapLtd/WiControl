@@ -31,9 +31,10 @@ class HeatProfile
 public:
 	HeatProfile(std::stringstream& profileFileLine, HeatProfile* previous);
 	float Temperature(struct tm* timeinfo);
-	int SensorNumber();
-	int SwitchNumber();
+//	int SensorNumber();
+//	int SwitchNumber();
 	bool Invert();
+	Device* TemperatureSensor();
 	void PrintProfile(std::ostream& os);
 	void On();
 	char* Name();
@@ -47,6 +48,7 @@ private:
 	bool invert;
 	HeatProfile* next;
 	char roomName[NAME_LENGTH];
+	Device* tempDevice;
 	Device** devices;
 	int deviceCount;
 };

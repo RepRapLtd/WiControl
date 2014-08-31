@@ -28,17 +28,40 @@ void Device::PrintDevice(std::ostream& os)
 	os << SD << name << SD << " " << panStampNumber << " " << port << " " << onDelay << " " << offDelay << endl;
 }
 
+int Device::PanStampNumber()
+{
+	return panStampNumber;
+}
+
+int Device::PanStampPort()
+{
+	return port;
+}
+
+float Device::OnDelay()
+{
+	return onDelay;
+}
+
+float Device::OffDelay()
+{
+	return offDelay;
+}
+
+bool Device::GetTemperature(float setTemperature, float& temperature)
+{
+	return wireless->GetTemperature(this, setTemperature, temperature);
+}
+
 void Device::On()
 {
-	if(on)
-		return;
-	wireless->SetSwitchOn(panStampNumber, port, onDelay);
+	wireless->SetSwitchOn(this);
 	on = true;
 }
 
 void Device::Off()
 {
-	wireless->SetSwitchOff(panStampNumber, port, offDelay);
+	wireless->SetSwitchOff(this);
 	on = false;
 }
 

@@ -12,9 +12,9 @@ class Wireless
 {
 public:
 	Wireless(char* port);
-	bool GetTemperature(int panStampNumber, float set, char* name, float& result);
-	void SetSwitchOn(int panStampNumber, int port, float delay);
-	void SetSwitchOff(int panStampNumber, int port, float delay);
+	bool GetTemperature(Device* device, float set, float& result);
+	void SetSwitchOn(Device* device);
+	void SetSwitchOff(Device* device);
 	bool Valid();
 
 private:

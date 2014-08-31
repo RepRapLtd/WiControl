@@ -19,6 +19,11 @@ public:
 	bool IAmOn();
 	char* Name();
 	void PrintDevice(std::ostream& os);
+	int PanStampNumber();
+	int PanStampPort();
+	float OnDelay();
+	float OffDelay();
+	bool GetTemperature(float setTemperature, float& temperature);
 	Device* Next();
 
 private:

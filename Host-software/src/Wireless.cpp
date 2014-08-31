@@ -12,11 +12,11 @@ Wireless::Wireless(char* port)
 	line = new Line(port);
 }
 
-bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& result)
+bool Wireless::GetTemperature(Device* device, float set, float& result)
 {
 	result = DEFAULT_TEMPERATURE;
 	std::stringstream ss;
-	ss << "C3 A" << panStampNumber << " SC2";
+	ss << "C3 A" << device->PanStampNumber() << " SC2";
 	ss.getline(scratchString, LINE_LENGTH);
 
 	if(!Valid())
@@ -53,7 +53,7 @@ bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& 
 
 	if(notDone)
 	{
-		ss << "Timeout on temperature read from: " << panStampNumber << endl;
+		ss << "Timeout on temperature read from: " << device->Name() << endl;
 		ss.getline(scratchString, LINE_LENGTH);
 		cerr << scratchString << endl;
 		result = 1000.0;
@@ -67,9 +67,9 @@ bool Wireless::GetTemperature(int panStampNumber, float set, char* name, float& 
 	ss << &scratchString[i];
 	ss >> result;
 
-	cout << "Temperature of " << name << " (" << panStampNumber << ") is " << result << " (set temperature: " << set << ").  " << endl;
+	cout << "Temperature of " << device->Name() << " (" << device->PanStampNumber() << ") is " << result << " (set temperature: " << set << ").  " << endl;
 
-	return result;
+	return true;
 }
 
 bool Wireless::Valid()
@@ -77,29 +77,29 @@ bool Wireless::Valid()
 	return line->Valid();
 }
 
-void Wireless::SetSwitchOn(int panStampNumber, int port, float delay)
+void Wireless::SetSwitchOn(Device* device)
 {
-	cout << "Turning " << panStampNumber << " on." << endl;
+	cout << "Turning " << device->Name() << " on." << endl;
 
 	if(!Valid())
 		return;
 
 	std::stringstream ss;
-	ss << "C3 A" << panStampNumber << " SC1" << " P" << port << " H1" << " D" << delay;
+	ss << "C3 A" << device->PanStampNumber() << " SC1" << " P" << device->PanStampPort() << " H1" << " D" << device->OnDelay();
 	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");
 }
 
-void Wireless::SetSwitchOff(int panStampNumber, int port, float delay)
+void Wireless::SetSwitchOff(Device* device)
 {
-	cout << "Turning " << panStampNumber << " off." << endl;
+	cout << "Turning " << device->Name() << " off." << endl;
 
 	if(!Valid())
 		return;
 
 	std::stringstream ss;
-	ss << "C3 A" << panStampNumber << " SC1" << " P" << port << " H0" << " D" << delay;
+	ss << "C3 A" << device->PanStampNumber() << " SC1" << " P" << device->PanStampPort() << " H0" << " D" << device->OffDelay();
 	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");

@@ -153,16 +153,20 @@ void Heating::Run(struct tm* timeinfo)
 		float temp;
 		int retries = 0;
 
-		while(!wireless->GetTemperature(hp->SensorNumber(), setTemperature, hp->Name(), temp) && retries < 3)
+		while(!hp->TemperatureSensor()->GetTemperature(setTemperature, temp) && retries < 3)
 			retries++;
 
 		if((temp < setTemperature) != hp->Invert())
 			hp->On();
 
 		hp = hp->Next();
+		usleep(2000);
 	}
 
 	// Any device still flagged as not on may need to be turned off
+	// NB the calls to On() above and the calls to Off() below mean
+	// that every device should be talked to, and so all the watchdogs
+	// should be reset.
 
 	dp = deviceList;
 	while(dp)
@@ -170,6 +174,7 @@ void Heating::Run(struct tm* timeinfo)
 		if(!dp->IAmOn())
 			dp->Off();
 		dp = dp->Next();
+		usleep(2000);
 	}
 }
 
