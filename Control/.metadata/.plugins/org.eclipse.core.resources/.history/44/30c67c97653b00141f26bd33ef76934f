@@ -1,0 +1,18 @@
+/*
+ * Light.cpp
+ *
+ *  Created on: 13 Sep 2014
+ *      Author: ensab
+ */
+
+#include "Control.h"
+
+Light::Light()
+{
+
+
+}
+
+Spin(unsigned long time)
+Set(float r, float g, float b, float t)
+

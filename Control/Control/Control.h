@@ -12,29 +12,26 @@
 #include "Communicator.h"
 #include "CommandBuffer.h"
 #include "Switch.h"
+#include "Light.h"
 
-#define MY_ADDRESS 35
+#define MY_ADDRESS 50
 #define PLACE "Test"
 #define NAME "WiControl"
-#define DATE "2014-08-25"
-#define VERSION "0.12"
+#define DATE "2014-09-13"
+#define VERSION "0.13"
 
 #define BAUD_RATE 38400
 
-// Comment this out to turn off the watchdog reset
-#define WATCHDOG
-
 // Uncomment this to enable LED control
-//#define USE_LEDS
+#define USE_LEDS
 
 #define DATA_LENGTH 60
 
 // The LED is wired to the Arduino Output 4 (physical panStamp pin 19)
-#define LEDOUTPUT 4
+#define FLASHOUTPUT 4
 
 #ifdef USE_LEDS
 // RGB PWM outputs
-
 #define RED_PWM 6
 #define GREEN_PWM 5
 #define BLUE_PWM 9
@@ -52,10 +49,19 @@
 
 #ifndef USE_LEDS
  #define SWITCHES 7
- #define OUT_PINS {3, 8, 9, 17, 15, 16, LEDOUTPUT}
+ #define OUT_PINS {3, 8, 9, 17, 15, 16, FLASHOUTPUT}
+ #define FLASH 6
+ #define RED FLASH
+ #define GREEN FLASH
+ #define BLUE FLASH
+ #define WATCHDOG
 #else
- #define SWITCHES 6
- #define OUT_PINS {3, 8, 17, 15, 16, LEDOUTPUT};
+ #define SWITCHES 9
+ #define OUT_PINS {3, 8, 17, 15, 16, RED_PWM, GREEN_PWM, BLUE_PWM, FLASHOUTPUT};
+ #define FLASH 8
+ #define RED 5
+ #define GREEN 6
+ #define BLUE 7
 #endif
 
 #define THERMISTOR_BETA 3528.0 // thermistor: RS 538-0806
@@ -66,6 +72,8 @@
 
 void IncommingInterrupt();
 void blink();
+
+extern Switch* switches[SWITCHES];
 
 #ifdef __cplusplus
 extern "C" {

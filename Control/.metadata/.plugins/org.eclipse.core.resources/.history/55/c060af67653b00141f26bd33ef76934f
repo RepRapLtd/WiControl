@@ -1,0 +1,20 @@
+/*
+ * Light.cpp
+ *
+ *  Created on: 13 Sep 2014
+ *      Author: ensab
+ */
+
+#include "Light.h"
+
+Light::Light()
+{
+
+
+}
+
+Light::~Light()
+{
+
+}
+

@@ -8,6 +8,8 @@ byte pins[SWITCHES] = OUT_PINS;
 
 Switch* switches[SWITCHES];
 
+Light* light;
+
 unsigned long resetTime;
 
 Communicator* communicator = 0;
@@ -49,22 +51,12 @@ void setup()
 	  Serial.begin(BAUD_RATE);
 	  Serial.print((int)MY_ADDRESS);
 	  Serial.println(" starting");
-	  pinMode(LEDOUTPUT, OUTPUT);
-	  digitalWrite(LEDOUTPUT, LOW);
 	  pinMode(TEMP_SENSE_PIN, INPUT);
 
 	  for(byte s = 0; s < SWITCHES; s++)
 		  switches[s] = new Switch(pins[s]);
 
-#ifdef USE_LEDS
-	  pinMode(RED_PWM, OUTPUT);
-	  pinMode(GREEN_PWM, OUTPUT);
-	  pinMode(BLUE_PWM, OUTPUT);
-	  analogWrite(RED_PWM, 0);
-	  analogWrite(GREEN_PWM, 0);
-	  analogWrite(BLUE_PWM, 0);
-#endif
-
+	  light = new Light();
 	  communicator = new Communicator(MY_ADDRESS);
 	  communicator->SetDebug(false);
 	  dataPointer = 0;
@@ -181,29 +173,25 @@ void Interpret(CommandBuffer* cb, int address)
 			break;
 
 			// Set LED rgb values
-#ifdef USE_LEDS
+
 		case 6:
 		{
-			float c;
+			float r = light->Red();
+			float g = light->Green();
+			float b = light->Blue();
+			float t = 0.0;
 			if(cb->Seen('r'))
-			{
-				c = cb->GetFValue();
-				analogWrite(RED_PWM, (unsigned char)(c*255.0));
-			}
+				r = cb->GetFValue();
 			if(cb->Seen('g'))
-			{
-				c = cb->GetFValue();
-				analogWrite(GREEN_PWM, (unsigned char)(c*255.0));
-			}
+				g = cb->GetFValue();
 			if(cb->Seen('b'))
-			{
-				c = cb->GetFValue();
-				analogWrite(BLUE_PWM, (unsigned char)(c*255.0));
-			}
-
+				b = cb->GetFValue();
+			if(cb->Seen('t'))
+				t = cb->GetFValue();
+			light->Set(r, g, b, t);
 		}
-		break;
-#endif
+			break;
+
 
 		default:
 			Message("Unknown command: ");
@@ -263,6 +251,7 @@ void loop()
 
 	for(byte s = 0; s < SWITCHES; s++)
 		switches[s]->Spin(time);
+	light->Spin(time);
 
 	char* input = communicator->Receive(address);
 	if(input)

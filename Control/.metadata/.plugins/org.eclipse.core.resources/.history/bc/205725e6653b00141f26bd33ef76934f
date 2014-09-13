@@ -1,0 +1,19 @@
+/*
+ * Light.h
+ *
+ *  Created on: 13 Sep 2014
+ *      Author: ensab
+ */
+
+#ifndef LIGHT_H_
+#define LIGHT_H_
+
+class Light
+{
+public:
+	Light();
+	void Spin(unsigned long time);
+	void Set(float r, float g, float b, float t);
+};
+
+#endif /* LIGHT_H_ */

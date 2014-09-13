@@ -1616,3 +1616,220 @@ Command-line arguments:  -os linux -ws gtk -arch x86 -perspective it.baeyens.ard
 
 !ENTRY org.eclipse.ui 4 4 2014-08-31 12:47:57.800
 !MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@11d4e75} vs {it.baeyens.arduino.actions.BuildHandler}
+!SESSION 2014-09-13 16:50:55.637 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.6.0_24
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_GB
+Framework arguments:  -perspective it.baeyens.arduino.application.perspective
+Command-line arguments:  -os linux -ws gtk -arch x86 -perspective it.baeyens.arduino.application.perspective -clean
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 16:51:16.673
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 16:51:24.840
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 16:51:31.775
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 16:51:51.579
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE A conflict occurred for ALT+CTRL+I:
+Binding(ALT+CTRL+I,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.open.include.browser,Open Include Browser,
+		Open an include browser on the selected element,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@15343c2,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cEditorScope,,,system)
+Binding(ALT+CTRL+I,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.open.include.browser,Open Include Browser,
+		Open an include browser on the selected element,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@15343c2,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cViewScope,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE A conflict occurred for ALT+SHIFT+R:
+Binding(ALT+SHIFT+R,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.text.rename.element,Rename - Refactoring ,
+		Rename the selected element,
+		Category(org.eclipse.cdt.ui.category.refactoring,Refactor - C++,C/C++ Refactorings,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@18587ac,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cEditorScope,,,system)
+Binding(ALT+SHIFT+R,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.text.rename.element,Rename - Refactoring ,
+		Rename the selected element,
+		Category(org.eclipse.cdt.ui.category.refactoring,Refactor - C++,C/C++ Refactorings,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@18587ac,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cViewScope,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE A conflict occurred for F3:
+Binding(F3,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.opendecl,Open Declaration,
+		Open an editor on the selected element's declaration(s),
+		Category(org.eclipse.cdt.ui.category.source,Source,Source commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@179eb02,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cEditorScope,,,system)
+Binding(F3,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.opendecl,Open Declaration,
+		Open an editor on the selected element's declaration(s),
+		Category(org.eclipse.cdt.ui.category.source,Source,Source commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@179eb02,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cViewScope,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE A conflict occurred for CTRL+SHIFT+T:
+Binding(CTRL+SHIFT+T,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.navigate.opentype,Open Element,
+		Open an element in an Editor,
+		Category(org.eclipse.cdt.ui.category.source,Source,Source commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@133e7a1,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cEditorScope,,,system)
+Binding(CTRL+SHIFT+T,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.navigate.opentype,Open Element,
+		Open an element in an Editor,
+		Category(org.eclipse.cdt.ui.category.source,Source,Source commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@133e7a1,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cViewScope,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE A conflict occurred for F4:
+Binding(F4,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.open.type.hierarchy,Open Type Hierarchy,
+		Open a type hierarchy on the selected element,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@ac0b08,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cEditorScope,,,system)
+Binding(F4,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.open.type.hierarchy,Open Type Hierarchy,
+		Open a type hierarchy on the selected element,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@ac0b08,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cViewScope,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE A conflict occurred for CTRL+G:
+Binding(CTRL+G,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.search.finddecl,Declaration,
+		Search for declarations of the selected element in the workspace,
+		Category(org.eclipse.cdt.ui.category.source,Source,Source commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@1083eaa,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cEditorScope,,,system)
+Binding(CTRL+G,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.search.finddecl,Declaration,
+		Search for declarations of the selected element in the workspace,
+		Category(org.eclipse.cdt.ui.category.source,Source,Source commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@1083eaa,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cViewScope,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE A conflict occurred for CTRL+SHIFT+G:
+Binding(CTRL+SHIFT+G,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.search.findrefs,References,
+		Search for references to the selected element in the workspace,
+		Category(org.eclipse.cdt.ui.category.source,Source,Source commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@8433bb,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cEditorScope,,,system)
+Binding(CTRL+SHIFT+G,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.search.findrefs,References,
+		Search for references to the selected element in the workspace,
+		Category(org.eclipse.cdt.ui.category.source,Source,Source commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@8433bb,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cViewScope,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE A conflict occurred for ALT+CTRL+H:
+Binding(ALT+CTRL+H,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.open.call.hierarchy,Open Call Hierarchy,
+		Open the call hierarchy for the selected element,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@160686a,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cEditorScope,,,system)
+Binding(ALT+CTRL+H,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.edit.open.call.hierarchy,Open Call Hierarchy,
+		Open the call hierarchy for the selected element,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@160686a,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cViewScope,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2014-09-13 16:52:38.502
+!MESSAGE A conflict occurred for CTRL+SHIFT+H:
+Binding(CTRL+SHIFT+H,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.navigate.open.type.in.hierarchy,Open Type in Hierarchy,
+		Open a type in the type hierarchy view,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@671637,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cEditorScope,,,system)
+Binding(CTRL+SHIFT+H,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.navigate.open.type.in.hierarchy,Open Type in Hierarchy,
+		Open a type in the type hierarchy view,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@671637,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.cViewScope,,,system)
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 16:52:38.702
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 16:54:10.631
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 16:55:45.762
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 16:57:36.432
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 17:26:33.732
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 17:37:39.419
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 17:37:51.575
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 17:43:06.903
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 17:43:07.305
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 17:58:58.135
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-09-13 18:48:45.921
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@13cb1cb} vs {it.baeyens.arduino.actions.BuildHandler}

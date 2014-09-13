@@ -1,4 +1,4 @@
-18:07:02 **** Build of configuration Release for project Control ****
+18:48:02 **** Build of configuration Release for project Control ****
 make all 
 Building file: ../CommandBuffer.cpp
 Starting C++ compile
@@ -14,6 +14,11 @@ Building file: ../Control.cpp
 Starting C++ compile
 "/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Control.cpp.d" -MT"Control.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "../Control.cpp"  -o  "Control.cpp.o"
 Finished building: ../Control.cpp
+ 
+Building file: ../Light.cpp
+Starting C++ compile
+"/usr/local/arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -MMD -mmcu=atmega328p -DF_CPU=8000000L -DARDUINO=157 -DARDUINO_AVR_PRO -DARDUINO_ARCH_AVR     -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/cores/arduino" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/variants/eightanaloginputs" -I"/usr/local/arduino-1.5.7/libraries/panstamp" -I"/usr/local/arduino-1.5.7/hardware/arduino/avr/libraries/EEPROM" -MMD -MP -MF"Light.cpp.d" -MT"Light.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "../Light.cpp"  -o  "Light.cpp.o"
+Finished building: ../Light.cpp
  
 Building file: ../Switch.cpp
 Starting C++ compile
@@ -200,7 +205,7 @@ Starting archiver
 Finished building: /home/ensab/Panstamp/WiControl/Control/Control/Release/arduino.ar
  
 Starting combiner
-"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -w -Os -Wl,--gc-sections -mmcu=atmega328p  -o "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf"    ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o ./Switch.cpp.o  ./Libraries/panstamp/avrrtc.cpp.o ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o   /home/ensab/Panstamp/WiControl/Control/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Control/Release" -lm
+"/usr/local/arduino/hardware/tools/avr/bin/avr-gcc" -w -Os -Wl,--gc-sections -mmcu=atmega328p  -o "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf"    ./CommandBuffer.cpp.o ./Communicator.cpp.o ./Control.cpp.o ./Light.cpp.o ./Switch.cpp.o  ./Libraries/panstamp/avrrtc.cpp.o ./Libraries/panstamp/calibration.cpp.o ./Libraries/panstamp/cc1101.cpp.o ./Libraries/panstamp/panstamp.cpp.o ./Libraries/panstamp/register.cpp.o ./Libraries/panstamp/repeater.cpp.o ./Libraries/panstamp/spi.cpp.o ./Libraries/panstamp/swcommand.cpp.o ./Libraries/panstamp/swpacket.cpp.o ./Libraries/panstamp/swquery.cpp.o ./Libraries/panstamp/swstatus.cpp.o  ./Libraries/EEPROM/EEPROM.cpp.o   /home/ensab/Panstamp/WiControl/Control/Control/Release/arduino.ar   "/home/ensab/Panstamp/WiControl/Control/Control/Release/arduino.ar" "-L/home/ensab/Panstamp/WiControl/Control/Control/Release" -lm
 Finished building: Control.elf
  
 Create eeprom image
@@ -216,23 +221,23 @@ Printing size:
 "/usr/local/arduino/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf"
 /home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf  :
 section            size      addr
-.data               566   8388864
-.text             13028         0
-.bss                297   8389430
+.data               568   8388864
+.text             14490         0
+.bss                303   8389432
 .comment             17         0
-.debug_aranges     1824         0
-.debug_info       69664         0
-.debug_abbrev     16359         0
-.debug_line       14219         0
-.debug_frame       5524         0
-.debug_str        11786         0
-.debug_loc        26568         0
-.debug_ranges      1752         0
-Total            161604
+.debug_aranges     1880         0
+.debug_info       73725         0
+.debug_abbrev     17034         0
+.debug_line       14763         0
+.debug_frame       5720         0
+.debug_str        12042         0
+.debug_loc        28551         0
+.debug_ranges      1800         0
+Total            170893
 
 
 Finished building target: Control
  
 
-18:07:24 Build Finished (took 21s.920ms)
+18:48:25 Build Finished (took 22s.24ms)
 

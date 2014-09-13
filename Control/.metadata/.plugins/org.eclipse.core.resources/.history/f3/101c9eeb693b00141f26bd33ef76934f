@@ -1,0 +1,32 @@
+/*
+ * Light.cpp
+ *
+ *  Created on: 13 Sep 2014
+ *      Author: ensab
+ */
+
+#include "Control.h"
+
+Light::Light()
+{
+	red = 0;
+	green = 0;
+	blue = 0;
+
+}
+
+void Light::Spin(unsigned long time)
+{
+
+}
+
+void Light::Set(float r, float g, float b, float t)
+{
+	red = (int)(r*255.0);
+	green = (int)(g*255.0);
+	blue = (int)(b*255.0);
+	switches[RED]->On(r, t);
+	switches[GREEN]->On(g, t);
+	switches[BLUE]->On(b, t);
+}
+

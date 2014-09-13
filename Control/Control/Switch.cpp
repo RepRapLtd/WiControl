@@ -14,6 +14,8 @@ Switch::Switch(int p)
 	digitalWrite(pin, LOW);
 	onWaiting = false;
 	offWaiting = false;
+	analogue = false;
+	value = 0;
 }
 
 bool Switch::Spin(unsigned long time)
@@ -23,7 +25,10 @@ bool Switch::Spin(unsigned long time)
 		if(time >= onTime)
 		{
 			onWaiting = false;
-			digitalWrite(pin, HIGH);
+			if(analogue)
+				analogWrite(pin, value);
+			else
+				digitalWrite(pin, HIGH);
 		}
 	}
 
