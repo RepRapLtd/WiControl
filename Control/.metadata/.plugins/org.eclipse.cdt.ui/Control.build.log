@@ -1,4 +1,4 @@
-18:07:56 **** Incremental Build of configuration Release for project Control ****
+18:07:02 **** Build of configuration Release for project Control ****
 make all 
 Building file: ../CommandBuffer.cpp
 Starting C++ compile
@@ -216,23 +216,23 @@ Printing size:
 "/usr/local/arduino/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf"
 /home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf  :
 section            size      addr
-.data               572   8388864
+.data               566   8388864
 .text             13028         0
-.bss                297   8389436
+.bss                297   8389430
 .comment             17         0
 .debug_aranges     1824         0
-.debug_info       69662         0
+.debug_info       69664         0
 .debug_abbrev     16359         0
 .debug_line       14219         0
 .debug_frame       5524         0
 .debug_str        11786         0
 .debug_loc        26568         0
 .debug_ranges      1752         0
-Total            161608
+Total            161604
 
 
 Finished building target: Control
  
 
-18:08:17 Build Finished (took 21s.676ms)
+18:07:24 Build Finished (took 21s.920ms)
 

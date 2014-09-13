@@ -13,8 +13,8 @@
 #include "CommandBuffer.h"
 #include "Switch.h"
 
-#define MY_ADDRESS 35
-#define PLACE "Test"
+#define MY_ADDRESS 31
+#define PLACE "Aand C Heating Controller"
 #define NAME "WiControl"
 #define DATE "2014-08-25"
 #define VERSION "0.12"
