@@ -79,8 +79,6 @@ bool Wireless::Valid()
 
 void Wireless::SetSwitchOn(Device* device)
 {
-	cout << "Turning " << device->Name() << " on." << endl;
-
 	if(!Valid())
 		return;
 
@@ -89,12 +87,11 @@ void Wireless::SetSwitchOn(Device* device)
 	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");
+	cout << "Turned " << device->Name() << " on." << endl;
 }
 
 void Wireless::SetSwitchOff(Device* device)
 {
-	cout << "Turning " << device->Name() << " off." << endl;
-
 	if(!Valid())
 		return;
 
@@ -103,5 +100,6 @@ void Wireless::SetSwitchOff(Device* device)
 	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");
+	cout << "Turned " << device->Name() << " off." << endl;
 }
 

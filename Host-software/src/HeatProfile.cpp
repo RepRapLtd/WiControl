@@ -70,7 +70,7 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 	devices = new Device*[deviceCount-1];
 	for(int d = 1; d < deviceCount; d++)
 		devices[d-1] = scratchDevices[d];
-
+	deviceCount--;
 	timeAndTemperatureList = 0;
 	TimeAndTemperature* tat = 0;
 
