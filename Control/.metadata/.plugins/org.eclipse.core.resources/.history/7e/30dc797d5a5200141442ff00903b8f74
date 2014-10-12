@@ -230,7 +230,7 @@ void Interpret(CommandBuffer* cb, int address)
 			Message("\n");
 			if(address >= 0)
 			{
-				snprintf(data, DATA_LENGTH, "R7 T%lu\n", (unsigned long)tim);
+				snprintf(data, DATA_LENGTH, "R7 T%u\n", (unsigned long)tim);
 				communicator->Send(address, data);
 			}
 			break;
@@ -288,7 +288,6 @@ void Interpret(CommandBuffer* cb, int address)
 				Message(address);
 				Message(" was ");
 				TimeToString(timeString, DATA_LENGTH, tim);
-				Message(timeString);
 				Message(" (");
 				Message((unsigned long)tim);
 				Message(")");

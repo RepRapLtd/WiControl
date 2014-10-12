@@ -15,9 +15,9 @@
 #include "Switch.h"
 #include "Light.h"
 
-#define MY_ADDRESS 1
+#define MY_ADDRESS 99
 #define HOST 1
-#define PLACE "Control"
+#define PLACE "Test"
 #define NAME "WiControl"
 #define DATE "2014-10-12"
 #define VERSION "0.14"

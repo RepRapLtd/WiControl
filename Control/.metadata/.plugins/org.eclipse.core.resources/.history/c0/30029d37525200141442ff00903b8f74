@@ -17,7 +17,7 @@
 
 #define MY_ADDRESS 1
 #define HOST 1
-#define PLACE "Control"
+#define PLACE "Controller"
 #define NAME "WiControl"
 #define DATE "2014-10-12"
 #define VERSION "0.14"
