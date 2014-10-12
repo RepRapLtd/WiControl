@@ -14,17 +14,16 @@ Wireless::Wireless(char* port)
 
 bool Wireless::GetTemperature(Device* device, float set, float& result)
 {
-	result = DEFAULT_TEMPERATURE;
-	std::stringstream ss;
-	ss << "C3 A" << device->PanStampNumber() << " SC2";
-	ss.getline(scratchString, LINE_LENGTH);
-
 	if(!Valid())
 	{
 		result = 1000.0;
 		return false;
 	}
 
+	result = DEFAULT_TEMPERATURE;
+	std::stringstream ss;
+	ss << "C3 A" << device->PanStampNumber() << " SC2";
+	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");
 	time_t startTime;
@@ -46,7 +45,7 @@ bool Wireless::GetTemperature(Device* device, float set, float& result)
 		} else
 			usleep(2000); // Don't hog the processor
 		time ( &now );
-	} while (now - startTime < 4 && notDone);
+	} while (now - startTime < 4 && notDone && i < LINE_LENGTH);
 
 	ss.clear();
 	ss.str(std::string());
@@ -89,6 +88,50 @@ void Wireless::SendTime(struct tm* timeinfo)
 	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");
+}
+
+void Wireless::PrintTime()
+{
+	if(!Valid())
+	{
+		cout << "Print time - no serial connection.\n";
+		return;
+	}
+
+	std::stringstream ss;
+	ss << "C7";
+	ss.getline(scratchString, LINE_LENGTH);
+	line->PutString(scratchString);
+	line->PutString("\n");
+	time_t startTime;
+	time_t now;
+	time ( &startTime );
+	int i = 0;
+	bool notDone = true;
+	do
+	{
+		if(line->ByteAvailable())
+		{
+			scratchString[i] = line->GetByte();
+			if(scratchString[i] == '\n')
+			{
+				scratchString[i] = 0;
+				notDone = false;
+			} else
+				i++;
+		} else
+			usleep(2000); // Don't hog the processor
+		time ( &now );
+	} while (now - startTime < 4 && notDone && i < LINE_LENGTH);
+
+	if(notDone)
+	{
+		cerr << "Timeout on time read." << endl;
+		return;
+	}
+
+
+	cout << scratchString << endl;
 }
 
 void Wireless::SetSwitchOn(Device* device)
