@@ -2913,3 +2913,21 @@ Binding(CTRL+SHIFT+H,
 
 !ENTRY org.eclipse.ui 4 4 2014-10-12 16:46:56.494
 !MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@bb25e2} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-10-12 16:48:40.929
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@bb25e2} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-10-12 16:50:02.258
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@bb25e2} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-10-12 17:07:04.559
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@bb25e2} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-10-12 17:30:01.148
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@bb25e2} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY org.eclipse.ui 4 4 2014-10-12 17:31:57.697
+!MESSAGE Conflicting handlers for it.baeyens.arduino.actions.ArduinoBuildAction: {it.baeyens.arduino.actions.BuildHandler@bb25e2} vs {it.baeyens.arduino.actions.BuildHandler}
+
+!ENTRY it.baeyens.core 4 0 2014-10-12 17:35:48.408
+!MESSAGE No project found to build

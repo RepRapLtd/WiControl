@@ -19,7 +19,7 @@ CommandBuffer* wirelessInput;
 void blink()
 {
 	switches[SWITCHES-1]->On(0.0);
-	switches[SWITCHES-1]->Off(1.0);
+	switches[SWITCHES-1]->Off(0.1);
 }
 
 
@@ -47,12 +47,6 @@ void TimeToString(char* s, int leng, time_t t)
 	snprintf(s, leng, "%d-%d-%d %d:%d", day(t), month(t), year(t), hour(t), minute(t));
 }
 
-void GetHostTime()
-{
-	strncpy(data, "C7\n", DATA_LENGTH);
-	communicator->Send(HOST, data);
-}
-
 
 void setup()
 {
@@ -72,10 +66,6 @@ void setup()
 	  dataPointer = 0;
 	  serialInput = new CommandBuffer();
 	  wirelessInput = new CommandBuffer();
-	  if(MY_ADDRESS != HOST)
-	  {
-		  GetHostTime();
-	  }
 #ifdef WATCHDOG
 	  wdt_enable(WDTO_8S);
 	  wdt_reset();

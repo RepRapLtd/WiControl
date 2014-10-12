@@ -19,7 +19,7 @@ CommandBuffer* wirelessInput;
 void blink()
 {
 	switches[SWITCHES-1]->On(0.0);
-	switches[SWITCHES-1]->Off(1.0);
+	switches[SWITCHES-1]->Off(0.1);
 }
 
 
@@ -49,8 +49,7 @@ void TimeToString(char* s, int leng, time_t t)
 
 void GetHostTime()
 {
-	strncpy(data, "C7\n", DATA_LENGTH);
-	communicator->Send(HOST, data);
+
 }
 
 

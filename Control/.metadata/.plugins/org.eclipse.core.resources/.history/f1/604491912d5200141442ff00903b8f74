@@ -35,7 +35,7 @@ inline void Switch::On(float delay)
 	{
 		onWaiting = true;
 		analogue = false;
-		onTime = now() + (time_t)delay;
+		onTime = now() + (time_t)(delay*1000.0);
 	}
 }
 
@@ -46,7 +46,7 @@ inline void Switch::On(float val, float delay)
 		onWaiting = true;
 		analogue = true;
 		value = (uint8_t)(255.0*val);
-		onTime = now() + (time_t)delay;
+		onTime = now() + (time_t)(delay*1000.0);
 	}
 }
 
@@ -55,7 +55,7 @@ inline void Switch::Off(float delay)
 	if(!offWaiting)
 	{
 		offWaiting = true;
-		offTime = now() + (time_t)delay;
+		offTime = now() + (time_t)(delay*1000.0);
 	}
 }
 

@@ -19,7 +19,7 @@ CommandBuffer* wirelessInput;
 void blink()
 {
 	switches[SWITCHES-1]->On(0.0);
-	switches[SWITCHES-1]->Off(1.0);
+	switches[SWITCHES-1]->Off(1);
 }
 
 

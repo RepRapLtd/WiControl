@@ -19,7 +19,7 @@ Switch::Switch(int p)
 	value = 0;
 }
 
-bool Switch::Spin(time_t time)
+bool Switch::Spin(unsigned long time)
 {
 	if(onWaiting || iAmOn)
 	{

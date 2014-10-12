@@ -1,27 +1,27 @@
-16:42:47 **** Incremental Build of configuration Release for project Control ****
+17:35:52 **** Incremental Build of configuration Release for project Control ****
 make all 
 Building target: Control
 Printing size:
 "/usr/local/arduino/hardware/tools/avr/bin/avr-size" -A "/home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf"
 /home/ensab/Panstamp/WiControl/Control/Control/Release/Control.elf  :
 section            size      addr
-.data               652   8388864
-.text             16376         0
-.bss                326   8389516
+.data               656   8388864
+.text             16458         0
+.bss                326   8389520
 .comment             17         0
-.debug_aranges     2224         0
-.debug_info       79302         0
-.debug_abbrev     18248         0
-.debug_line       16267         0
-.debug_frame       6664         0
-.debug_str        13371         0
-.debug_loc        32201         0
-.debug_ranges      2128         0
-Total            187776
+.debug_aranges     2232         0
+.debug_info       79524         0
+.debug_abbrev     18252         0
+.debug_line       16366         0
+.debug_frame       6700         0
+.debug_str        13414         0
+.debug_loc        32249         0
+.debug_ranges      2160         0
+Total            188354
 
 
 Finished building target: Control
  
 
-16:42:48 Build Finished (took 161ms)
+17:35:52 Build Finished (took 112ms)
 

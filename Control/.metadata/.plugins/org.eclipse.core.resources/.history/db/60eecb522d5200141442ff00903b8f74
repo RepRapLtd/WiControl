@@ -19,8 +19,8 @@
 #define HOST 10
 #define PLACE "Test"
 #define NAME "WiControl"
-#define DATE "2014-10-12"
-#define VERSION "0.14"
+#define DATE "2014-09-13"
+#define VERSION "0.13"
 
 #define BAUD_RATE 38400
 
