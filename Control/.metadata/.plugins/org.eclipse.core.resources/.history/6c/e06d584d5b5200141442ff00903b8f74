@@ -16,11 +16,10 @@ Communicator* communicator = 0;
 CommandBuffer* serialInput;
 CommandBuffer* wirelessInput;
 
-
 void blink()
 {
 	switches[SWITCHES-1]->On(0.0);
-	switches[SWITCHES-1]->Off(0.1);
+	switches[SWITCHES-1]->Off(1.0);
 }
 
 
@@ -43,6 +42,17 @@ float SetOutput(int pin, int val)
 	digitalWrite(pin, val);
 }
 
+void TimeToString(char* s, int leng, time_t t)
+{
+	snprintf(s, leng, "%d-%d-%d %d:%d", day(t), month(t), year(t), hour(t), minute(t));
+}
+
+void GetHostTime()
+{
+	strncpy(data, "C7\n", DATA_LENGTH);
+	communicator->Send(HOST, data);
+}
+
 
 void setup()
 {
@@ -62,6 +72,10 @@ void setup()
 	  dataPointer = 0;
 	  serialInput = new CommandBuffer();
 	  wirelessInput = new CommandBuffer();
+	  if(MY_ADDRESS != HOST)
+	  {
+		  GetHostTime();
+	  }
 #ifdef WATCHDOG
 	  wdt_enable(WDTO_8S);
 	  wdt_reset();
@@ -78,10 +92,22 @@ void Message(int i)
 	Serial.print(i);
 }
 
+void Message(unsigned long i)
+{
+	Serial.print(i);
+}
+
+void Message(float f)
+{
+	Serial.print(f);
+}
+
 void Interpret(CommandBuffer* cb, int address)
 {
 	float t;
 	int sendAddress;
+	char timeString[DATA_LENGTH];
+	time_t tim;
 
 	if(address == MY_ADDRESS)
 	{
@@ -194,7 +220,25 @@ void Interpret(CommandBuffer* cb, int address)
 
 		// Return the time
 		case 7:
+			tim = now();
+			Message("Time: ");
+			TimeToString(timeString, DATA_LENGTH, tim);
+			Message(timeString);
+			Message(" (");
+			Message((unsigned long)tim);
+			Message(")");
+			Message("\n");
+			if(address >= 0)
+			{
+				snprintf(data, DATA_LENGTH, "R7 T%u\n", (unsigned long)tim);
+				communicator->Send(address, data);
+			}
+			break;
 
+		// Set the time
+		case 8:
+			if(cb->Seen('T'))
+				setTime((time_t)cb->GetLValue());
 			break;
 
 
@@ -217,7 +261,7 @@ void Interpret(CommandBuffer* cb, int address)
 				Message("Temp returned from ");
 				Message(address);
 				Message(" was ");
-				Message(0.1*(float)cb->GetIValue());
+				Message((float)(0.1*(float)cb->GetIValue()));
 				Message("\n");
 			}
 			break;
@@ -234,9 +278,22 @@ void Interpret(CommandBuffer* cb, int address)
 			}
 			break;
 
-		// Reply from a request to send the time
+		// Reply from a request to send the time; use it to set my time
 		case 7:
-
+			if(cb->Seen('T'))
+			{
+				setTime((time_t)cb->GetLValue());
+				tim = now();
+				Message("Time returned from ");
+				Message(address);
+				Message(" was ");
+				TimeToString(timeString, DATA_LENGTH, tim);
+				Message(timeString);
+				Message(" (");
+				Message((unsigned long)tim);
+				Message(")");
+				Message("\n");
+			}
 			break;
 
 		default:
@@ -260,8 +317,9 @@ void loop()
 		         wdt_reset();
 #endif
 
+	time_t tim = now();
 	for(byte s = 0; s < SWITCHES; s++)
-		switches[s]->Spin(time);
+		switches[s]->Spin(tim);
 	light->Spin(time);
 
 	char* input = communicator->Receive(address);
