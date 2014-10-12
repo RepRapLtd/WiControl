@@ -148,6 +148,11 @@ void Heating::Run(struct tm* timeinfo)
 		dp = dp->Next();
 	}
 
+	// Print the time
+
+	wireless->PrintTime();
+	usleep(2000);
+
 	// Check each profile and see if its devices need to be on
 
 	HeatProfile* hp = heatProfileList;
@@ -219,7 +224,7 @@ int main(int argc, char** argv)
 
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
-	cout << asctime (timeinfo) ;
+	//cout << asctime (timeinfo) ;
 
 	Heating* heating = new Heating(argv[profileArg], argv[serialPortArg]);
 

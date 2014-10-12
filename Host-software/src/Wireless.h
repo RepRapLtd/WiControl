@@ -16,6 +16,7 @@ public:
 	void SetSwitchOn(Device* device);
 	void SetSwitchOff(Device* device);
 	void SendTime(struct tm* timeinfo);
+	void PrintTime();
 	bool Valid();
 
 private:
