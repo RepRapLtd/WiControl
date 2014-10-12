@@ -84,7 +84,10 @@ void Wireless::SendTime(struct tm* timeinfo)
 		return;
 
 	std::stringstream ss;
-	ss << "C8 T" << (unsigned long)mktime(timeinfo);
+	unsigned long summerTime = 0;
+	if(timeinfo->tm_isdst > 0)
+		summerTime = 3600;
+	ss << "C8 T" << ((unsigned long)mktime(timeinfo) + summerTime);
 	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");
