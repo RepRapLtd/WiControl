@@ -7,6 +7,7 @@
 #ifndef Control_H_
 #define Control_H_
 #include "Arduino.h"
+#include <Time.h>
 #include <avr/wdt.h>
 
 #include "Communicator.h"
@@ -14,7 +15,8 @@
 #include "Switch.h"
 #include "Light.h"
 
-#define MY_ADDRESS 50
+#define MY_ADDRESS 99
+#define HOST 10
 #define PLACE "Test"
 #define NAME "WiControl"
 #define DATE "2014-09-13"
@@ -23,7 +25,7 @@
 #define BAUD_RATE 38400
 
 // Uncomment this to enable LED control
-#define USE_LEDS
+//#define USE_LEDS
 
 #define DATA_LENGTH 60
 

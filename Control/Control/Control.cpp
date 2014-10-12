@@ -16,7 +16,6 @@ Communicator* communicator = 0;
 CommandBuffer* serialInput;
 CommandBuffer* wirelessInput;
 
-
 void blink()
 {
 	switches[SWITCHES-1]->On(0.0);
@@ -41,6 +40,11 @@ float GetTemperature()
 float SetOutput(int pin, int val)
 {
 	digitalWrite(pin, val);
+}
+
+void TimeToString(char* s, int leng, time_t t)
+{
+	snprintf(s, leng, "%d-%d-%d %d:%d", day(t), month(t), year(t), hour(t), minute(t));
 }
 
 
@@ -78,10 +82,22 @@ void Message(int i)
 	Serial.print(i);
 }
 
+void Message(unsigned long i)
+{
+	Serial.print(i);
+}
+
+void Message(float f)
+{
+	Serial.print(f);
+}
+
 void Interpret(CommandBuffer* cb, int address)
 {
 	float t;
 	int sendAddress;
+	char timeString[DATA_LENGTH];
+	time_t tim;
 
 	if(address == MY_ADDRESS)
 	{
@@ -192,6 +208,29 @@ void Interpret(CommandBuffer* cb, int address)
 		}
 			break;
 
+		// Return the time
+		case 7:
+			tim = now();
+			Message("Time: ");
+			TimeToString(timeString, DATA_LENGTH, tim);
+			Message(timeString);
+			Message(" (");
+			Message((unsigned long)tim);
+			Message(")");
+			Message("\n");
+			if(address >= 0)
+			{
+				snprintf(data, DATA_LENGTH, "R7 T%u\n", (unsigned long)tim);
+				communicator->Send(address, data);
+			}
+			break;
+
+		// Set the time
+		case 8:
+			if(cb->Seen('T'))
+				setTime((time_t)cb->GetLValue());
+			break;
+
 
 		default:
 			Message("Unknown command: ");
@@ -212,11 +251,12 @@ void Interpret(CommandBuffer* cb, int address)
 				Message("Temp returned from ");
 				Message(address);
 				Message(" was ");
-				Message(0.1*(float)cb->GetIValue());
+				Message((float)(0.1*(float)cb->GetIValue()));
 				Message("\n");
 			}
 			break;
 
+		// Reply from a request to send the identifier
 		case 4:
 			if(cb->Seen('S'))
 			{
@@ -224,6 +264,23 @@ void Interpret(CommandBuffer* cb, int address)
 				Message(address);
 				Message(" was ");
 				Message(cb->GetString());
+				Message("\n");
+			}
+			break;
+
+		// Reply from a request to send the time; use it to set my time
+		case 7:
+			if(cb->Seen('T'))
+			{
+				setTime((time_t)cb->GetLValue());
+				tim = now();
+				Message("Time returned from ");
+				Message(address);
+				Message(" was ");
+				TimeToString(timeString, DATA_LENGTH, tim);
+				Message(" (");
+				Message((unsigned long)tim);
+				Message(")");
 				Message("\n");
 			}
 			break;
