@@ -1,0 +1,11 @@
+#!/bin/sh
+LD_LIBRARY_PATH=/usr/local/lib
+export LD_LIBRARY_PATH
+cd /home/pi/Panstamp/WiControl
+wget --timeout=15 http://adrianbowyer.net/sandb-profile.dat -O sandb-profile.dat
+./Host-software/Debug/Heating -p /dev/ttyUSB0 -i sandb-profile.dat >  Status
+if [ -f Log ]
+then
+ cat Status >> Log
+fi
+
