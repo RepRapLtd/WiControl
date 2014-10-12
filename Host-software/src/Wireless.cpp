@@ -74,7 +74,21 @@ bool Wireless::GetTemperature(Device* device, float set, float& result)
 
 bool Wireless::Valid()
 {
+	if(!line)
+		return false;
 	return line->Valid();
+}
+
+void Wireless::SendTime(struct tm* timeinfo)
+{
+	if(!Valid())
+		return;
+
+	std::stringstream ss;
+	ss << "C8 T" << (unsigned long)mktime(timeinfo);
+	ss.getline(scratchString, LINE_LENGTH);
+	line->PutString(scratchString);
+	line->PutString("\n");
 }
 
 void Wireless::SetSwitchOn(Device* device)

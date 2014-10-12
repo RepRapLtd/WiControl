@@ -134,6 +134,11 @@ void Heating::PrintHeating(std::ostream& os)
 
 void Heating::Run(struct tm* timeinfo)
 {
+	// Tell the Arduino the time
+
+	wireless->SendTime(timeinfo);
+	usleep(2000);
+
 	// Flag all devices as not on
 
 	Device* dp = deviceList;

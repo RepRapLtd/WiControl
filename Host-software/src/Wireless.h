@@ -15,6 +15,7 @@ public:
 	bool GetTemperature(Device* device, float set, float& result);
 	void SetSwitchOn(Device* device);
 	void SetSwitchOff(Device* device);
+	void SendTime(struct tm* timeinfo);
 	bool Valid();
 
 private:
