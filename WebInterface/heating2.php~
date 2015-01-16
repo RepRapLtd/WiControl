@@ -11,7 +11,7 @@
 
 </head>
 
-<body>
+<body style="background-color: rgb(225,225,225)">
 
 
 <iframe id="frmFile" src="../workshop-profile.dat" onload="LoadFile();" style="display: none;"></iframe>
