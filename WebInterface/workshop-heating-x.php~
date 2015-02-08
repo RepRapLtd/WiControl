@@ -31,8 +31,8 @@ function Footer()
 {
 	document.write('</tbody></table>');
 	document.write('<br><button style="background-color:white" type="button" name="Save"><H2>Save</H2></button>');
-	document.write('<button style="background-color:white" type="button" name="CopyWeek"><H2>Copy to weekdays</H2></button>');
-	document.write('<button style="background-color:white" type="button" name="CopyWeekend"><H2>Copy to weekends</H2></button>');
+	document.write('<br><button style="background-color:white" type="button" name="CopyWeek"><H2>Copy to weekdays</H2></button>');
+	document.write('<br><button style="background-color:white" type="button" name="CopyWeekend"><H2>Copy to weekends</H2></button>');
 	document.write('</form>');
 }
 

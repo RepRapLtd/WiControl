@@ -78,16 +78,21 @@ bool Wireless::Valid()
 	return line->Valid();
 }
 
+unsigned long Wireless::SimpleTime(struct tm* timeinfo)
+{
+	unsigned long summerTime = 0;
+	if(timeinfo->tm_isdst > 0)
+		summerTime = 3600;
+	return (unsigned long)mktime(timeinfo) + summerTime;
+}
+
 void Wireless::SendTime(struct tm* timeinfo)
 {
 	if(!Valid())
 		return;
 
 	std::stringstream ss;
-	unsigned long summerTime = 0;
-	if(timeinfo->tm_isdst > 0)
-		summerTime = 3600;
-	ss << "C8 T" << ((unsigned long)mktime(timeinfo) + summerTime);
+	ss << "C8 T" << SimpleTime(timeinfo);
 	ss.getline(scratchString, LINE_LENGTH);
 	line->PutString(scratchString);
 	line->PutString("\n");

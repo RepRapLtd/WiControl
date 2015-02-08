@@ -9,13 +9,14 @@
 #define HEATING_H_
 
 #define NAME_LENGTH 50
-//#define PROFILE_FILE "/home/pi/Panstamp/WiControl/heat-profile.dat"
-//#define SERIAL_PORT "/dev/ttyUSB0"
+
 #define LINE_LENGTH 300
 #define MIN_INPUT_LENGTH 11
 #define DEFAULT_TEMPERATURE 15.0
 #define TOP_PAN 100
 #define SD '*'
+#define OFF_TEMPERATURE 10.0
+#define BOOST_TEMPERATURE 24.0
 
 class Line;
 class HeatProfile;
@@ -51,11 +52,13 @@ extern Device* scratchDevices[];
 class Heating
 {
 public:
-	Heating(char* profileFile, char* port);
-	void Run(struct tm* timeinfo);
+	Heating(char* profileFile, char* port, char* tempFile);
+	void Run(time_t *rawtime);
 	void PrintHeating(std::ostream& os);
 
 private:
+	std::ifstream webProfileFile;
+	std::ofstream temperatureLogFile;
 };
 
 

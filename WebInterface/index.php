@@ -79,7 +79,8 @@ function TableLine(tableLine, rowLength)
 	{
 		document.write('<td><input type="time" name="' + location + 'time' + i +'" value = "' + tableLine.substring(tstep).match(/..:..:../) + '" ></td>');
 		tstep += 8;
-		temps[i] = tableLine.substring(tstep).match(/\d+$/)[0];
+		temps[i] = tableLine.substring(tstep).match(/\d+/)[0];
+	   tstep += temps[i].length + 2;
 	}
 
 	for(var i = tc; i < rowLength; i++)
