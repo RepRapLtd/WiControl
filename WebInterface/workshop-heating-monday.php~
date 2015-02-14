@@ -57,6 +57,10 @@ var off = [];
 var maxLocation = 0;
 var boostAll = 0;
 var offAll = 0;
+var controlFileLines;
+var deviceCount = -1;
+var rows = -1;
+var times = -1;
 
 function AllBoost()
 {
@@ -119,27 +123,102 @@ document.write('<button style="background-color:Yellow" type="button" name="OffA
 function Footer()
 {
 	document.write('</tbody></table>');
-	document.write('<br><button style="background-color:white" type="button" name="Save" onclick="Save()"><H2>Save</H2></button>');
+	document.write('<br><button style="background-color:white" type="button" name="Save" onclick="SaveDay(\'Monday\', true)"><H2>Save</H2></button>');
 	document.write('<button style="background-color:white" type="button" name="CopyWeek" onclick="WeekCopy()"><H2>Copy to weekdays</H2></button>');
 	document.write('<button style="background-color:white" type="button" name="CopyWeekend" onclick="WeekendCopy()"><H2>Copy to weekends</H2></button>');
 	document.write('</form>');
 }
 
-function Save()
+function GetTableLine(curline, i)
 {
-	alert("Save");
+	var result = curline.substring(0, DataStart(curline));
+   var theForm = document.forms["settings"];
+	var rowLength = times+2;
+
+	if(off[i])
+		result += "0";
+	else
+		result += "1";
+	result += " ";
+
+	if(boost[i])
+		result += Math.floor(Date.now()/1000) + 3600;
+	else
+		result += Math.floor(Date.now()/1000) - 4000;
+
+	var location = locations[i];
+	for(var j = 0; j < rowLength; j++)
+	{
+		var timeCell = location + 'time' + j;
+		var tempCell = location + 'temp' + j;
+		var time = theForm.elements[timeCell].value;
+      var temp = theForm.elements[tempCell].value;
+		if(time == '')
+			break;
+		result += " " + time + " " + temp;
+	}
+	return result;
+}
+
+function NewFileToSave()
+{
+	var result = "";
+
+   for(var i = 0; i < controlFileLines.length; i++) 
+   {
+        var curLine = controlFileLines[i];
+		  result += curLine + '\n';
+        if(curLine == '---')
+			break;
+	}
+
+	var i = 0;
+	
+   for(j = deviceCount+1; j <= deviceCount+rows; j++)
+   {
+        curLine = controlFileLines[j];
+		  result += GetTableLine(curLine, i) + '\n';
+		  i++;
+   }
+
+	return result;
+}
+
+
+function SaveDay(day, lastShot)
+{
+	var toSend = NewFileToSave();
+   var xhr = new XMLHttpRequest();
+   xhr.open('POST', 'post' + day + '.php', true);
+	xhr.setRequestHeader("Content-type","text/plain");
+   xhr.onload = 
+	function(e) 
+  	{
+    	if (this.status == 200) 
+		{
+			if(lastShot)
+				alert(xhr.responseText.split('<!--')[0]);
+    	}
+		xhr.abort();
+  	};
+
+   xhr.send(toSend);
 }
 
 function WeekCopy()
 {
-	alert("WeekCopy");
-
+	SaveDay('Monday', false);
+	SaveDay('Tuesday', false);
+	SaveDay('Wednesday', false);
+	SaveDay('Thursday', false);
+	SaveDay('Friday', true);
 }
 
 
 function WeekendCopy()
 {
-	alert("WeekendCopy");
+	SaveDay('Saturday', false);
+	SaveDay('Sunday', true);
 }
 
 function DataStart(tableLine)
@@ -300,37 +379,41 @@ function TableLine(tableLine, rowLength)
 	maxLocation++;
 }
 
-function LoadTemperatures() 
+function GetFileAsStringArray(frameName)
 {
-    var oFrame = document.getElementById("temperatureFile");
+    var oFrame = document.getElementById(frameName);
     var strRawContents = oFrame.contentWindow.document.body.childNodes[0].innerHTML;
     while (strRawContents.indexOf("\r") >= 0)
         strRawContents = strRawContents.replace("\r", "");
     var arrLines = strRawContents.split("\n");
+	 return arrLines;
+}
+
+function LoadTemperatures() 
+{
+    var arrLines = GetFileAsStringArray("temperatureFile");
     for(var i = 0; i < arrLines.length; i++) 
     {
-		temperatureLocations[i] = RoomName(arrLines[i]);
-		var ts = DataStart(arrLines[i]);
-		temperatures[i] = arrLines[i].substring(ts).match(/\d+/)[0];
+		if(arrLines[i].length > 2)
+		{
+			temperatureLocations[i] = RoomName(arrLines[i]);
+			var ts = DataStart(arrLines[i]);
+			temperatures[i] = arrLines[i].substring(ts).match(/\d+/)[0];
+		}
     }
 }
 
 
 function LoadFile() 
 {
-    var oFrame = document.getElementById("controlFile");
-    var strRawContents = oFrame.contentWindow.document.body.childNodes[0].innerHTML;
+    controlFileLines = GetFileAsStringArray("controlFile");
+    
     Header();
-    while (strRawContents.indexOf("\r") >= 0)
-        strRawContents = strRawContents.replace("\r", "");
-    var arrLines = strRawContents.split("\n");
-    //alert("File " + oFrame.src + " has " + arrLines.length + " lines");
-    var deviceCount = -1;
-	 var rows = -1;
-    var times = -1;
-    for(var i = 0; i < arrLines.length; i++) 
+
+
+    for(var i = 0; i < controlFileLines.length; i++) 
     {
-        var curLine = arrLines[i];
+        var curLine = controlFileLines[i];
         if(curLine == '---')
         {
 				deviceCount = i;
@@ -350,7 +433,7 @@ function LoadFile()
     //alert("Devices: " + deviceCount + ", Rows: " + rows + ", Times: " + times);
     for(j = deviceCount+1; j <= deviceCount+rows; j++)
     {
-        curLine = arrLines[j];
+        curLine = controlFileLines[j];
 		  TableLine(curLine, times+2);
     }
 	 Footer();
@@ -359,8 +442,12 @@ function LoadFile()
 
     SetButtons();
 }
+
+
+
 </script>
- 
+
+
 
 </body>
 </html>
