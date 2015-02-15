@@ -1,0 +1,11 @@
+#!/bin/sh
+LD_LIBRARY_PATH=/usr/local/lib
+export LD_LIBRARY_PATH
+cd /home/ensab/Panstamp/WiControl
+wget --timeout=15 http://adrianbowyer.net/workshop-profile.dat -O profile.dat
+./Host-software/Debug/Heating -p /dev/ttyUSB0 -i profile.dat >  Status
+if [ -f Log ]
+then
+ cat Status >> Log
+fi
+

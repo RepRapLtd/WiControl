@@ -62,8 +62,14 @@ HeatProfile::HeatProfile(std::stringstream& profileFileLine, HeatProfile* previo
 			} else
 				deviceCount++;
 		} else
+		{
 			readingDevices = false;
+			profileFileLine.putback(c);
+		}
 	}
+
+	profileFileLine >> switchedOn;
+	profileFileLine >> boostSetting;
 
 	tempDevice = scratchDevices[0];
 
@@ -134,6 +140,7 @@ void HeatProfile::PrintProfile(std::ostream& os)
 	os << SD << roomName << SD  << ' ' <<  temperatureSensorPanstamp << ' ';
 	for(int d = 0; d < deviceCount; d++)
 		os << SD << devices[d]->Name() << SD << ' ';
+	os << switchedOn << ' '<< boostSetting << ' ';
 
 	long time;
 	long hours, minutes, seconds;
@@ -154,8 +161,13 @@ void HeatProfile::PrintProfile(std::ostream& os)
 	os << '\n';
 }
 
-float HeatProfile::Temperature(struct tm* timeinfo)
+float HeatProfile::Temperature(struct tm* timeinfo, Wireless *wireless)
 {
+	if(boostSetting > wireless->SimpleTime(timeinfo))
+		return BOOST_TEMPERATURE;
+	if(switchedOn == 0)
+		return OFF_TEMPERATURE;
+
 	float result = 0.0;
 
 	long t = timeinfo->tm_hour*3600 + timeinfo->tm_min*60 + timeinfo->tm_sec;

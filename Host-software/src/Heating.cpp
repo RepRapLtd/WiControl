@@ -55,7 +55,7 @@ Device* FindDevice(char* name)
 	return NULL;
 }
 
-Heating::Heating(char* profileFile, char* port)
+Heating::Heating(char* profileFile, char* port, char* tempFile)
 {
 	deviceList = 0;
 	Device* tempD = 0;
@@ -63,15 +63,15 @@ Heating::Heating(char* profileFile, char* port)
 	HeatProfile* tempH = 0;
 	std::stringstream strs;
 	char string[LINE_LENGTH];
-	std::ifstream ifs;
 
-	ifs.open(profileFile, std::ifstream::in);
+	webProfileFile.open(profileFile, std::ifstream::in);
+	temperatureLogFile.open(tempFile, std::ofstream::out);
 
 	bool deviceEnd = false;
 	deviceList = NULL;
 	while(!deviceEnd)
 	{
-		ifs.getline(string, LINE_LENGTH);
+		webProfileFile.getline(string, LINE_LENGTH);
 		//cout << string << endl;
 		std::string s = string;
 		if(s.length() >= MIN_INPUT_LENGTH)
@@ -87,9 +87,9 @@ Heating::Heating(char* profileFile, char* port)
 	}
 
 
-	while(!ifs.eof())
+	while(!webProfileFile.eof())
 	{
-		ifs.getline(string, LINE_LENGTH);
+		webProfileFile.getline(string, LINE_LENGTH);
 		//cout << string << endl;
 		std::string s = string;
 		if(s.length() >= MIN_INPUT_LENGTH)
@@ -132,8 +132,11 @@ void Heating::PrintHeating(std::ostream& os)
 	}
 }
 
-void Heating::Run(struct tm* timeinfo)
+void Heating::Run(time_t *rawtime)
 {
+	struct tm *timeinfo;
+	timeinfo = localtime (rawtime);
+
 	// Tell the Arduino the time
 
 	wireless->SendTime(timeinfo);
@@ -159,15 +162,17 @@ void Heating::Run(struct tm* timeinfo)
 	float setTemperature;
 	while(hp)
 	{
-		setTemperature = hp->Temperature(timeinfo);
-		float temp;
+		setTemperature = hp->Temperature(timeinfo, wireless);
+		float locationTemperature;
 		int retries = 0;
 
-		while(!hp->TemperatureSensor()->GetTemperature(setTemperature, temp) && retries < 3)
+		while(!hp->TemperatureSensor()->GetTemperature(setTemperature, locationTemperature) && retries < 3)
 			retries++;
 
-		if((temp < setTemperature) != hp->Invert())
+		if((locationTemperature < setTemperature) != hp->Invert())
 			hp->On();
+
+		temperatureLogFile << SD << hp->Name() << SD << ' ' << locationTemperature << endl;
 
 		hp = hp->Next();
 		usleep(2000);
@@ -186,6 +191,8 @@ void Heating::Run(struct tm* timeinfo)
 		dp = dp->Next();
 		usleep(2000);
 	}
+
+	temperatureLogFile.close();
 }
 
 int main(int argc, char** argv)
@@ -193,8 +200,9 @@ int main(int argc, char** argv)
 	time_t rawtime;
 	int serialPortArg = -1;
 	int profileArg = -1;
+	int tempFileArg = -1;
 
-	if(argc != 5)
+	if(argc != 7)
 	{
 		cerr << "Usage: Heating -p USB-port -i heat-profile-file\n";
 		return EXIT_FAILURE;
@@ -206,6 +214,8 @@ int main(int argc, char** argv)
 			serialPortArg = i + 1;
 		if(strcmp("-i", argv[i]) == 0)
 			profileArg = i + 1;
+		if(strcmp("-o", argv[i]) == 0)
+			tempFileArg = i + 1;
 	}
 
 	if(serialPortArg < 0)
@@ -220,17 +230,21 @@ int main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
-	struct tm * timeinfo;
+	if(tempFileArg < 0)
+	{
+		cerr << "Heating: no temperature file defined (no -o temperature-file)\n";
+		return EXIT_FAILURE;
+	}
 
 	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
+
 	//cout << asctime (timeinfo) ;
 
-	Heating* heating = new Heating(argv[profileArg], argv[serialPortArg]);
+	Heating* heating = new Heating(argv[profileArg], argv[serialPortArg], argv[tempFileArg]);
 
 	// heating->PrintHeating(cout); cout << "\n";
 
-	heating->Run(timeinfo);
+	heating->Run(&rawtime);
 
 	cout << "\n";
 

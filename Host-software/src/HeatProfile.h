@@ -30,7 +30,7 @@ class HeatProfile
 {
 public:
 	HeatProfile(std::stringstream& profileFileLine, HeatProfile* previous);
-	float Temperature(struct tm* timeinfo);
+	float Temperature(struct tm* timeinfo, Wireless *wireless);
 //	int SensorNumber();
 //	int SwitchNumber();
 	bool Invert();
@@ -51,6 +51,8 @@ private:
 	Device* tempDevice;
 	Device** devices;
 	int deviceCount;
+	int switchedOn;
+	unsigned long boostSetting;
 };
 
 

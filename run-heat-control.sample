@@ -1,11 +1,35 @@
 #!/bin/sh
 LD_LIBRARY_PATH=/usr/local/lib
 export LD_LIBRARY_PATH
-cd /home/pi/Panstamp/WiControl
-wget --timeout=15 http://adrianbowyer.net/sandb-profile.dat -O sandb-profile.dat
-./Host-software/Debug/Heating -p /dev/ttyUSB0 -i sandb-profile.dat >  Status
+cd /home/ensab/Panstamp/WiControl
+DAYOFWEEK=$(date +"%u")
+if [ "${DAYOFWEEK}" -eq 1 ]
+then    
+  wget --timeout=15 http://adrianbowyer.net/workshop-profile-monday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 2 ]
+then    
+  wget --timeout=15 http://adrianbowyer.net/workshop-profile-tuesday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 3 ]
+then    
+  wget --timeout=15 http://adrianbowyer.net/workshop-profile-wednesday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 4 ]
+then    
+  wget --timeout=15 http://adrianbowyer.net/workshop-profile-thursday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 5 ]
+then    
+  wget --timeout=15 http://adrianbowyer.net/workshop-profile-friday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 6 ]
+then    
+  wget --timeout=15 http://adrianbowyer.net/workshop-profile-saturday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 7 ]
+then    
+  wget --timeout=15 http://adrianbowyer.net/workshop-profile-sunday.dat -O profile.dat
+else
+  echo "Can't find the day of the week!"
+fi
+./Host-software/Debug/Heating -p /dev/ttyUSB0 -i profile.dat -o workshop-temperatures.dat > Status
 if [ -f Log ]
 then
  cat Status >> Log
 fi
-
+wput --tries=2 workshop-temperatures.dat ftp://a4484763:*****@adrianbowyer.net/public_html/workshop-temperatures.dat

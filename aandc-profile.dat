@@ -1,0 +1,30 @@
+*Boiler* 32 0 45.0 0.0
+*Hall West* 33 0 0 15.0
+*UF Utility* 34 0 0 0
+*UF Pump* 34 1 45 0
+*UF Kitchen* 34 2 0 0
+*UF Living?* 34 3 0 0
+*UF Dining?* 34 4 0 0
+*UF Lavatory?* 34 5 0 0
+*Kitchen* 35 0 0 15
+*Living Room* 36 0 0 15
+*Main Bedroom* 37 0 0 15
+*Bathroom* 38 0 0 15
+*Hall East* 39 0 0 15.0
+*Dining Room* 40 0 0 15.0
+*Landing* 41 0 0 15.0
+*Dressing Room* 42 0 0 15.0
+---
+*Hall* *Hall West* *Boiler* *Hall West* *Hall East* 00:00:00 12.0 08:00:00 20.0 10:00:00 18.0 17:30:00 18.0 20:00:00 18.0
+*Kitchen* *Kitchen* *Boiler* *Kitchen* 00:00:00 12 07:00:00 15.0 08:30:00 15.0 17:00:00 20 20:00:00 20.0
+*UF Kitchen* *Kitchen* *Boiler* *UF Kitchen* *UF Pump* 00:00:00 5 07:00:00 22.0 08:00:00 16.0 17:00:00 21 20:00:00 18
+*Living Room* *Living Room* *Boiler* *Living Room* 00:00:00 12 16:00:00 24  20:00:00 21
+*UF Living?* *Living Room* *Boiler* *UF Living?* *UF Pump* 00:00:00 12 16:00:00 24 20:00:00 22
+*Dining Room* *Dining Room* *Boiler* *Dining Room* 00:00:00 12 16:00:00 22 19:00:00 12
+*UF Dining?* *Dining Room* *Boiler* *UF Dining?* *UF Pump* 00:00:00 12 16:00:00 22 20:00:00 12
+*Bathroom* *Bathroom* *Boiler* *Bathroom* 00:00:00 5 08:00:00 5 10:00:00 5
+*Main Bedroom* *Main Bedroom* *Boiler* *Main Bedroom* 00:00:00 12 07:00:00 20 09:00:00 12 23:20:00 18.0
+*Landing* *Landing* *Boiler* *Landing* 00:00:00 12 07:00:00 20 09:00:00 18 18:00:00 18 23:20:00 18.0
+*Dressing Room* *Dressing Room* *Boiler* *Dressing Room* 00:00:00 12 08:00:00 20 09:00:00 12 18:00:00 18 23:20:00 18.0
+
+
