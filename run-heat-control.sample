@@ -1,7 +1,7 @@
 #!/bin/sh
 LD_LIBRARY_PATH=/usr/local/lib
 export LD_LIBRARY_PATH
-cd /home/ensab/Panstamp/WiControl
+cd /home/pi/Panstamp/WiControl
 DAYOFWEEK=$(date +"%u")
 if [ "${DAYOFWEEK}" -eq 1 ]
 then    
@@ -28,8 +28,8 @@ else
   echo "Can't find the day of the week!"
 fi
 ./Host-software/Debug/Heating -p /dev/ttyUSB0 -i profile.dat -o workshop-temperatures.dat > Status
+/usr/local/bin/wput --tries=2 workshop-temperatures.dat ftp://a4484763:********@adrianbowyer.net/public_html/workshop-temperatures.dat
 if [ -f Log ]
 then
  cat Status >> Log
 fi
-wput --tries=2 workshop-temperatures.dat ftp://a4484763:*****@adrianbowyer.net/public_html/workshop-temperatures.dat
