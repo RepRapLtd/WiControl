@@ -160,6 +160,7 @@ void Heating::Run(time_t *rawtime)
 
 	HeatProfile* hp = heatProfileList;
 	float setTemperature;
+	bool switchOn;
 	while(hp)
 	{
 		setTemperature = hp->Temperature(timeinfo, wireless);
@@ -169,10 +170,18 @@ void Heating::Run(time_t *rawtime)
 		while(!hp->TemperatureSensor()->GetTemperature(setTemperature, locationTemperature) && retries < 3)
 			retries++;
 
-		if((locationTemperature < setTemperature) != hp->Invert())
+		switchOn = ((locationTemperature < setTemperature) != hp->Invert());
+		if(switchOn)
 			hp->On();
 
-		temperatureLogFile << SD << hp->Name() << SD << ' ' << locationTemperature << endl;
+		temperatureLogFile << SD << hp->Name() << SD << ' ' << locationTemperature << ' ' << setTemperature;
+
+		if(switchOn)
+			temperatureLogFile << " 1";
+		else
+			temperatureLogFile << " 0";
+
+		temperatureLogFile << endl;
 
 		hp = hp->Next();
 		usleep(2000);
