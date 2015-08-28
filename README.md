@@ -51,6 +51,7 @@ $ sudo crontab -e
 and add lines at the end like this:
 
 * * * * * /home/pi/Panstamp/WiControl/run-heat-control
+
 0 4   *   *   *    /sbin/shutdown -r +5
 
 That will cause the shell script run-heat-control to be run once a minute, and cause a

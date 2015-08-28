@@ -12,19 +12,33 @@ Installation:
 On the Pi:
 
 $ mkdir Panstamp
+
 $ cd Panstamp
+
 $ git clone https://github.com/AdrianRepRap/WiControl.git
+
 $ cd WiControl/libserial-0.6.0rc1
+
 $ make clean
+
 $ sudo make install
+
 $ cd ../wput-0.6.1
+
 $ ./configure
+
 $ make
+
 $ sudo make install
+
 $ cd ../Host-software/Debug
+
 $ make clean
+
 $ make
+
 $ cd ../..
+
 $ cp run-heat-control.sample run-heat-control
 
 then edit run-heat-control to download your control file from your webserver and to 
