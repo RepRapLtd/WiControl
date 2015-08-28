@@ -17,6 +17,10 @@ $ git clone https://github.com/AdrianRepRap/WiControl.git
 $ cd WiControl/libserial-0.6.0rc1
 $ make clean
 $ sudo make install
+$ cd ../wput-0.6.1
+$ ./configure
+$ make
+$ sudo make install
 $ cd ../Host-software/Debug
 $ make clean
 $ make
