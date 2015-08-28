@@ -37,19 +37,12 @@
 
 </style>
 
-</head>
-
-<body>
-
-<iframe id="temperatureFile" src="../workshop-temperatures.dat" onload="LoadTemperatures();" style="display: none;"></iframe>
-
-<iframe id="controlFile" src="../workshop-profile-monday.dat" onload="LoadFile();" style="display: none;"></iframe>
-
-
 <script type="text/javascript">
 
 var locations = [];
 var temperatures = [];
+var setTemperatures = [];
+var heatOn = [];
 var temperatureLocations = [];
 var boost = [];
 var boostStamp = [];
@@ -98,16 +91,16 @@ function AllOff()
 	
 function Header()
 {
-	document.write('<H2>West End Stables: Workshop Heating Settings</H2><br><br>');
+	document.write("<H2>West End Stables: Sally and Ben's Heating Settings</H2><br><br>");
 
    document.write('<ul>');
-   document.write('<li><a href="workshop-heating-monday.php"><H3>Monday</H3></a></li>');
-	document.write('<li><a href="workshop-heating-tuesday.php">Tuesday</a></li>');
-	document.write('<li><a href="workshop-heating-wednesday.php">Wednesday</a></li>');
-	document.write('<li><a href="workshop-heating-thursday.php">Thursday</a></li>');
-	document.write('<li><a href="workshop-heating-friday.php">Friday</a></li>');
-	document.write('<li><a href="workshop-heating-Saturday.php">Saturday</a></li>');
-	document.write('<li><a href="workshop-heating-Sunday.php">Sunday</a></li>');
+   document.write('<li><a href="sandb-heating-monday.php"><big>Monday <-</big></a></li>');
+	document.write('<li><a href="sandb-heating-tuesday.php">Tuesday</a></li>');
+	document.write('<li><a href="sandb-heating-wednesday.php">Wednesday</a></li>');
+	document.write('<li><a href="sandb-heating-thursday.php">Thursday</a></li>');
+	document.write('<li><a href="sandb-heating-friday.php">Friday</a></li>');
+	document.write('<li><a href="sandb-heating-saturday.php">Saturday</a></li>');
+	document.write('<li><a href="sandb-heating-sunday.php">Sunday</a></li>');
 	document.write('</ul><br>');
 
    document.write('<button style="background-color:Yellow" type="button" name="BoostAll"  onclick="AllBoost()">Boost all</button>');
@@ -123,7 +116,7 @@ document.write('<button style="background-color:Yellow" type="button" name="OffA
 function Footer()
 {
 	document.write('</tbody></table>');
-	document.write('<br><button style="background-color:white" type="button" name="Save" onclick="SaveDay(\'Monday\', true)"><H2>Save</H2></button>');
+	document.write('<br><button style="background-color:white" type="button" name="Save" onclick="SaveDay(NewFileToSave(), \'Monday\', true)"><H2>Save</H2></button>');
 	document.write('<button style="background-color:white" type="button" name="CopyWeek" onclick="WeekCopy()"><H2>Copy to weekdays</H2></button>');
 	document.write('<button style="background-color:white" type="button" name="CopyWeekend" onclick="WeekendCopy()"><H2>Copy to weekends</H2></button>');
 	document.write('</form>');
@@ -152,9 +145,11 @@ function GetTableLine(curline, i)
 		var timeCell = location + 'time' + j;
 		var tempCell = location + 'temp' + j;
 		var time = theForm.elements[timeCell].value;
-      var temp = theForm.elements[tempCell].value;
+                var temp = theForm.elements[tempCell].value;
 		if(time == '')
-			break;
+			 break;
+                if(time.lastIndexOf(':') < 3)
+                     time += ":00";
 		result += " " + time + " " + temp;
 	}
 	return result;
@@ -185,9 +180,8 @@ function NewFileToSave()
 }
 
 
-function SaveDay(day, lastShot)
+function SaveDay(toSend, day, lastShot)
 {
-	var toSend = NewFileToSave();
    var xhr = new XMLHttpRequest();
    xhr.open('POST', 'post' + day + '.php', true);
 	xhr.setRequestHeader("Content-type","text/plain");
@@ -207,18 +201,20 @@ function SaveDay(day, lastShot)
 
 function WeekCopy()
 {
-	SaveDay('Monday', false);
-	SaveDay('Tuesday', false);
-	SaveDay('Wednesday', false);
-	SaveDay('Thursday', false);
-	SaveDay('Friday', true);
+	var toSend = NewFileToSave();
+	SaveDay(toSend, 'Monday', false);
+	SaveDay(toSend, 'Tuesday', false);
+	SaveDay(toSend, 'Wednesday', false);
+	SaveDay(toSend, 'Thursday', false);
+	SaveDay(toSend, 'Friday', true);
 }
 
 
 function WeekendCopy()
 {
-	SaveDay('Saturday', false);
-	SaveDay('Sunday', true);
+	var toSend = NewFileToSave();
+	SaveDay(toSend, 'Saturday', false);
+	SaveDay(toSend, 'Sunday', true);
 }
 
 function DataStart(tableLine)
@@ -327,7 +323,13 @@ function TableLine(tableLine, rowLength)
 		alert("Temperature file mismatch: " + location + " != " + temperatureLocations[maxLocation]);
 
 	document.write('<td rowspan="2">' + location + '</td>');
-	document.write('<td rowspan="2">' + temperatures[maxLocation] + '<sup>o</sup>C</td>');
+
+   if(heatOn[maxLocation] == 1)
+		document.write('<td rowspan="2" style="background-color:IndianRed">');
+   else
+		document.write('<td rowspan="2" style="background-color:Aqua">');
+
+   document.write(temperatures[maxLocation] + '/' + setTemperatures[maxLocation] + '<sup>o</sup>C</td>');
 
 	document.write('<td align="center"><button style="background-color:Yellow" type="button" name="' + location + 'Boost" onclick="BoostButton(\'' + location + '\', -1)">Boost</button>  </td>');
 
@@ -399,6 +401,10 @@ function LoadTemperatures()
 			temperatureLocations[i] = RoomName(arrLines[i]);
 			var ts = DataStart(arrLines[i]);
 			temperatures[i] = arrLines[i].substring(ts).match(/\d+/)[0];
+         ts += temperatures[i].length+1;
+         setTemperatures[i] = arrLines[i].substring(ts).match(/\d+/)[0];
+			ts += setTemperatures[i].length+1;
+         heatOn[i] = arrLines[i].substring(ts).match(/\d+/)[0];
 		}
     }
 }
@@ -449,6 +455,23 @@ function LoadFile()
 
 
 
+</head>
+
+<body>
+
+<script>
+
+var url1 = "../../sandb-temperatures.dat?timestamp=" + Date.now();
+document.write('<iframe id="temperatureFile" src="' + url1 + '" onload="LoadTemperatures();" style="display: none;"></iframe>');
+
+var url2 = "../../sandb-profile-monday.dat?timestamp=" + Date.now();
+document.write('<iframe id="controlFile" src="' + url2 + '" onload="LoadFile();" style="display: none;"></iframe>');
+
+
+</script>
+
+
+
+
 </body>
 </html>
-
