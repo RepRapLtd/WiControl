@@ -11,7 +11,6 @@ msgstr ""
 "PO-Revision-Date: 2007-07-02 21:33+0600\n"
 "Last-Translator: Vyacheslav Nikitin <alien.virus@gmail.com>\n"
 "Language-Team:  <ru@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -432,8 +431,8 @@ msgstr "Предупреждение приема: таймаут вызова r
 #, c-format
 msgid "Receive-Error: read() failed. Read '%s' so far. (errno: %s (%d))\n"
 msgstr ""
-"Предупреждение приема: таймаут вызова read(). Ещ читать '%s'. (errno: %s "
-"(%d))\n"
+"Предупреждение приема: таймаут вызова read(). Ещ читать '%s'. (errno: %s (%"
+"d))\n"
 
 #: src/socketlib.c:263
 msgid "recv() timed out. No data received\n"

@@ -13,7 +13,6 @@ msgstr ""
 "PO-Revision-Date: 2005-05-26 12:06+0200\n"
 "Last-Translator: Hagen Fritsch <fritsch+wput-it@in.tum.de>\n"
 "Language-Team:  <de@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -439,8 +438,8 @@ msgstr "TLS handshake fallito.\n"
 #, c-format
 msgid "Receive-Warning: read() timed out. Read '%s' so far.\n"
 msgstr ""
-"Attenzione: read() è terminata per time out. Fino ad ora è stato letto: "
-"'%s'.\n"
+"Attenzione: read() è terminata per time out. Fino ad ora è stato letto: '%"
+"s'.\n"
 
 #: src/socketlib.c:243
 #, c-format

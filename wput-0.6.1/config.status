@@ -341,7 +341,7 @@ Copyright (C) 2006 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/pi/Panstamp/WiControl/wput-0.6.1'
+ac_pwd='/home/pi/wput-0.6.1'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 # If no file are specified by the user, then we need to provide default
@@ -557,10 +557,10 @@ s,@INSTALL_SCRIPT@,|#_!!_#|${INSTALL},g
 s,@INSTALL_DATA@,|#_!!_#|${INSTALL} -m 644,g
 s,@MKINSTALLDIRS@,|#_!!_#|$(top_builddir)/./mkinstalldirs,g
 s,@USE_NLS@,|#_!!_#|yes,g
-s,@MSGFMT@,|#_!!_#|/usr/bin/msgfmt,g
-s,@GMSGFMT@,|#_!!_#|/usr/bin/msgfmt,g
-s,@XGETTEXT@,|#_!!_#|/usr/bin/xgettext,g
-s,@MSGMERGE@,|#_!!_#|/usr/bin/msgmerge,g
+s,@MSGFMT@,|#_!!_#|:,g
+s,@GMSGFMT@,|#_!!_#|:,g
+s,@XGETTEXT@,|#_!!_#|:,g
+s,@MSGMERGE@,|#_!!_#|:,g
 s,@build@,|#_!!_#|armv6l-unknown-linux-gnu,g
 s,@build_cpu@,|#_!!_#|armv6l,g
 s,@build_vendor@,|#_!!_#|unknown,g
