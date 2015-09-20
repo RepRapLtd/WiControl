@@ -84,7 +84,7 @@ Heating::Heating(char* profileFile, char* port, char* tempFile)
 		strs.str(std::string());
 	}
 
-	oldTemperatureLogFile.open(tempFile, std::ifstream::in);
+/*	oldTemperatureLogFile.open(tempFile, std::ifstream::in);
 	while(!oldTemperatureLogFile.eof())
 	{
 		oldTemperatureLogFile.getline(string, LINE_LENGTH);
@@ -96,11 +96,9 @@ Heating::Heating(char* profileFile, char* port, char* tempFile)
 		Device* d = FindDevice(scratchString);
 		if(d)
 			d->SetOldTemperature(t);
-		strs.clear();
-		strs.str(std::string());
 	}
 	oldTemperatureLogFile.close();
-
+*/
 	temperatureLogFile.open(tempFile, std::ofstream::out);
 
 	while(!webProfileFile.eof())

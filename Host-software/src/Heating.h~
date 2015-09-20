@@ -58,7 +58,6 @@ public:
 
 private:
 	std::ifstream webProfileFile;
-	std::ifstream oldTemperatureLogFile;
 	std::ofstream temperatureLogFile;
 };
 

@@ -24,8 +24,6 @@ public:
 	float OnDelay();
 	float OffDelay();
 	bool GetTemperature(float setTemperature, float& temperature);
-        float GetOldTemperature();
-        void SetOldTemperature(float t);
 	Device* Next();
 
 private:
@@ -34,7 +32,6 @@ private:
 	int port;
 	float onDelay;
 	float offDelay;
-	float oldTemperature;
 	bool on;
 	Device* next;
 };
