@@ -27,7 +27,7 @@ then
 else
   echo "Can't find the day of the week!"
 fi
-./Host-software/Debug/Heating -p /dev/ttyUSB0 -i profile.dat -o workshop-temperatures.dat &> Status
+./Host-software/Debug/Heating -p /dev/ttyUSB0 -i profile.dat -o workshop-temperatures.dat > Status
 /usr/local/bin/wput --tries=2 workshop-temperatures.dat ftp://adrianbo:********@ftp.adrianbowyer.com:21/public_html/workshop-temperatures.dat
 if [ -f Log ]
 then
