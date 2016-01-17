@@ -1,0 +1,68 @@
+/*
+ * Switch.h
+ *
+ *  Created on: 24 Aug 2014
+ *      Author: ensab
+ */
+
+#ifndef SWITCH_H_
+#define SWITCH_H_
+
+class Switch
+{
+public:
+	Switch(int p);
+	void On(float delay);
+	void On(float value, float delay);
+	void Off(float delay);
+	bool Spin(unsigned long time);
+	int Pin();
+
+private:
+	int pin;
+	uint8_t value;
+	bool onWaiting;
+	bool analogue;
+	bool offWaiting;
+	bool iAmOn;
+	time_t onTime;
+	time_t offTime;
+};
+
+inline void Switch::On(float delay)
+{
+	if(!onWaiting)
+	{
+		onWaiting = true;
+		analogue = false;
+		onTime = now() + (time_t)delay;
+	}
+}
+
+inline void Switch::On(float val, float delay)
+{
+	if(!onWaiting)
+	{
+		onWaiting = true;
+		analogue = true;
+		value = (uint8_t)(255.0*val);
+		onTime = now() + (time_t)delay;
+	}
+}
+
+inline void Switch::Off(float delay)
+{
+	if(!offWaiting)
+	{
+		offWaiting = true;
+		offTime = now() + (time_t)delay;
+	}
+}
+
+inline int Switch::Pin()
+{
+	return pin;
+}
+
+
+#endif /* SWITCH_H_ */
