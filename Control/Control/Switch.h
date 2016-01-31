@@ -29,36 +29,6 @@ private:
 	time_t offTime;
 };
 
-inline void Switch::On(float delay)
-{
-	if(!onWaiting)
-	{
-		onWaiting = true;
-		analogue = false;
-		onTime = now() + (time_t)delay;
-	}
-}
-
-inline void Switch::On(float val, float delay)
-{
-	if(!onWaiting)
-	{
-		onWaiting = true;
-		analogue = true;
-		value = (uint8_t)(255.0*val);
-		onTime = now() + (time_t)delay;
-	}
-}
-
-inline void Switch::Off(float delay)
-{
-	if(!offWaiting)
-	{
-		offWaiting = true;
-		offTime = now() + (time_t)delay;
-	}
-}
-
 inline int Switch::Pin()
 {
 	return pin;

@@ -10,17 +10,18 @@
 #include <Time.h>
 #include <avr/wdt.h>
 
+#include "Debug.h"
 #include "Communicator.h"
 #include "CommandBuffer.h"
 #include "Switch.h"
 #include "Light.h"
 
-#define MY_ADDRESS 1
-#define HOST 1
-#define PLACE "Control"
+#define MY_ADDRESS 100
+#define HOST 31
+#define PLACE "Test"
 #define NAME "WiControl"
-#define DATE "2014-10-12"
-#define VERSION "0.14"
+#define DATE "2016-01-31"
+#define VERSION "0.15"
 
 #define BAUD_RATE 38400
 
@@ -56,7 +57,7 @@
  #define RED FLASH
  #define GREEN FLASH
  #define BLUE FLASH
- #define WATCHDOG
+ //#define WATCHDOG
 #else
  #define SWITCHES 9
  #define OUT_PINS {3, 8, 17, 15, 16, RED_PWM, GREEN_PWM, BLUE_PWM, FLASHOUTPUT};
@@ -76,6 +77,7 @@ void IncommingInterrupt();
 void blink();
 
 extern Switch* switches[SWITCHES];
+extern Message* message;
 
 #ifdef __cplusplus
 extern "C" {

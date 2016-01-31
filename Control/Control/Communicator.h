@@ -21,23 +21,23 @@ public:
 	char* Receive(byte& address);
 	void Interrupt();
 	void FreeReadData();
-	void SetDebug(bool d);
+	//void SetDebug(bool d);
 
 private:
-	CC1101 cc1101;
-	CCPACKET transmitPacket;
-	CCPACKET receivePacket;
+	CC1101* cc1101;
+	CCPACKET* transmitPacket;
+	CCPACKET* receivePacket;
 	volatile bool dataAvailable;
 	byte networkAddress[2];
 	byte myAddress;
 	byte lastReceivedFrom;
-	bool debug;
+	//bool debug;
 };
 
-inline void Communicator::SetDebug(bool d)
-{
-	debug = d;
-}
+//inline void Communicator::SetDebug(bool d)
+//{
+//	debug = d;
+//}
 
 inline void Communicator::FreeReadData()
 {

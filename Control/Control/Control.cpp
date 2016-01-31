@@ -16,6 +16,8 @@ Communicator* communicator = 0;
 CommandBuffer* serialInput;
 CommandBuffer* wirelessInput;
 
+Message* message;
+
 void blink()
 {
 	switches[SWITCHES-1]->On(0.0);
@@ -58,9 +60,9 @@ void setup()
 {
 	  wdt_disable();
 	  resetTime = millis();
-	  Serial.begin(BAUD_RATE);
-	  Serial.print((int)MY_ADDRESS);
-	  Serial.println(" starting");
+	  message = new Message();
+	  message->Say((int)MY_ADDRESS);
+	  message->Say(" starting\n");
 	  pinMode(TEMP_SENSE_PIN, INPUT);
 
 	  for(byte s = 0; s < SWITCHES; s++)
@@ -68,7 +70,7 @@ void setup()
 
 	  light = new Light();
 	  communicator = new Communicator(MY_ADDRESS);
-	  communicator->SetDebug(false);
+	  //communicator->SetDebug(false);
 	  dataPointer = 0;
 	  serialInput = new CommandBuffer();
 	  wirelessInput = new CommandBuffer();
@@ -82,6 +84,7 @@ void setup()
 #endif
 }
 
+/*
 void Message(char* m)
 {
 	Serial.print(m);
@@ -101,7 +104,7 @@ void Message(float f)
 {
 	Serial.print(f);
 }
-
+*/
 void Interpret(CommandBuffer* cb, int address)
 {
 	float t;
@@ -111,7 +114,7 @@ void Interpret(CommandBuffer* cb, int address)
 
 	if(address == MY_ADDRESS)
 	{
-		Message("Talking to myself!\n");
+		message->Debug("Talking to myself!\n");
 		return;
 	}
 
@@ -135,10 +138,18 @@ void Interpret(CommandBuffer* cb, int address)
 					float delay = 0.0;
 					if(cb->Seen('D'))
 						delay = cb->GetFValue();
-					if(value)
-						switches[s]->On(delay);
-					else
-						switches[s]->Off(delay);
+					if(s >= 0 && s < SWITCHES)
+					{
+						if(value)
+							switches[s]->On(delay);
+						else
+							switches[s]->Off(delay);
+					} else
+					{
+						message->Say("Dud switch index: ");
+						message->Say(s);
+						message->Say(".\n");
+					}
 				}
 			}
 			break;
@@ -147,9 +158,9 @@ void Interpret(CommandBuffer* cb, int address)
 
 		case 2:
 			t = GetTemperature();
-			Message("Temp: ");
-			Message(t);
-			Message("\n");
+			message->Say("Temp: ");
+			message->Say(t);
+			message->Say("\n");
 			if(address >= 0)
 			{
 				snprintf(data, DATA_LENGTH, "R2 T%d\n", 10*(int)t);
@@ -173,9 +184,9 @@ void Interpret(CommandBuffer* cb, int address)
 		case 4:
 			snprintf(data, DATA_LENGTH, "\"%s\" %d, %s, ver: %s, date: %s\n",
 					PLACE, MY_ADDRESS, NAME, VERSION, DATE);
-			Message("\n");
-			Message(data);
-			Message("\n");
+			message->Say("\n");
+			message->Say(data);
+			message->Say("\n");
 			if(address >= 0)
 			{
 				snprintf(data, DATA_LENGTH, "R4 S\"%s\" %d, v: %s, %s\n",
@@ -184,7 +195,7 @@ void Interpret(CommandBuffer* cb, int address)
 			}
 			break;
 
-			// Low level write to a pin for test/debug
+			// Low level write to a pin for test/message
 
 		case 5:
 			if(cb->Seen('P'))
@@ -221,13 +232,13 @@ void Interpret(CommandBuffer* cb, int address)
 		// Return the time
 		case 7:
 			tim = now();
-			Message("Time: ");
+			message->Say("Time: ");
 			TimeToString(timeString, DATA_LENGTH, tim);
-			Message(timeString);
-			Message(" (");
-			Message((unsigned long)tim);
-			Message(")");
-			Message("\n");
+			message->Say(timeString);
+			message->Say(" (");
+			message->Say((unsigned long)tim);
+			message->Say(")");
+			message->Say("\n");
 			if(address >= 0)
 			{
 				snprintf(data, DATA_LENGTH, "R7 T%lu\n", (unsigned long)tim);
@@ -241,11 +252,21 @@ void Interpret(CommandBuffer* cb, int address)
 				setTime((time_t)cb->GetLValue());
 			break;
 
+		// Turn debugging on or off
+		case 9:
+			if(cb->Seen('P'))
+			{
+				if(cb->GetIValue())
+					message->DebugOn();
+				else
+					message->DebugOff();
+			}
+			break;
 
 		default:
-			Message("Unknown command: ");
-			Message(cb->Buffer());
-			Message("\n");
+			message->Debug("Unknown command: ");
+			message->Debug(cb->Buffer());
+			message->Debug("\n");
 		}
 	}
 
@@ -258,11 +279,11 @@ void Interpret(CommandBuffer* cb, int address)
 		case 2:
 			if(cb->Seen('T'))
 			{
-				Message("Temp returned from ");
-				Message(address);
-				Message(" was ");
-				Message((float)(0.1*(float)cb->GetIValue()));
-				Message("\n");
+				message->Say("Temp returned from ");
+				message->Say(address);
+				message->Say(" was ");
+				message->Say((float)(0.1*(float)cb->GetIValue()));
+				message->Say("\n");
 			}
 			break;
 
@@ -270,11 +291,11 @@ void Interpret(CommandBuffer* cb, int address)
 		case 4:
 			if(cb->Seen('S'))
 			{
-				Message("Identifier from: ");
-				Message(address);
-				Message(" was ");
-				Message(cb->GetString());
-				Message("\n");
+				message->Say("Identifier from: ");
+				message->Say(address);
+				message->Say(" was ");
+				message->Say(cb->GetString());
+				message->Say("\n");
 			}
 			break;
 
@@ -284,22 +305,22 @@ void Interpret(CommandBuffer* cb, int address)
 			{
 				setTime((time_t)cb->GetLValue());
 				tim = now();
-				Message("Time returned from ");
-				Message(address);
-				Message(" was ");
+				message->Say("Time returned from ");
+				message->Say(address);
+				message->Say(" was ");
 				TimeToString(timeString, DATA_LENGTH, tim);
-				Message(timeString);
-				Message(" (");
-				Message((unsigned long)tim);
-				Message(")");
-				Message("\n");
+				message->Say(timeString);
+				message->Say(" (");
+				message->Say((unsigned long)tim);
+				message->Say(")");
+				message->Say("\n");
 			}
 			break;
 
 		default:
-			Message("Unknown reply: ");
-			Message(cb->Buffer());
-			Message("\n");
+			message->Debug("Unknown reply: ");
+			message->Debug(cb->Buffer());
+			message->Debug("\n");
 		}
 	}
 }
