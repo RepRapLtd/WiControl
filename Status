@@ -1,14 +1,18 @@
-Time: 15-10-2015 21:31 (1444944708)
-Temperature of Office (2) is 20 (set temperature: 20).  
-Temperature of Electronics Lab (3) is 19 (set temperature: 19).  
-Temperature of Chemistry Lab (6) is 17 (set temperature: 17).  
-Temperature of Workshop (4) is 17 (set temperature: 15).  
-Temperature of Tack room (7) is 17 (set temperature: 0).  
-Temperature of Foyer (8) is 17 (set temperature: 0).  
-Turned Boiler off.
-Turned Office off.
+Time: 15-3-2016 10:38 (1458038281)
+Temperature of Office (2) is 21 (set temperature: 22).  
+Turned Boiler on.
+Turned Office on.
+Temperature of Electronics Lab (3) is 20 (set temperature: 20).  
+Temperature of Chemistry Lab (6) is 19 (set temperature: 20).  
+Turned Boiler on.
+Turned Chemistry Lab on.
+Temperature of Workshop (4) is 20 (set temperature: 20).  
+Temperature of Tack room (7) is 16 (set temperature: 14).  
+Timeout on temperature read from: Foyer, using : 15
+Timeout on temperature read from: Foyer, using : 15
+Timeout on temperature read from: Foyer, using : 15
+Timeout on temperature read from: Foyer, using : 15
 Turned Electronics Lab off.
-Turned Chemistry Lab off.
 Turned Workshop off.
 Turned Tack room off.
 Turned Foyer off.
