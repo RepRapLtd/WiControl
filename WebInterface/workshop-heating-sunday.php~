@@ -55,7 +55,7 @@ td {
 // Set these two for all scripts
 // building is one of 'aandc', 'sandb', or 'Workshop'
 
-var today = 'Sunday';
+var today = 'Saturday';
 var building = 'Workshop';
 
 //------------------------------------------

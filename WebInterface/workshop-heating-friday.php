@@ -55,7 +55,7 @@ td {
 // Set these two for all scripts
 // building is one of 'aandc', 'sandb', or 'Workshop'
 
-var today = 'Sunday';
+var today = 'Friday';
 var building = 'Workshop';
 
 //------------------------------------------
@@ -75,18 +75,6 @@ var controlFileLines;
 var deviceCount = -1;
 var rows = -1;
 var times = -1;
-
-var juneSolstice = new Date();
-juneSolstice.setMonth(5); // zero-based
-juneSolstice.setDate(21);
-
-var decemberSolstice = new Date();
-decemberSolstice.setMonth(11); // zero-based
-decemberSolstice.setDate(21);
-
-
-var winterOffset = Math.max(juneSolstice.getTimezoneOffset(), decemberSolstice.getTimezoneOffset());
-var summerOffset = Math.min(juneSolstice.getTimezoneOffset(), decemberSolstice.getTimezoneOffset());
 
 
 function AllBoost()
@@ -188,12 +176,9 @@ function GetTableLine(curline, i)
 	result += " ";
 
 	var boostTime = 3600;
-
-	var thisDay = new Date();
-	if (thisDay.getTimezoneOffset() != winterOffset) 
-	{ 
-		boostTime = 2*boostTime; 
-	}
+	var today = new Date();
+	if (today.dst())
+		boostTime = 2*boostTime;
 
 	if(boost[i])
 		result += Math.floor(Date.now()/1000) + boostTime;
@@ -403,7 +388,7 @@ function TableLine(tableLine, rowLength)
    document.write('<td rowspan="2" style="background-color:white">');
    document.write(setTemperatures[maxLocation] + '<sup>o</sup>C</td>');
 
-	document.write('<td align="center"><button style="background-color:Yellow" type="button" name="' + location + 'Boost" onclick="BoostButton(\'' + location + '\', -1, true)">Boost</button>  </td>');
+	document.write('<td align="center"><button style="background-color:Yellow" type="button" name="' + location + 'Boost" onclick="BoostButton(\'' + location + '\', -1, false)">Boost</button>  </td>');
 
 	var ts = DataStart(tableLine);
    var tstep = ts;

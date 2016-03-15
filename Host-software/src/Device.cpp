@@ -16,7 +16,7 @@ Device::Device(std::stringstream& profileFileLine, Device* previous)
 	profileFileLine >> std::skipws >> port;
 	profileFileLine >> std::skipws >> onDelay;
 	profileFileLine >> std::skipws >> offDelay;
-	oldTemperature = -10;
+	oldTemperature = DEFAULT_TEMPERATURE;
 
 	on = false;
 	if(previous)
