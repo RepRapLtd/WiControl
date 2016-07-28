@@ -136,7 +136,7 @@ void Interpret(CommandBuffer* cb, int address)
       message->Say("\n");
       if(address >= 0)
       {
-        snprintf(data, DATA_LENGTH, "R2 T%d\n", 10*(int)t);
+        snprintf(data, DATA_LENGTH, "R2 T%d\n", round(10.0*t));
         communicator->Send(address, data);
       }
       break;
