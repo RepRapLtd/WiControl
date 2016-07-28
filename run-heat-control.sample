@@ -29,6 +29,7 @@ then
  else
    echo "Can't find the day of the week!"
  fi
+ cp profile.dat backup-profile.dat
 else
  cp backup-profile.dat profile.dat
 fi
