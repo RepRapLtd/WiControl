@@ -16,7 +16,7 @@ On the Pi:
 $ sudo dpkg-reconfigure tzdata [Set your local timezone]
 $ mkdir Panstamp
 $ cd Panstamp
-$ git clone https://github.com/AdrianBowyer/WiControl.git
+$ git clone https://github.com/AdrianRepRap/WiControl.git
 $ cd WiControl/libserial-0.6.0rc1
 $ make clean
 $ sudo make install
