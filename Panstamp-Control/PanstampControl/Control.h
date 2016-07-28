@@ -52,7 +52,7 @@
  #define RED FLASH
  #define GREEN FLASH
  #define BLUE FLASH
- //#define WATCHDOG
+ #define WATCHDOG
 #else
  #define SWITCHES 9
  #define OUT_PINS {3, 8, 17, 15, 16, RED_PWM, GREEN_PWM, BLUE_PWM, FLASHOUTPUT};

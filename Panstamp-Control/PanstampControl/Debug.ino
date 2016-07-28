@@ -14,7 +14,12 @@ Message::Message()
 void Message::DebugOn()
 {
   debug = true;
-  Serial.println("Debugging on");
+  Serial.print("Debugging on");
+#ifdef WATCHDOG
+  Serial.println(", watchdog active.");
+#else
+  Serial.println(", watchdog inactive.");
+#endif
 }
 
 void Message::DebugOff()

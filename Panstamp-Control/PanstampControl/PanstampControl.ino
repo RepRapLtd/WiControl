@@ -32,7 +32,7 @@ Switch* switches[SWITCHES];
 
 Light* light;
 
-unsigned long resetTime;
+unsigned long timeOfLastMessage;
 
 Communicator* communicator = 0;
 CommandBuffer* serialInput;
@@ -307,7 +307,6 @@ void softReset()
 void setup()
 {
     wdt_disable();
-    resetTime = millis();
     message = new Message();
     message->Say((int)MY_ADDRESS);
     message->Say(" starting\n");
@@ -325,6 +324,8 @@ void setup()
     {
       GetHostTime();
     }
+    timeOfLastMessage = millis();
+    wdt_enable(WDTO_8S);
 }
 
 
@@ -336,12 +337,16 @@ void loop()
   unsigned long time = millis();
 
 #ifdef WATCHDOG
-  if( time - resetTime > ((unsigned long)RESET_SECONDS*(unsigned long)1000 ) )
+  if( time - timeOfLastMessage > ((unsigned long)RESET_SECONDS*(unsigned long)1000 ) )
   {
      message->Say("Timeout reset.\n");
      delay(2000);
-     softReset();
+  } else
+  {
+    wdt_reset();
   }
+#else
+  wdt_reset();
 #endif
 
   time_t tim = now();
@@ -356,7 +361,7 @@ void loop()
     communicator->FreeReadData();
     Interpret(wirelessInput, address);
     // If something has talked to us, we are working OK; reset the reset timer
-    resetTime = time;
+    timeOfLastMessage = time;
   }
 
   if(!Serial.available())
