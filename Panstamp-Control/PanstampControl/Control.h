@@ -11,7 +11,7 @@
 //#define A_AND_C
 //#define S_AND_B
 
-#define MY_ADDRESS 8
+#define MY_ADDRESS 100
 #define HOST 1
 #define PLACE "Test"
 #define NAME "WiControl"

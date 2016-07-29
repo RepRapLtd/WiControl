@@ -33,7 +33,7 @@ then
 else
  cp backup-profile.dat profile.dat
 fi
-./Host-software/Debug/Heating -p /dev/ttyUSB0 -i profile.dat -o aandc-temperatures.dat > Status 2>&1
+./Pi-Control/bin/Heating -p /dev/ttyUSB0 -i profile.dat -o aandc-temperatures.dat > Status 2>&1
 /usr/local/bin/wput --tries=2 aandc-temperatures.dat ftp://heating@adrianbowyer.com:*********@ftp.adrianbowyer.com:21/aandc-temperatures.dat
 if [ -f Log ]
 then
