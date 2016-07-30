@@ -37,7 +37,6 @@ class Heating;
 #include <cstring>
 #include <stdio.h>
 #include <sstream>
-#include <math.h>
 
 #include "Line.h"
 #include "HeatProfile.h"

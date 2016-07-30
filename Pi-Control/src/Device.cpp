@@ -16,7 +16,7 @@ Device::Device(std::stringstream& profileFileLine, Device* previous)
 	profileFileLine >> std::skipws >> port;
 	profileFileLine >> std::skipws >> onDelay;
 	profileFileLine >> std::skipws >> offDelay;
-	oldTemperature = DEFAULT_TEMPERATURE;
+	oldTemperature = defaultTemperature;
 
 	on = false;
 	if(previous)
@@ -26,7 +26,7 @@ Device::Device(std::stringstream& profileFileLine, Device* previous)
 
 void Device::PrintDevice(std::ostream& os)
 {
-	os << SD << name << SD << " " << panStampNumber << " " << port << " " << onDelay << " " << offDelay << endl;
+	os << SD << name << SD << ", panStamp: " << panStampNumber << ", port:" << port << ", on-delay:" << onDelay << ", off-delay:" << offDelay << endl;
 }
 
 int Device::PanStampNumber()

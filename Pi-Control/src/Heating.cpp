@@ -16,6 +16,8 @@ Device* scratchDevices[LINE_LENGTH];
 HeatProfile* heatProfileList;
 Wireless* wireless;
 Device* deviceList;
+int debug;
+float defaultTemperature = DEFAULT_TEMPERATURE_WINTER;
 
 void ReadQuotedString(std::stringstream& profileFileLine, char* s)
 {
@@ -61,16 +63,23 @@ Heating::Heating(char* profileFile, char* port, char* tempFile)
 	Device* tempD = 0;
 	heatProfileList = 0;
 	HeatProfile* tempH = 0;
+	error = true;
 	std::stringstream strs;
 	char string[LINE_LENGTH];
 
 	webProfileFile.open(profileFile, std::ifstream::in);
+	if (!webProfileFile.is_open())
+	{
+		cerr << "Can't open " << profileFile << " to read settings." << endl;
+		return;
+	}
 	bool deviceEnd = false;
 	deviceList = NULL;
 	while(!deviceEnd)
 	{
 		webProfileFile.getline(string, LINE_LENGTH);
-		//cout << string << endl;
+		if(debug > 1 && string[0])
+			cout << "profile: " << string << endl;
 		std::string s = string;
 		if(s.length() >= MIN_INPUT_LENGTH)
 		{
@@ -84,10 +93,20 @@ Heating::Heating(char* profileFile, char* port, char* tempFile)
 		strs.str(std::string());
 	}
 
+	// Read the old temperatures here
+
 	oldTemperatureLogFile.open(tempFile, std::ifstream::in);
+	if (!oldTemperatureLogFile.is_open())
+	{
+		cerr << "Can't open " << tempFile << " to read old temperatures." << endl;
+		return;
+	}
+
 	while(!oldTemperatureLogFile.eof())
 	{
 		oldTemperatureLogFile.getline(string, LINE_LENGTH);
+		if(debug && string[0])
+			cout << "old temperature: " << string << endl;
 		std::string s = string;
 		strs << string;
 		ReadQuotedString(strs, scratchString);
@@ -101,12 +120,15 @@ Heating::Heating(char* profileFile, char* port, char* tempFile)
 	}
 	oldTemperatureLogFile.close();
 
+	// Now open the old temperature file to write the current temperatures into
+
 	temperatureLogFile.open(tempFile, std::ofstream::out);
 
 	while(!webProfileFile.eof())
 	{
 		webProfileFile.getline(string, LINE_LENGTH);
-		//cout << string << endl;
+		if(debug > 1 && string[0])
+			cout << "profile: " << string << endl;
 		std::string s = string;
 		if(s.length() >= MIN_INPUT_LENGTH)
 		{
@@ -122,13 +144,17 @@ Heating::Heating(char* profileFile, char* port, char* tempFile)
 	wireless = new Wireless(port);
 
 	if(!wireless->Valid())
+	{
 		cerr << "No wireless communications available." << endl;
+		return;
+	}
 
+	error = false;
 }
 
 void Heating::PrintHeating(std::ostream& os)
 {
-	os << "Heating settings:\n Devices:\n";
+	os << "\nHeating settings:\n Devices:\n";
 
 	Device* d = deviceList;
 	while(d)
@@ -146,6 +172,20 @@ void Heating::PrintHeating(std::ostream& os)
 		hp->PrintProfile(os);
 		hp = hp->Next();
 	}
+}
+
+char* TimeString(struct tm *timeinfo)
+{
+	char* ts = asctime(timeinfo);
+	ts[strlen(ts)-1] = '\0';
+	return ts;
+}
+
+char* TimeString(time_t *rawtime)
+{
+	struct tm * timeinfo;
+	timeinfo = localtime (rawtime);
+	return TimeString(timeinfo);
 }
 
 void Heating::Run(time_t *rawtime)
@@ -190,7 +230,10 @@ void Heating::Run(time_t *rawtime)
 		if(switchOn)
 			hp->On();
 
-		temperatureLogFile << SD << hp->Name() << SD << ' ' << locationTemperature << ' ' << setTemperature;
+		// NB temperatures in the logfile have to be integers to avoid
+		// confusing the web interface
+
+		temperatureLogFile << SD << hp->Name() << SD << ' ' << round(locationTemperature) << ' ' << round(setTemperature);
 
 		if(switchOn)
 			temperatureLogFile << " 1";
@@ -220,6 +263,7 @@ void Heating::Run(time_t *rawtime)
 	temperatureLogFile.close();
 }
 
+
 int main(int argc, char** argv)
 {
 	time_t rawtime;
@@ -227,9 +271,11 @@ int main(int argc, char** argv)
 	int profileArg = -1;
 	int tempFileArg = -1;
 
-	if(argc != 7)
+	debug = 0;
+
+	if(argc != 7 && argc != 8)
 	{
-		cerr << "Usage: Heating -p USB-port -i heat-profile-file -o temperature-file\n";
+		cerr << "Usage: Heating [-d[d]] -p USB-port -i heat-profile-file -o temperature-file\n";
 		return EXIT_FAILURE;
 	}
 
@@ -241,7 +287,14 @@ int main(int argc, char** argv)
 			profileArg = i + 1;
 		if(strcmp("-o", argv[i]) == 0)
 			tempFileArg = i + 1;
+		if(strcmp("-d", argv[i]) == 0)
+			debug = 1;
+		if(strcmp("-dd", argv[i]) == 0)
+			debug = 2;
 	}
+
+	if(debug)
+		cout << endl << endl;
 
 	if(serialPortArg < 0)
 	{
@@ -262,12 +315,33 @@ int main(int argc, char** argv)
 	}
 
 	time ( &rawtime );
+	struct tm * timeInfo;
+	timeInfo = localtime (&rawtime);
 
-	//cout << asctime (timeinfo) ;
+	if(timeInfo->tm_mon > 3 && timeInfo->tm_mon < 8)
+		defaultTemperature = DEFAULT_TEMPERATURE_SUMMER;
+	else
+		defaultTemperature = DEFAULT_TEMPERATURE_WINTER;
+
+	if(debug)
+	{
+		cout << "System time: " << TimeString(timeInfo) << ", default temperature:" << defaultTemperature <<
+		" (month " << timeInfo->tm_mon+1 << ").\n" << endl;
+	}
 
 	Heating* heating = new Heating(argv[profileArg], argv[serialPortArg], argv[tempFileArg]);
 
-	// heating->PrintHeating(cout); cout << "\n";
+	if(heating->Failed())
+	{
+		cerr << "Heating: setup failed.\n";
+		return EXIT_FAILURE;
+	}
+
+	if(debug)
+	{
+		heating->PrintHeating(cout); 
+		cout << "\nStarting scan of rooms...\n\n";
+	}
 
 	heating->Run(&rawtime);
 

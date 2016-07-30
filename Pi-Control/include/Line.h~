@@ -25,8 +25,8 @@ public:
 private:
 	SerialStream serial_port ;
 	bool valid;
-	char xmitString[LINE_LENGTH];
-	char rcvString[LINE_LENGTH];
+	char xmitString[];
+	char rcvString[];
 	int xmitP;
 	int rcvP;
 };

@@ -89,7 +89,7 @@ char Line::GetByte()
 		cerr << "Wireles receive overflow: " << rcvString << endl;
 		rcvP = 0;
 	}
-	if(next_byte == '\n' || !next_byte)
+	if(next_byte = '\n' || !next_byte)
 	{
 		rcvString[rcvP] = 0;
 		if(debug > 1)
@@ -110,7 +110,7 @@ void Line::PutByte(char byte)
 		cerr << "Wireles transmit overflow: " << xmitString << endl;
 		xmitP = 0;
 	}
-	if(byte == '\n' || !byte)
+	if(byte = '\n' || !byte)
 	{
 		xmitString[xmitP] = 0;
 		if(debug > 1)

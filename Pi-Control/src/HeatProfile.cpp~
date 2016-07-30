@@ -129,9 +129,8 @@ void HeatProfile::PrintProfile(std::ostream& os)
 {
 	os << "room:" << SD << roomName << SD  << ", thermometer:*" <<  tempDevice->Name() << "*, Dependent(s):";
 	for(int d = 0; d < deviceCount; d++)
-		os << SD << devices[d]->Name() << SD << ' ';
-	time_t tt = (time_t)boostSetting;
-	os << ", on/off:" << switchedOn << ", boost:" << TimeString(&tt) << ", ";
+		os << SD << devices[d]->Name() << SD << ' ';	
+	os << ", on/off:" << switchedOn << ", boost:" << TimeString((time_t)boostSetting) << ", ";
 
 	long time;
 	long hours, minutes, seconds;

@@ -12,69 +12,72 @@ Wireless::Wireless(char* port)
 	line = new Line(port);
 }
 
+// Returns true for a valid temperature however obtained, false for timeout
+
 bool Wireless::GetTemperature(Device* device, float set, float& result)
 {
+	bool responseOK = true;
+	bool notDone = true;
+	int i = 0;
+	std::stringstream ss;
+
 	if(!Valid())
 	{
 		result = device->GetOldTemperature();
 		cerr << "Wireless not live! Using old temperature for " << device->Name() << " (" << result << ")" << endl;
-		return false;
-	}
-
-	result = DEFAULT_TEMPERATURE;
-	std::stringstream ss;
-	ss << "C3 A" << device->PanStampNumber() << " SC2";
-	ss.getline(scratchString, LINE_LENGTH);
-	line->PutString(scratchString);
-	line->PutString("\n");
-	time_t startTime;
-	time_t now;
-	time ( &startTime );
-	int i = 0;
-	bool notDone = true;
-	do
+	} else
 	{
-		if(line->ByteAvailable())
+		result = defaultTemperature;
+		ss << "C3 A" << device->PanStampNumber() << " SC2";
+		ss.getline(scratchString, LINE_LENGTH);
+		line->PutString(scratchString);
+		line->PutString("\n");
+		time_t startTime;
+		time_t now;
+		time ( &startTime );
+
+		do
 		{
-			scratchString[i] = line->GetByte();
-			if(scratchString[i] == '\n')
+			if(line->ByteAvailable())
 			{
-				scratchString[i] = 0;
-				notDone = false;
+				scratchString[i] = line->GetByte();
+				if(scratchString[i] == '\n')
+				{
+					scratchString[i] = 0;
+					notDone = false;
+				} else
+					i++;
 			} else
-				i++;
+				usleep(2000); // Don't hog the processor
+			time ( &now );
+		} while (now - startTime < 4 && notDone && i < LINE_LENGTH);
+
+	
+		if(notDone)
+		{
+			result = device->GetOldTemperature();;
+			cerr << "Timeout on temperature read from: " << device->Name() << ", using : " << result << endl;
+			responseOK = false;
 		} else
-			usleep(2000); // Don't hog the processor
-		time ( &now );
-	} while (now - startTime < 4 && notDone && i < LINE_LENGTH);
+		{
+			ss.clear();
+			ss.str(std::string());
 
-	ss.clear();
-	ss.str(std::string());
-
-	if(notDone)
-	{
-		result = device->GetOldTemperature();;
-		cerr << "Timeout on temperature read from: " << device->Name() << ", using : " << result << endl;
-		return false;
+			while(scratchString[i] != ' ' && i > 0) i--;
+			ss << &scratchString[i];
+			ss >> result;
+		}
 	}
-
-	ss.clear();
-	ss.str(std::string());
-
-	while(scratchString[i] != ' ' && i > 0) i--;
-	ss << &scratchString[i];
-	ss >> result;
 
 	if(result < 0.5)
 	{
 		result = device->GetOldTemperature();
 		cerr << "Zero temperature returned for " << device->Name() << ", using " << result << endl;
-		return false;
 	}
 
 	cout << "Temperature of " << device->Name() << " (" << device->PanStampNumber() << ") is " << result << " (set temperature: " << set << ").  " << endl;
 
-	return true;
+	return responseOK;
 }
 
 bool Wireless::Valid()
@@ -108,7 +111,7 @@ void Wireless::PrintTime()
 {
 	if(!Valid())
 	{
-		cout << "Print time - no serial connection.\n";
+		cerr << "Print time - no serial connection.\n";
 		return;
 	}
 

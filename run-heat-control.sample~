@@ -1,4 +1,6 @@
 #!/bin/sh
+LD_LIBRARY_PATH=/usr/local/lib
+export LD_LIBRARY_PATH
 cd /home/pi/WiControl
 if ping -c 1 adrianbowyer.com &> /dev/null
 then
