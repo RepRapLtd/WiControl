@@ -49,9 +49,9 @@ float Device::OffDelay()
 	return offDelay;
 }
 
-bool Device::GetTemperature(float setTemperature, float& temperature)
+bool Device::GetTemperature(float& temperature)
 {
-	return wireless->GetTemperature(this, setTemperature, temperature);
+	return wireless->GetTemperature(this, temperature);
 }
 
 float Device::GetOldTemperature()
@@ -96,6 +96,28 @@ Device* Device::Next()
 	return next;
 }
 
+bool Device::CheckLive()
+{
+	wireless->SendString(this, "SC4");
+	bool gotResponse = wireless->GetResponse(this);
+	if(debug)
+	{
+		if(gotResponse)
+			cout << "Checking response from " << Name() << ". It returned: " << scratchString << endl;
+		else
+			cerr << "Checking response from " << Name() << ". No response." << endl;
+	}
+	return gotResponse;
+}
 
+void Device::SetListenedTo(bool l)
+{
+	listenedTo = l;
+}
+
+bool Device::ListenedTo()
+{
+	return listenedTo;
+}
 
 

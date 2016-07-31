@@ -198,12 +198,13 @@ void Heating::Run(time_t *rawtime)
 	wireless->SendTime(timeinfo);
 	usleep(2000);
 
-	// Flag all devices as not on
+	// Flag all devices as not on and not listened to
 
 	Device* dp = deviceList;
 	while(dp)
 	{
 		dp->FlagOff();
+		dp->SetListenedTo(false);
 		dp = dp->Next();
 	}
 
@@ -224,7 +225,7 @@ void Heating::Run(time_t *rawtime)
 		bool response = true;
 		int retries = 0;
 
-		while(!(response = hp->TemperatureSensor()->GetTemperature(setTemperature, locationTemperature)) && retries < 3)
+		while(!(response = hp->TemperatureSensor()->GetTemperature(locationTemperature)) && retries < 3)
 			retries++;
 
 		if(!response)
@@ -269,7 +270,14 @@ void Heating::Run(time_t *rawtime)
 	dp = deviceList;
 	while(dp)
 	{
-		if(!dp->IAmOn())
+		// If we haven't received from this device, check it's still live
+		bool live = true;
+		if(!dp->ListenedTo())
+		{
+			if(!(live = dp->CheckLive()))
+				cerr << "No response from " << dp->Name() << "." << endl;
+		}
+		if(live && !dp->IAmOn())
 			dp->Off();
 		dp = dp->Next();
 		usleep(2000);

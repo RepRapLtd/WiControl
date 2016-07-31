@@ -19,7 +19,7 @@ public:
 	void PrintTime();
 	unsigned long SimpleTime(struct tm* timeinfo);
 	bool Valid();
-	void SendString(Device* device, const char* string);
+	void SendString(Device* device, const char* string)
 	bool GetResponse(Device* device);
 
 private:

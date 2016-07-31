@@ -12,69 +12,82 @@ Wireless::Wireless(char* port)
 	line = new Line(port);
 }
 
+// Get a response from device in the char array scratchString.
+// Return false for a timeout or corrupt data, true for a valid string (i.e. one ending \n).
+
+bool Wireless::GetResponse(Device* device)
+{
+	time_t startTime;
+	time_t now;
+	time ( &startTime );
+	bool gotResponse = false;
+	int i = 0;
+
+	do
+	{
+		if(line->ByteAvailable())
+		{
+			scratchString[i] = line->GetByte();
+			if(scratchString[i] == '\n')
+			{
+				scratchString[i] = 0;
+				gotResponse = true;
+				device->SetListenedTo(true);
+			} else
+				i++;
+		} else
+			usleep(2000); // Don't hog the processor
+		time ( &now );
+	} while (now - startTime < 4 && !gotResponse && i < LINE_LENGTH);
+
+	return gotResponse;
+}
+
+void Wireless::SendString(Device* device, const char* string)
+{
+	std::stringstream ss;
+	ss << "C3 A" << device->PanStampNumber() << " " << string;
+	ss.getline(scratchString, LINE_LENGTH);
+	line->PutString(scratchString);
+	line->PutString("\n");	
+}
+
 // Returns true for a valid temperature however obtained, false for timeout
 
-bool Wireless::GetTemperature(Device* device, float set, float& result)
+bool Wireless::GetTemperature(Device* device, float& readTemperature)
 {
 	bool responseOK = true;
-	bool notDone = true;
+	bool gotResponse = true;
 	int i = 0;
 	std::stringstream ss;
 
 	if(!Valid())
 	{
-		result = device->GetOldTemperature();
-		cerr << "Wireless not live! Using old temperature for " << device->Name() << " (" << result << ")" << endl;
+		readTemperature = device->GetOldTemperature();
+		cerr << "Wireless not live! Using old temperature for " << device->Name() << " (" << readTemperature << ")" << endl;
 	} else
 	{
-		result = defaultTemperature;
-		ss << "C3 A" << device->PanStampNumber() << " SC2";
-		ss.getline(scratchString, LINE_LENGTH);
-		line->PutString(scratchString);
-		line->PutString("\n");
-		time_t startTime;
-		time_t now;
-		time ( &startTime );
+		readTemperature = defaultTemperature;
 
-		do
-		{
-			if(line->ByteAvailable())
-			{
-				scratchString[i] = line->GetByte();
-				if(scratchString[i] == '\n')
-				{
-					scratchString[i] = 0;
-					notDone = false;
-				} else
-					i++;
-			} else
-				usleep(2000); // Don't hog the processor
-			time ( &now );
-		} while (now - startTime < 4 && notDone && i < LINE_LENGTH);
+		SendString(device, "SC2");
 
+		gotResponse = GetResponse(device);
 	
-		if(notDone)
-		{
-			result = device->GetOldTemperature();;
-			responseOK = false;
-		} else
+		if(gotResponse)
 		{
 			ss.clear();
 			ss.str(std::string());
-
+			i = strlen(scratchString) - 1;
 			while(scratchString[i] != ' ' && i > 0) i--;
 			ss << &scratchString[i];
-			ss >> result;
+			ss >> readTemperature;
+
+		} else
+		{
+			readTemperature = device->GetOldTemperature();;
+			responseOK = false;
 		}
 	}
-
-	if(result < 0.5)
-	{
-		result = device->GetOldTemperature();
-		cerr << "Zero temperature returned for " << device->Name() << ", using " << result << endl;
-	}
-
-	cout << "Temperature of " << device->Name() << " (" << device->PanStampNumber() << ") is " << result << " (set temperature: " << set << ").  " << endl;
 
 	return responseOK;
 }
