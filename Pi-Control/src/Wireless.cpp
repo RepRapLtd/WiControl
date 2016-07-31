@@ -56,7 +56,6 @@ bool Wireless::GetTemperature(Device* device, float set, float& result)
 		if(notDone)
 		{
 			result = device->GetOldTemperature();;
-			cerr << "Timeout on temperature read from: " << device->Name() << ", using : " << result << endl;
 			responseOK = false;
 		} else
 		{
@@ -68,14 +67,6 @@ bool Wireless::GetTemperature(Device* device, float set, float& result)
 			ss >> result;
 		}
 	}
-
-	if(result < 0.5)
-	{
-		result = device->GetOldTemperature();
-		cerr << "Zero temperature returned for " << device->Name() << ", using " << result << endl;
-	}
-
-	cout << "Temperature of " << device->Name() << " (" << device->PanStampNumber() << ") is " << result << " (set temperature: " << set << ").  " << endl;
 
 	return responseOK;
 }

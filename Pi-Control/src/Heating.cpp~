@@ -93,6 +93,8 @@ Heating::Heating(char* profileFile, char* port, char* tempFile)
 		strs.str(std::string());
 	}
 
+	// Read the old temperatures here
+
 	oldTemperatureLogFile.open(tempFile, std::ifstream::in);
 	if (!oldTemperatureLogFile.is_open())
 	{
@@ -117,6 +119,8 @@ Heating::Heating(char* profileFile, char* port, char* tempFile)
 		strs.str(std::string());
 	}
 	oldTemperatureLogFile.close();
+
+	// Now open the old temperature file to write the current temperatures into
 
 	temperatureLogFile.open(tempFile, std::ofstream::out);
 
@@ -217,10 +221,17 @@ void Heating::Run(time_t *rawtime)
 	{
 		setTemperature = hp->Temperature(timeinfo, wireless);
 		float locationTemperature;
+		bool noResponse = true;
 		int retries = 0;
 
-		while(!hp->TemperatureSensor()->GetTemperature(setTemperature, locationTemperature) && retries < 3)
+		while(!(noResponse = hp->TemperatureSensor()->GetTemperature(setTemperature, locationTemperature)) && retries < 3)
 			retries++;
+
+		if(noResponse)
+			cerr << "Timeout on temperature read from: " << hp->TemperatureSensor()->Name() << ", using : " << locationTemperature << endl;
+		else
+			cout << "Temperature of " << hp->TemperatureSensor()->Name() << " (" << hp->TemperatureSensor()->PanStampNumber() << ") is " << 
+				locationTemperature << " (set temperature: " << setTemperature << ").  " << endl;
 
 		switchOn = ((locationTemperature < setTemperature) != hp->Invert());
 		if(switchOn)

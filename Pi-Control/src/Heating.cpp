@@ -221,10 +221,25 @@ void Heating::Run(time_t *rawtime)
 	{
 		setTemperature = hp->Temperature(timeinfo, wireless);
 		float locationTemperature;
+		bool noResponse = true;
 		int retries = 0;
 
-		while(!hp->TemperatureSensor()->GetTemperature(setTemperature, locationTemperature) && retries < 3)
+		while(!(noResponse = hp->TemperatureSensor()->GetTemperature(setTemperature, locationTemperature)) && retries < 3)
 			retries++;
+
+		if(noResponse)
+			cerr << "Timeout on temperature read from: " << hp->TemperatureSensor()->Name() << ", using : " << locationTemperature << endl;
+		else
+		{
+			if(locationTemperature < 0.5)
+			{
+				locationTemperature = hp->TemperatureSensor()->GetOldTemperature();
+				cerr << "Zero temperature returned for " << hp->TemperatureSensor()->Name() << ", using " << locationTemperature << endl;
+			} else
+				cout << "Temperature of " << hp->TemperatureSensor()->Name() << " (" << hp->TemperatureSensor()->PanStampNumber() << ") is " << 
+					locationTemperature << " (set temperature: " << setTemperature << ").  " << endl;
+
+		}
 
 		switchOn = ((locationTemperature < setTemperature) != hp->Invert());
 		if(switchOn)

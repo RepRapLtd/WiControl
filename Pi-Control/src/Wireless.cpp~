@@ -56,7 +56,6 @@ bool Wireless::GetTemperature(Device* device, float set, float& result)
 		if(notDone)
 		{
 			result = device->GetOldTemperature();;
-			cerr << "Timeout on temperature read from: " << device->Name() << ", using : " << result << endl;
 			responseOK = false;
 		} else
 		{
@@ -111,7 +110,7 @@ void Wireless::PrintTime()
 {
 	if(!Valid())
 	{
-		cout << "Print time - no serial connection.\n";
+		cerr << "Print time - no serial connection.\n";
 		return;
 	}
 
