@@ -17,6 +17,7 @@ Device::Device(std::stringstream& profileFileLine, Device* previous)
 	profileFileLine >> std::skipws >> onDelay;
 	profileFileLine >> std::skipws >> offDelay;
 	oldTemperature = defaultTemperature;
+	listenedTo = false;
 
 	on = false;
 	if(previous)

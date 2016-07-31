@@ -263,21 +263,22 @@ void Heating::Run(time_t *rawtime)
 	}
 
 	// Any device still flagged as not on may need to be turned off
-	// NB the calls to On() above and the calls to Off() below mean
+	// NB the calls to On() above and the calls to Off() and CheckLive below mean
 	// that every device should be talked to, and so all the watchdogs
 	// should be reset.
 
 	dp = deviceList;
 	while(dp)
 	{
-		if(!dp->IAmOn())
-			dp->Off();
 		// If we haven't received from this device, check it's still live
+		bool live = true;
 		if(!dp->ListenedTo())
 		{
-			if(!dp->CheckLive())
+			if(!(live = dp->CheckLive()))
 				cerr << "No response from " << dp->Name() << "." << endl;
 		}
+		if(live && !dp->IAmOn())
+			dp->Off();
 		dp = dp->Next();
 		usleep(2000);
 	}

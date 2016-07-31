@@ -103,9 +103,9 @@ bool Device::CheckLive()
 	if(debug)
 	{
 		if(gotResponse)
-			cout << "Checking response from << " << Name() << ". It returned: " << scratchString << endl;
+			cout << "Checking response from " << Name() << ". It returned: " << scratchString << endl;
 		else
-			cerr << "Checking response from << " << Name() << ". No response." << endl;
+			cerr << "Checking response from " << Name() << ". No response." << endl;
 	}
 	return gotResponse;
 }
