@@ -221,13 +221,13 @@ void Heating::Run(time_t *rawtime)
 	{
 		setTemperature = hp->Temperature(timeinfo, wireless);
 		float locationTemperature;
-		bool noResponse = true;
+		bool response = true;
 		int retries = 0;
 
-		while(!(noResponse = hp->TemperatureSensor()->GetTemperature(setTemperature, locationTemperature)) && retries < 3)
+		while(!(response = hp->TemperatureSensor()->GetTemperature(setTemperature, locationTemperature)) && retries < 3)
 			retries++;
 
-		if(noResponse)
+		if(!response)
 			cerr << "Timeout on temperature read from: " << hp->TemperatureSensor()->Name() << ", using : " << locationTemperature << endl;
 		else
 		{
