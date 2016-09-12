@@ -263,7 +263,7 @@ void Heating::Run(time_t *rawtime)
 	}
 
 	// Any device still flagged as not on may need to be turned off
-	// NB the calls to On() above and the calls to Off() and CheckLive below mean
+	// NB the calls to On() above and the calls to Off() and CheckLive() below mean
 	// that every device should be talked to, and so all the watchdogs
 	// should be reset.
 

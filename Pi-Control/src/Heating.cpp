@@ -341,7 +341,7 @@ int main(int argc, char** argv)
 	struct tm * timeInfo;
 	timeInfo = localtime (&rawtime);
 
-	if(timeInfo->tm_mon > 3 && timeInfo->tm_mon < 8)
+	if(timeInfo->tm_mon > 3 && timeInfo->tm_mon < 11)
 		defaultTemperature = DEFAULT_TEMPERATURE_SUMMER;
 	else
 		defaultTemperature = DEFAULT_TEMPERATURE_WINTER;
