@@ -1,0 +1,31 @@
+*Boiler* 32 0 190 0.0
+*Hall West* 33 0 0 15
+*UF Dining* 34 5 0 0
+*UF Pump* 34 1 190 0
+*UF Utility* 34 0 0 0
+*UF Kitchen 1* 34 2 0 0
+*UF Kitchen 2* 34 3 0 0
+*UF Living* 34 4 0 0
+*Kitchen* 35 0 0 15
+*Living Room* 36 0 0 15
+*Main Bedroom* 37 0 0 15
+*Bathroom* 38 0 0 15
+*Hall East* 39 0 0 15
+*Dining Room* 40 0 0 15
+*Landing* 41 0 0 15
+*Dressing Room* 42 0 0 15
+*Spare Bedroom* 43 0 0 15
+---
+*Hall* *Hall West* *Boiler* *Hall West* *Hall East* 1 1458588458 00:00:00 15 07:30:00 19 09:00:00 17 17:00:00 21 19:30:00 18
+*UF Utility* *UF Utility* *Boiler* *UF Utility* *UF Pump* 1 1458588458 00:00:00 15 08:00:00 20 10:00:00 16 13:00:00 20 14:00:00 16 18:00:00 20 21:00:00 16
+*Kitchen* *Kitchen* *Boiler* *Kitchen* 1 1458588458 00:00:00 13 07:00:00 20 09:00:00 17 12:00:00 19 13:30:00 17 17:00:00 20 23:00:00 17
+*UF Kitchen* *Kitchen* *Boiler* *UF Kitchen 1* *UF Kitchen 2* *UF Pump* 1 1458588458 00:00:00 14 06:45:00 22 09:00:00 18 12:00:00 21 14:00:00 20 16:30:00 22 21:00:00 0
+*Living Room* *Living Room* *Boiler* *Living Room* 1 1458588458 00:00:00 15 08:00:00 20 09:00:00 10 17:00:00 23 19:00:00 23 23:00:00 20
+*UF Living* *Living Room* *Boiler* *UF Living* *UF Pump* 1 1458588458 00:00:00 15 07:30:00 21 09:30:00 19 16:00:00 24 20:00:00 24
+*Dining Room* *Dining Room* *Boiler* *Dining Room* 1 1458588458 00:00:00 15 09:30:00 15 11:30:00 15 17:00:00 21 20:50:00 15 22:00:00 15
+*UF Dining* *Dining Room* *Boiler* *UF Dining* *UF Pump* 1 1458588458 00:00:00 14 09:30:00 15 11:30:00 15 17:00:00 20 20:30:00 15 22:00:00 15
+*Bathroom* *Bathroom* *Boiler* *Bathroom* 1 1458588458 00:00:00 15 07:00:00 22 09:30:00 16 17:00:00 22 19:00:00 16 22:30:00 21
+*Main Bedroom* *Main Bedroom* *Boiler* *Main Bedroom* 1 1458588458 00:00:00 15 07:00:00 21 08:30:00 17 18:00:00 15 19:00:00 20 19:30:00 15 22:30:00 20 23:30:00 19
+*Landing* *Landing* *Boiler* *Landing* 1 1458588458 00:00:00 15 07:00:00 21 08:45:00 16 18:00:00 18 23:20:00 20
+*Dressing Room* *Dressing Room* *Boiler* *Dressing Room* 1 1458588458 00:00:00 15 07:00:00 21 08:30:00 15 17:30:00 22 18:00:00 15 22:30:00 21 23:00:00 15
+*Spare Bedroom* *Spare Bedroom* *Boiler* *Spare Bedroom* 0 1458588458 00:00:00 15 07:15:00 16 08:50:00 15 16:30:00 16 18:00:00 10 22:30:00 15 23:00:00 15

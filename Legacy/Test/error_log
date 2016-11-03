@@ -1,0 +1,4 @@
+[24-Mar-2016 12:06:17 America/Chicago] PHP Parse error:  syntax error, unexpected ',' in /home2/adrianbo/public_html/Heating_Control/Test/post.php on line 8
+[26-Mar-2016 10:11:38 America/Chicago] PHP Parse error:  syntax error, unexpected end of file in /home2/adrianbo/public_html/Heating_Control/Test/dirlist.php on line 19
+[27-Mar-2016 11:11:15 America/Chicago] PHP Parse error:  syntax error, unexpected ';' in /home2/adrianbo/public_html/Heating_Control/Test/filecopy.php on line 2
+[27-Mar-2016 11:12:18 America/Chicago] PHP Parse error:  syntax error, unexpected '}' in /home2/adrianbo/public_html/Heating_Control/Test/filecopy.php on line 4

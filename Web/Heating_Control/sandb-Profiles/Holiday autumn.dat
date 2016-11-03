@@ -1,0 +1,15 @@
+*Boiler* 11 0 30.0 0.0
+*Hall* 12 0 0 15
+*Living Room North* 13 0 0 15
+*Living Room South* 14 0 0 15
+*Main Bedroom* 15 0 0 15
+*Spare Bedroom* 16 0 0 15
+*Kitchen* 17 0 0 15
+*Porch* 18 0 0 15
+---
+*Living Room* *Living Room South* *Boiler* *Living Room North* *Living Room South* 1 1476815139 00:00:00 12 12:30:00 12 13:15:00 12 16:15:00 12 17:00:00 24 18:45:00 24 20:15:00 22 21:30:00 20 22:30:00 0
+*Kitchen* *Kitchen* *Boiler* *Kitchen* 1 1476815139 00:00:00 5 12:30:00 12 13:15:00 12 18:30:00 22 19:00:00 12
+*Hall* *Hall* *Boiler* *Hall* 1 1476815139 00:00:00 12 05:40:00 12 06:00:00 12 08:30:00 20 09:00:00 0 17:00:00 22 18:00:00 20 19:00:00 20 23:00:00 0
+*Porch* *Porch* *Boiler* *Porch* 1 1476815139 00:00:00 18
+*Main Bedroom* *Main Bedroom* *Boiler* *Main Bedroom* 1 1476815139 00:00:00 5 05:40:00 12 06:00:00 12 08:15:00 20 08:45:00 12 17:45:00 20 18:15:00 12 21:30:00 21 22:30:00 12
+*Spare Bedroom* *Spare Bedroom* *Boiler* *Spare Bedroom* 1 1476815139 00:00:00 5 05:30:00 12 06:15:00 12 18:00:00 17 18:20:00 0

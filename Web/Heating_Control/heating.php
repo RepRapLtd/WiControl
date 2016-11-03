@@ -55,8 +55,21 @@ td {
 // Set these two for all scripts
 // building is one of 'aandc', 'sandb', or 'Workshop'
 
-var today = 'Friday';
-var building = 'Workshop';
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
+    function(m,key,value) {
+      vars[key] = value;
+    });
+    return vars;
+  }
+
+var today = getUrlVars()["day"];
+var building = getUrlVars()["building"];
+
+//alert(today);
+//alert(building);
+
 
 //------------------------------------------
 
@@ -75,6 +88,19 @@ var controlFileLines;
 var deviceCount = -1;
 var rows = -1;
 var times = -1;
+var profileList;
+
+var juneSolstice = new Date();
+juneSolstice.setMonth(5); // zero-based
+juneSolstice.setDate(21);
+
+var decemberSolstice = new Date();
+decemberSolstice.setMonth(11); // zero-based
+decemberSolstice.setDate(21);
+
+
+var winterOffset = Math.max(juneSolstice.getTimezoneOffset(), decemberSolstice.getTimezoneOffset());
+var summerOffset = Math.min(juneSolstice.getTimezoneOffset(), decemberSolstice.getTimezoneOffset());
 
 
 function AllBoost()
@@ -116,7 +142,7 @@ function AllOff()
 function Header()
 {
 	document.write('<H1>West End Stables: ');
-	if(building == "Workshop")
+	if(building == "workshop")
 		document.write('Workshop');
 	else if(building == "aandc")
 		document.write('Adrian and Christine\'s');
@@ -124,17 +150,17 @@ function Header()
 		document.write('Sally and Ben\'s');
 	document.write(' Heating Settings</H1><br>');
 
-	document.write('<a href="../index.html"><H2>Home</H2></a><br><br>');
+	document.write('<a href="index.html"><H2>Home</H2></a><br><br>');
 
 	document.write('<table border="1" border-spacing="5px" >');
 	document.write('  <tr>');
-	document.write('    <td><a href="' + building.toLowerCase() + '-heating-monday.php">Monday</a></td>');
-	document.write('    <td><a href="' + building.toLowerCase() + '-heating-tuesday.php">Tuesday</a></td>');
-	document.write('    <td><a href="' + building.toLowerCase() + '-heating-wednesday.php">Wednesday</a></td>');
- 	document.write('   <td><a href="' + building.toLowerCase() + '-heating-thursday.php">Thursday</a></td>');
- 	document.write('   <td><a href="' + building.toLowerCase() + '-heating-friday.php">Friday</a></td>');
- 	document.write('   <td><a href="' + building.toLowerCase() + '-heating-saturday.php">Saturday</a></td>');
- 	document.write('   <td><a href="' + building.toLowerCase() + '-heating-sunday.php">Sunday</a></td>');
+	document.write('   <td><a href="heating.php?building=' + building.toLowerCase() + '&day=Monday">Monday</a></td>');
+	document.write('   <td><a href="heating.php?building=' + building.toLowerCase() + '&day=Tuesday">Tuesday</a></td>');
+	document.write('   <td><a href="heating.php?building=' + building.toLowerCase() + '&day=Wednesday">Wednesday</a></td>');
+ 	document.write('   <td><a href="heating.php?building=' + building.toLowerCase() + '&day=Thursday">Thursday</a></td>');
+ 	document.write('   <td><a href="heating.php?building=' + building.toLowerCase() + '&day=Friday">Friday</a></td>');
+ 	document.write('   <td><a href="heating.php?building=' + building.toLowerCase() + '&day=Saturday">Saturday</a></td>');
+ 	document.write('   <td><a href="heating.php?building=' + building.toLowerCase() + '&day=Sunday">Sunday</a></td>');
  	document.write(' </tr>');
 	document.write('</table> ');
 
@@ -149,8 +175,9 @@ function Header()
 
 	document.write('<form method="post" action="set" name="settings">');
 
-	document.write('<table border="1" border-spacing="5px"><tbody>');
+	document.write('<table border="0" border-spacing="5px"><tbody>');
 	document.write('<tr><td>Room</td><td>Actual</td><td>Set</td> </tr>');
+	document.write('<tr class="break"><td colspan="' + (times+8) + '" bgcolor="#000000"></td></tr>');
 
 }
 
@@ -160,7 +187,32 @@ function Footer()
 	document.write('<br><button style="background-color:white" type="button" name="Save" onclick="SaveDay(NewFileToSave(), \'' + today + '\', true)"><H2>Save</H2></button>');
 	document.write('<button style="background-color:white" type="button" name="CopyWeek" onclick="WeekCopy()"><H2>Copy to weekdays</H2></button>');
 	document.write('<button style="background-color:white" type="button" name="CopyWeekend" onclick="WeekendCopy()"><H2>Copy to weekends</H2></button>');
+	document.write('<br><br><button style="background-color:white" type="button" name="SaveToFile" onclick="SaveProfile(NewFileToSave(), GetProfileName())"><H2>Save To File:</H2></button>');
+	document.write('&nbsp;&nbsp;<input size="30" style="height:60px;font-size:14pt;" text-align="right" name="profileFile" value = "enter filename here" onfocus="if (this.value==\'enter filename here\') this.value=\'\';">');
+
+	ProfileLoadFiles();
 	document.write('</form>');
+}
+
+function ProfileLoadFiles()
+{
+
+	document.write('<br><br><H2>Load from:</H2><br>');
+
+	for(var i = 0; i < profileList.length; i++)
+	{
+		if(profileList[i] != "")
+		  document.write('<button style="background-color:white" type="button" name="Load" onclick="LoadDay(\'' + profileList[i] + '\')"><H2>' + profileList[i] + '</H2></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+		if((i+1)%6 == 0)
+			document.write('<br>');
+	}
+}
+
+function GetProfileName()
+{
+   	var theForm = document.forms["settings"];
+	//alert(theForm.elements["profileFile"].value);
+	return theForm.elements["profileFile"].value;
 }
 
 function GetTableLine(curline, i)
@@ -175,10 +227,18 @@ function GetTableLine(curline, i)
 		result += "1";
 	result += " ";
 
+	var boostTime = 3600;
+
+	var thisDay = new Date();
+	if (thisDay.getTimezoneOffset() != winterOffset) 
+	{ 
+		boostTime = 2*boostTime; 
+	}
+
 	if(boost[i])
-		result += Math.floor(Date.now()/1000) + 3600;
+		result += Math.floor(Date.now()/1000) + boostTime;
 	else
-		result += Math.floor(Date.now()/1000) - 4000;
+		result += Math.floor(Date.now()/1000) - boostTime - 1000;
 
 	var location = locations[i];
 	for(var j = 0; j < rowLength; j++)
@@ -221,11 +281,54 @@ function NewFileToSave()
 }
 
 
+function SaveProfile(toSend, name)
+{
+   var xhr = new XMLHttpRequest();
+   
+   xhr.open('POST', 'post.php?building=' + building.toLowerCase() + '&file=' + name, true);
+	xhr.setRequestHeader("Content-type","text/plain");
+   xhr.onload = 
+	function(e) 
+  	{
+    	if (this.status == 200) 
+		{
+			//if(lastShot)
+				alert(xhr.responseText.split('<!--')[0]);
+    	}
+		xhr.abort();
+  	};
+
+   xhr.send(toSend);
+}
+
+function LoadDay(fileName)
+{
+   fileToCopy = "" + building.toLowerCase() + '-Profiles/' + fileName;
+   fileToReplace = "" + building.toLowerCase() + '-profile-' + today.toLowerCase() + '.dat';
+   var xhr = new XMLHttpRequest();
+   
+   xhr.open('POST', 'filecopy.php?from=' + fileToCopy + '&to=' + fileToReplace, true);
+	xhr.setRequestHeader("Content-type","text/plain");
+   xhr.onload = 
+	function(e) 
+  	{
+    	if (this.status == 200) 
+		{
+			//if(lastShot)
+				alert(xhr.responseText.split('<!--')[0]);
+				location.reload(true);
+    	}
+		xhr.abort();
+  	};
+
+   xhr.send(" ");
+}
+
 function SaveDay(toSend, day, lastShot)
 {
    var xhr = new XMLHttpRequest();
    
-   xhr.open('POST', 'post' + day + '.php', true);
+   xhr.open('POST', 'post.php?building=' + building.toLowerCase() + '&day=' + day.toLowerCase() + '&file=', true);
 	xhr.setRequestHeader("Content-type","text/plain");
    xhr.onload = 
 	function(e) 
@@ -383,7 +486,7 @@ function TableLine(tableLine, rowLength)
    document.write('<td rowspan="2" style="background-color:white">');
    document.write(setTemperatures[maxLocation] + '<sup>o</sup>C</td>');
 
-	document.write('<td align="center"><button style="background-color:Yellow" type="button" name="' + location + 'Boost" onclick="BoostButton(\'' + location + '\', -1, false)">Boost</button>  </td>');
+	document.write('<td align="center"><button style="background-color:Yellow" type="button" name="' + location + 'Boost" onclick="BoostButton(\'' + location + '\', -1, true)">Boost</button>  </td>');
 
 	var ts = DataStart(tableLine);
    var tstep = ts;
@@ -428,24 +531,41 @@ function TableLine(tableLine, rowLength)
 		document.write('<td><input size="3" text-align="right" name="' + location + 'temp' + i +'" value = "0" ><sup>o</sup>C</td>');
 
 
-	document.write('</tr>');
+	document.write('</tr><tr class="break"><td colspan="' + (rowLength+6) + '" bgcolor="#000000"></td></tr>');
 
 	maxLocation++;
 }
 
-function GetFileAsStringArray(frameName)
+function GetFileAsStringArray(frameName, child)
 {
     var oFrame = document.getElementById(frameName);
-    var strRawContents = oFrame.contentWindow.document.body.childNodes[0].innerHTML;
+    //var rand = Math.floor((Math.random()*1000000)+1);
+    //oFrame.contentWindow.location.href = oFrame.src + "?uid="+rand;
+//alert(JSON.stringify(oFrame.src));
+    //oFrame.contentWindow.location.reload();
+    var strRawContents;
+    if(child)
+	strRawContents = oFrame.contentWindow.document.body.childNodes[0].innerHTML;
+    else
+	strRawContents = oFrame.contentWindow.document.body.innerHTML;
     while (strRawContents.indexOf("\r") >= 0)
         strRawContents = strRawContents.replace("\r", "");
     var arrLines = strRawContents.split("\n");
 	 return arrLines;
 }
 
+function LoadProfileDirectory()
+{
+	//alert("In function");
+	profileList = GetFileAsStringArray("profileFile", false)
+	//alert(JSON.stringify(profileList));
+}
+
+
+
 function LoadTemperatures() 
 {
-    var arrLines = GetFileAsStringArray("temperatureFile");
+    var arrLines = GetFileAsStringArray("temperatureFile", true);
     for(var i = 0; i < arrLines.length; i++) 
     {
 		if(arrLines[i].length > 2)
@@ -464,11 +584,7 @@ function LoadTemperatures()
 
 function LoadFile() 
 {
-    controlFileLines = GetFileAsStringArray("controlFile");
-    
-    Header();
-
-
+    controlFileLines = GetFileAsStringArray("controlFile", true);
     for(var i = 0; i < controlFileLines.length; i++) 
     {
         var curLine = controlFileLines[i];
@@ -488,17 +604,29 @@ function LoadFile()
         {
         }
     }
+
+
+    Header();
+
     //alert("Devices: " + deviceCount + ", Rows: " + rows + ", Times: " + times);
     for(j = deviceCount+1; j <= deviceCount+rows; j++)
     {
         curLine = controlFileLines[j];
 		  TableLine(curLine, times+2);
     }
-	 Footer();
+    Footer();
 
     //alert(Math.floor(Date.now() / 1000));
 
     SetButtons();
+}
+
+
+function AllLoaded()
+{
+	LoadTemperatures();
+	LoadProfileDirectory();
+	LoadFile();
 }
 
 
@@ -513,18 +641,38 @@ function LoadFile()
 
 <script>
 
-var url1 = "../../" + building.toLowerCase() + "-temperatures.dat?timestamp=" + Date.now();
+/*
+var url1 = "" + building.toLowerCase() + "-temperatures.dat?timestamp=" + Date.now();
 document.write('<iframe id="temperatureFile" src="' + url1 + '" onload="LoadTemperatures();" style="display: none;"></iframe>');
 
-var url2 = "../../" + building.toLowerCase() + "-profile-" + today.toLowerCase() + ".dat?timestamp=" + Date.now();
+var url3 = "dirlist.php?dir=" + building.toLowerCase() + "-Profiles";
+document.write('<iframe id="profileFile" src="' + url3 + '" onload="LoadProfileDirectory();" style="display: none;"></iframe>');
+
+var url2 = "" + building.toLowerCase() + "-profile-" + today.toLowerCase() + ".dat?timestamp=" + Date.now();
 document.write('<iframe id="controlFile" src="' + url2 + '" onload="LoadFile();" style="display: none;"></iframe>');
 
+*/
+
+var url1 = "" + building.toLowerCase() + "-temperatures.dat?timestamp=" + Date.now();
+document.write('<iframe id="temperatureFile" src="' + url1 + '" style="display: none;"></iframe>');
+
+var url3 = "dirlist.php?dir=" + building.toLowerCase() + "-Profiles";
+document.write('<iframe id="profileFile" src="' + url3 + '" style="display: none;"></iframe>');
+
+var url2 = "" + building.toLowerCase() + "-profile-" + today.toLowerCase() + ".dat?timestamp=" + Date.now();
+document.write('<iframe id="controlFile" src="' + url2 + '" style="display: none;"></iframe>');
 
 </script>
 
+&nbsp;&nbsp;<br>
 
+<script>
+window.onload = function()
+{
+	AllLoaded();
+}
+</script>
 
 
 </body>
 </html>
-

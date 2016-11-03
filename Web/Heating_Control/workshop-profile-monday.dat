@@ -1,0 +1,14 @@
+*Boiler* 5 0 30.0 0.0
+*Office* 2 0 0 15.0
+*Electronics Lab* 3 0 0 15.0
+*Chemistry Lab* 6 0 0 15.0
+*Workshop* 4 0 0 15.0
+*Tack room* 7 0 0 15.0
+*Foyer* 8 0 0 15.0
+---
+*Office* *Office* *Boiler* *Office* 1 1478070351 00:00:00 12 08:50:00 22 09:50:00 22 17:30:00 14 23:00:00 0
+*Electronics Lab* *Electronics Lab* *Boiler* *Electronics Lab* 1 1478070351 00:00:00 0 09:00:00 22 17:30:00 14 20:00:00 0 23:00:00 0
+*Chemistry Lab* *Chemistry Lab* *Boiler* *Chemistry Lab* 1 1478070351 00:00:00 0 09:08:00 22 17:30:00 14 20:00:00 0 23:00:00 0
+*Workshop* *Workshop* *Boiler* *Workshop* 1 1478070351 00:00:00 0 09:12:00 22 17:30:00 14 20:00:00 0 23:00:00 0
+*Tack room* *Tack room* *Boiler* *Tack room* 1 1478070351 00:00:00 0 10:00:00 14 17:30:00 0 20:00:00 0
+*Foyer* *Foyer* *Boiler* *Foyer* 1 1478070351 00:00:00 0 09:30:00 15 17:00:00 0
