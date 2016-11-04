@@ -7,13 +7,44 @@
 #ifndef Control_H_
 #define Control_H_
 
+/*****************************************************************/
+
+// Only edit outside this section if you really know what you are doing.
+
+// Name your heating zones here and uncomment one
+
 #define WORKSHOP
 //#define A_AND_C
 //#define S_AND_B
 
-#define MY_ADDRESS 1
+// Define the Host Panstamp number and this device's name and number
+
 #define HOST 1
-#define PLACE "Control"
+#define PLACE "Office"
+#define MY_ADDRESS 2
+
+// For each zone define a unique SYNCWORD and RFCHANNEL
+
+#ifdef WORKSHOP
+ #define SYNCWORD1 199
+ #define SYNCWORD0 0
+ #define RFCHANNEL 0
+#endif
+
+#ifdef A_AND_C
+ #define SYNCWORD1 198
+ #define SYNCWORD0 0
+ #define RFCHANNEL 1
+#endif
+
+#ifdef S_AND_B
+ #define SYNCWORD1 197
+ #define SYNCWORD0 0
+ #define RFCHANNEL 2
+#endif
+
+/*****************************************************************/
+
 #define NAME "WiControl"
 #define DATE "2016-07-23"
 #define VERSION "0.2"

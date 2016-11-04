@@ -1,28 +1,27 @@
 WiControl
 =========
 
-Wireless Control with Panstamp and Raspberry Pi
+Wireless Control with Panstamp and Raspberry Pi.
 
-The libserial-0.6.0rc1 directory contains a version of the C++ libserial
-library configured for the Raspberry Pi.  The wput-0.6.1 directory contains
-a version of wput - sort of the reverse of wget, but it is not hyper secure so 
-don't use it for anything critical.
 
 Installation:
 -------------
 
 On the Pi:
 
-You may want to change the default name of the Pi ("raspberrypi") to something more appropriate like "heatingcontrol".  See here for instructions on how to do that:  http://www.howtogeek.com/167195/how-to-change-your-raspberry-pi-or-other-linux-devices-hostname/
+You may want to change the default name of the Pi ("raspberrypi") to something more appropriate 
+like "heatingcontrol".  See here for instructions on how to do that: 
+http://www.howtogeek.com/167195/how-to-change-your-raspberry-pi-or-other-linux-devices-hostname/
+
+If your Pi is not already running Apache and php set them up as described here:
+
+https://www.raspberrypi.org/documentation/remote-access/web-server/apache.md
 
 Then:
 
 $ sudo dpkg-reconfigure tzdata [Set your local timezone]
 $ git clone https://github.com/AdrianBowyer/WiControl.git
-$ cd WiControl/Pi-Control
-$ make clean
-$ make
-$ cd ..
+$ cd WiControl
 $ cp run-heat-control.sample run-heat-control
 
 then edit run-heat-control to download your control file from your webserver and to 
@@ -34,12 +33,34 @@ $ sudo crontab -e
 
 and add lines at the end like this:
 
-* * * * * /home/pi/Panstamp/WiControl/run-heat-control
+* * * * * /home/pi/WiControl/run-heat-control
 0 4   *   *   *    /sbin/shutdown -r +5
 
 That will cause the shell script run-heat-control to be run once a minute, and cause a
 system reboot at 04:05 in the morning to keep everything clean and tidy.  The sudo is
 needed because shutdown needs root privilege.
+
+
+On the PanStamps:
+
+You can just about run the Arduino IDE on the Raspberry Pi, but it's probably better to
+use a big serious computer to do this bit.  Install the Arduino IDE on your computer if
+you haven't already got it:
+
+https://www.arduino.cc/en/Main/Software
+
+And clone the repository https://github.com/AdrianBowyer/WiControl.git as you did on the Pi.
+
+Load the arduino program in the folder Panstamp-control into the IDE.
+
+At the head of the file Control.h set up your heating zones and device names and numbers.  Load 
+this program into each device (e.g. boiler, radiator) on your heating system.
+
+
+Running
+-------
+
+
 
 When it runs it creates a status file called Status.
 

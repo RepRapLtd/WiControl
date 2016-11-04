@@ -8,24 +8,6 @@
 #ifndef COMMUNICATOR_H_
 #define COMMUNICATOR_H_
 
-#ifdef WORKSHOP
- #define SYNCWORD1 199
- #define SYNCWORD0 0
- #define RFCHANNEL 0
-#endif
-
-#ifdef A_AND_C
- #define SYNCWORD1 198
- #define SYNCWORD0 0
- #define RFCHANNEL 1
-#endif
-
-#ifdef S_AND_B
- #define SYNCWORD1 197
- #define SYNCWORD0 0
- #define RFCHANNEL 2
-#endif
-
 class Communicator
 {
 public:
