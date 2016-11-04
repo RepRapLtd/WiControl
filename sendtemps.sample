@@ -1,0 +1,13 @@
+#!/bin/sh
+HOST='---IP address here---'
+USER='---ftp account here---'
+PASSWD='*********'
+FILE='workshop-temperatures.dat'
+
+ftp -n $HOST <<END_SCRIPT
+quote USER $USER
+quote PASS $PASSWD
+put $FILE
+quit
+END_SCRIPT
+exit 0
