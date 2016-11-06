@@ -2,7 +2,7 @@
 HOST='localhost'
 USER='upload'
 PASSWD='********'
-FILE='workshop-temperatures.dat'
+FILE='zone-1-temperatures.dat'
 
 ftp -n $HOST <<END_SCRIPT
 quote USER $USER

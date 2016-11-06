@@ -53,23 +53,37 @@ $ sudo useradd ftpuser -g ftpgroup -s /sbin/nologin -d /dev/null
 $ pushd /var/www/html/
 $ sudo chown -R ftpuser:ftpgroup .
 $ sudo pure-pw useradd upload -u ftpuser -g ftpgroup -d /var/www/html -m
+[** You will be asked to create a password for the user upload at this point**]
 $ sudo pure-pw mkdb
 $ sudo ln -s /etc/pure-ftpd/conf/PureDB /etc/pure-ftpd/auth/60puredb
 $ sudo service pure-ftpd restart
 $ popd
 
-Finally you need to install the heating software:
+You next need to install the heating software:
 
 $ git clone https://github.com/AdrianBowyer/WiControl.git
 $ cd WiControl
 
+Copy the control file:
 
 $ cp run-heat-control.sample run-heat-control
 
-then edit run-heat-control to download your control file from your webserver and to 
-run the program with that file.  Replace the ***** with your ftp password so that the 
-temperatures can be uploaded to the server.  (Remember after that to keep the file
-private - in particular don't push it to Github...)  Finally
+and edit the file run-heat-control and replace the "zone-1"s with the name of the zone you want.
+
+Copy the sending file:
+
+$ cp sendtemps.sample sendtemps
+
+and edit the sendtemps file to include the ftp password you set above and to change zone-1 to the name of your zone.
+
+Backup the webserver's index file, and copy all the heating web files there:
+
+$ sudo mv /var/www/html/index.html /var/www/html/index.html.old
+$ cd Web
+$ sudo cp -r * /var/www/html
+$ sudo chown -R ftpuser:ftpgroup /var/www/html
+
+Finally
 
 $ sudo crontab -e
 
