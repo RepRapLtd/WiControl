@@ -9,19 +9,61 @@ Installation:
 
 On the Pi:
 
+This assumes you have an out-of-the-box Raspberry Pi SD card with no extra software installed.
+
+First set your local timezone:
+
+$ sudo dpkg-reconfigure tzdata
+
 You may want to change the default name of the Pi ("raspberrypi") to something more appropriate 
-like "heatingcontrol".  See here for instructions on how to do that: 
-http://www.howtogeek.com/167195/how-to-change-your-raspberry-pi-or-other-linux-devices-hostname/
+like "heatingcontrol".  To do that:
 
-If your Pi is not already running Apache and php set them up as described here:
+$ sudo nano /etc/hostname
 
-https://www.raspberrypi.org/documentation/remote-access/web-server/apache.md
+That file contains a single name - the name of the Pi.  Change it to what you want, save the file, then reboot.
 
-Then:
+Next install Apache and PHP:
 
-$ sudo dpkg-reconfigure tzdata [Set your local timezone]
+$ sudo apt-get update
+$ sudo apt-get install apache2 -y
+$ sudo apt-get install php5 libapache2-mod-php5 -y
+
+At this point it is a good idea to check that the webserver is now running.  In the URL address bar of a web browser on a PC or phone type
+
+  myname.home/
+
+where myname is the Pi's name that you created above.  If you don't get anything type 
+
+$ ifconfig
+
+on the Pi.  This will tell you the Pi's IP address (something like 192.168.1.163).  Type that IP address into the web browser's URL bar.  You should see the default Apache/Debian server homepage.
+
+Next install ftp:
+
+$ sudo apt-get install ftp
+
+And the ftp demon:
+
+$ sudo apt-get install pure-ftpd
+
+Create an ftp user (see https://www.raspberrypi.org/documentation/remote-access/ftp.md) called "upload" with access to the html directory:
+
+$ sudo groupadd ftpgroup
+$ sudo useradd ftpuser -g ftpgroup -s /sbin/nologin -d /dev/null
+$ pushd /var/www/html/
+$ sudo chown -R ftpuser:ftpgroup .
+$ sudo pure-pw useradd upload -u ftpuser -g ftpgroup -d /var/www/html -m
+$ sudo pure-pw mkdb
+$ sudo ln -s /etc/pure-ftpd/conf/PureDB /etc/pure-ftpd/auth/60puredb
+$ sudo service pure-ftpd restart
+$ popd
+
+Finally you need to install the heating software:
+
 $ git clone https://github.com/AdrianBowyer/WiControl.git
 $ cd WiControl
+
+
 $ cp run-heat-control.sample run-heat-control
 
 then edit run-heat-control to download your control file from your webserver and to 

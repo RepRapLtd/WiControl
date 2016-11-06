@@ -1,0 +1,39 @@
+#!/bin/sh
+cd /home/pi/WiControl
+DAYOFWEEK=$(date +"%u")
+URL=localhost
+rm -f profile.dat
+if [ "${DAYOFWEEK}" -eq 1 ]
+then    
+   wget --timeout=15 http://$URL/zone-1-profile-monday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 2 ]
+then    
+   wget --timeout=15 http://$URL/zone-1-profile-tuesday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 3 ]
+then    
+   wget --timeout=15 http://$URL/zone-1-profile-wednesday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 4 ]
+then    
+   wget --timeout=15 http://$URL/zone-1-profile-thursday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 5 ]
+then    
+   wget --timeout=15 http://$URL/zone-1-profile-friday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 6 ]
+then    
+   wget --timeout=15 http://$URL/zone-1-profile-saturday.dat -O profile.dat
+elif [ "${DAYOFWEEK}" -eq 7 ]
+then    
+   wget --timeout=15 http://$URL/zone-1-profile-sunday.dat -O profile.dat
+else
+   echo "Can't find the day of the week!"
+fi
+if [ ! -f profile.dat ]
+then
+ cp backup-profile.dat profile.dat
+fi
+./Pi-Control/bin/Heating -p /dev/ttyUSB0 -i profile.dat -o zone-1-temperatures.dat > Status 2>&1
+./sendtemps
+if [ -f Log ]
+then
+ cat Status >> Log
+fi
