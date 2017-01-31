@@ -40,7 +40,7 @@ At this point it is a good idea to check that the webserver is now running.  In 
 
   myname.home/
 
-where myname is the Pi's name that you created above.  If you don't get anything type 
+where myname is the Pi's name that you created above (some networks need myname.local instead).  If you don't get anything type 
 
 $ ifconfig
 
