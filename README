@@ -22,6 +22,14 @@ $ sudo nano /etc/hostname
 
 That file contains a single name - the name of the Pi.  Change it to what you want, save the file, then reboot.
 
+Change you password:
+
+$ passwd
+
+And enable ssh:
+
+$ sudo raspi-config
+
 Next install Apache and PHP:
 
 $ sudo apt-get update
