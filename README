@@ -76,12 +76,14 @@ $ cp sendtemps.sample sendtemps
 
 and edit the sendtemps file to include the ftp password you set above and to change zone-1 to the name of your zone.
 
-Backup the webserver's index file, and copy all the heating web files there:
+Backup the webserver's index file, and copy all the heating web files there and set permissions:
 
 $ sudo mv /var/www/html/index.html /var/www/html/index.html.old
 $ cd Web
 $ sudo cp -r * /var/www/html
 $ sudo chown -R ftpuser:ftpgroup /var/www/html
+$ sudo chmod 666 /var/www/html/*.dat
+$ sudo chmod 777 /var/www/html/zone-1-Profiles
 
 Finally
 
