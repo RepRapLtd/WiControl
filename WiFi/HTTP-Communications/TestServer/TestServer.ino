@@ -11,8 +11,10 @@
 const char* ssid = "reprapltd";
 const char* password = "1sgdttsa";
  
-int ledPin = D5;
+int ledPin = D4;
+int heatPin = D0;
 WiFiServer server(80);
+bool debug = true;
 
 
 
@@ -24,39 +26,69 @@ float Temperature()
 }
  
 void setup() {
-  //Serial.begin(115200);
-  //delay(10);
+  if(debug)
+  {
+    Serial.begin(115200);
+    delay(10);
+  }
  
  
   pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
+  digitalWrite(ledPin, HIGH);
+  pinMode(heatPin, OUTPUT);
+  digitalWrite(heatPin, LOW);
  
   // Connect to WiFi network
-  //Serial.println();
-  //Serial.println();
-  //Serial.print("Connecting to ");
-  //Serial.println(ssid);
+  if(debug)
+  {
+    Serial.println();
+    Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+  }
 
   //WiFi.hostname("thermometer");
   WiFi.begin(ssid, password);
  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    //Serial.print(".");
+    if(debug)
+      Serial.print(".");
   }
-  //Serial.println("");
-  //Serial.println("WiFi connected");
+
+  if(debug)
+  {
+    Serial.println("");
+    Serial.println("WiFi connected");
+  }
  
   // Start the server
   server.begin();
-  //Serial.println("Server started");
+
+  if(debug)
+  {
+    Serial.println("Server started");
  
-  // Print the IP address
-  //Serial.print("Use this URL : ");
-  //Serial.print("http://");
-  //Serial.print(WiFi.localIP());
-  //Serial.println("/");
+    // Print the IP address
+    Serial.print("Use this URL : ");
+    Serial.print("http://");
+    Serial.print(WiFi.localIP());
+    Serial.println("/");
+  }
  
+}
+
+void control(boolean on)
+{
+  if(on)
+  {
+    digitalWrite(ledPin, LOW);
+    digitalWrite(heatPin, HIGH);
+  } else
+  {
+    digitalWrite(ledPin, HIGH);
+    digitalWrite(heatPin, LOW);
+  }
 }
  
 void loop() {
@@ -74,21 +106,21 @@ void loop() {
  
   // Read the first line of the request
   String request = client.readStringUntil('\r');
-  //Serial.println(request);
+  if(debug)
+    Serial.println(request);
   client.flush();
  
   // Match the request
  
-/*  int value = LOW;
-  if (request.indexOf("/LED=ON") != -1) {
-    digitalWrite(ledPin, HIGH);
-    value = HIGH;
+  if (request.indexOf("/HEAT=ON") != -1) 
+  {
+    control(true);
   } 
-  if (request.indexOf("/LED=OFF") != -1){
-    digitalWrite(ledPin, LOW);
-    value = LOW;
+  if (request.indexOf("/HEAT=OFF") != -1)
+  {
+    control(false);
   }
-*/ 
+ 
  
  
   // Return the response
@@ -108,9 +140,14 @@ void loop() {
   client.println("<br><br>");
   client.println("Click <a href=\"/LED=ON\">here</a> turn the LED on pin 5 ON<br>");
   client.println("Click <a href=\"/LED=OFF\">here</a> turn the LED on pin 5 OFF<br>");*/
-  //client.print("Temperature is: ");
-  client.print(Temperature());
+  float temp = Temperature();
+  client.print(temp);
   client.println();
+  if(debug)
+  {
+    Serial.print("Temperature is: ");
+    Serial.println(temp);
+  }
   //client.println("<sup>o</sup>C<br>");
 //  client.println("</html>");
  
