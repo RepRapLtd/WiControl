@@ -1,7 +1,19 @@
 WiControl
 =========
 
-Wireless Control with Panstamp and Raspberry Pi.
+This is a system for the wireless control of building heating (and other systems like lighting etc, though it was primarily designed for heating).
+
+It allows temperature profiles to be set for each individual room for all times of the day and every day of the week.
+
+It can be controlled using a web browser from anywhere.
+
+It uses Panstamps (http://www.panstamp.com/) for the individual rooms and a Raspberry Pi (https://www.raspberrypi.org/) as the main building controller.
+
+This repository contains all the software and all the hardware designs.
+
+It is fully open-source and free.  The licence is the GPL.
+
+One thing it lacks is full documentation, as I created it for my own use and I know how it works.  Sorry.
 
 
 Installation:
@@ -69,7 +81,7 @@ $ popd
 
 You next need to install the heating software:
 
-$ git clone https://github.com/AdrianBowyer/WiControl.git
+$ git clone https://github.com/RepRapLtd/WiControl.git
 $ cd WiControl
 
 Copy the control file:
@@ -115,7 +127,7 @@ you haven't already got it:
 
 https://www.arduino.cc/en/Main/Software
 
-And clone the repository https://github.com/AdrianBowyer/WiControl.git as you did on the Pi.
+And clone the repository https://github.com/RepRapLtd/WiControl.git as you did on the Pi.
 
 Load the arduino program in the folder Panstamp-control into the IDE.
 

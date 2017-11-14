@@ -10,6 +10,7 @@
  
 const char* ssid = "reprapltd";
 const char* password = "1sgdttsa";
+const char* myName = "thermometer";
  
 int ledPin = D4;
 int heatPin = D0;
@@ -47,7 +48,7 @@ void setup() {
     Serial.println(ssid);
   }
 
-  //WiFi.hostname("thermometer");
+  WiFi.hostname(myName);
   WiFi.begin(ssid, password);
  
   while (WiFi.status() != WL_CONNECTED) {
