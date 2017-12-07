@@ -13,9 +13,9 @@
 int ledPin = 2; // D4 on later PCBs?
 int heatPin = D2;
 //WiFiServer server(80);
-bool debug = false;
+bool debug = true;
 
-long checkTime=20000; // Milliseconds
+long checkTime=10000; // Milliseconds
 float switchTemperature = 28.0;
 
 
@@ -24,21 +24,6 @@ float Temperature()
   float r = (float)analogRead(TEMP_SENSE_PIN);
   return ABS_ZERO + THERMISTOR_BETA/log( (r*THERMISTOR_SERIES_R/(AD_RANGE - r))/
       ( THERMISTOR_25_R*exp(-THERMISTOR_BETA/(25.0 - ABS_ZERO)) ) );
-}
- 
-void setup() 
-{
-  if(debug)
-  {
-    Serial.begin(9600);
-     while (!Serial); // wait for serial port to connect. Needed for Leonardo only
-  }
- 
-  pinMode(ledPin, FUNCTION_3);
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, HIGH);
-  pinMode(heatPin, OUTPUT);
-  digitalWrite(heatPin, LOW);
 }
 
 void control(boolean on)
@@ -56,8 +41,29 @@ void control(boolean on)
   }
 }
  
+void setup() 
+{
+  if(debug)
+  {
+    Serial.begin(9600);
+     while (!Serial); // wait for serial port to connect. Needed for Leonardo only
+  }
+ 
+  pinMode(ledPin, FUNCTION_3);
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, HIGH);
+  pinMode(heatPin, OUTPUT);
+  digitalWrite(heatPin, LOW);
+  //wdt_enable(WDTO_8S);
+
+
+}
+
+
+ 
 void loop() 
 {
+
   float t = Temperature();
 
   if(debug)
@@ -75,6 +81,5 @@ void loop()
   }
 
   delay(checkTime);
- 
  
 }
