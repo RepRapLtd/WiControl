@@ -20,18 +20,31 @@
 WiFiClient client;
 bool debug = true;
 
-const char* myName = "ElectronicsLab";  // What am I controlling?
-const char* pageRoot = "/WiFiHeating/"; // Where the .php scripts are on the server
-const char* server = "192.168.1.171";   // Server IP address
+const char* myName = "ElectronicsLab";   // What am I controlling?
+const char* pageRoot = "/heating/WiFi/"; // Where the .php scripts are on the server
+const char* page = "controllednode.php";  // The script we need
+const char* server = "192.168.1.171";    // Server IP address
 const char* bodyStart = "<BODY>";
 const char* bodyEnd = "</BODY>";
-const long loopTime = 10000;            // Milliseconds
+const long loopTime = 10000;             // Milliseconds
+const long randomTime = 2000;            // Milliseconds (must be < loopTime)
+
+#define ABS_ZERO -273.15           // Celsius
+#define TEMP_SENSE_PIN 0           // Analogue pin number
+
+#define THERMISTOR_BETA 3528.0     // thermistor: RS 538-0806
+#define THERMISTOR_SERIES_R 1000.0 // Ohms in series with the thermistors
+#define THERMISTOR_25_R 1000.0     // Thermistor ohms at 25 C = 298.15 K
+#define AD_RANGE 1023.0            // The A->D converter that measures temperatures gives an int this big as its max value
 
 #define MAXC 80
+#define TEMPC 10
 char messageString[MAXC];
+char tempString[TEMPC];
 int messageCount;
 int tagCount;
 bool inMessage;
+long nextTime;
 
 void setup() 
 {
@@ -66,10 +79,27 @@ void setup()
     Serial.print("\nConnected to ");
     Serial.println(ssid);
   }
+  
+  randomSeed(analogRead(TEMP_SENSE_PIN));
+  nextTime = (long)millis();
+}
+
+// Return the celsius temperature as a text string
+
+char* Temperature()
+{
+  double r = (double)analogRead(TEMP_SENSE_PIN);
+  r = ABS_ZERO + THERMISTOR_BETA/log( (r*THERMISTOR_SERIES_R/(AD_RANGE - r))/
+      ( THERMISTOR_25_R*exp(-THERMISTOR_BETA/(25.0 - ABS_ZERO)) ) );
+  if(r >= 10.0 || r < 0.0) // Assumes temp is always bigger than -9.9 C...
+    dtostrf(r, 4, 1, tempString);
+  else
+    dtostrf(r, 3, 1, tempString);
+  return tempString;
 }
 
 
-// This checks a string of characters fed in c to see
+// This checks a string of characters fed one by one in c to see
 // if they match the string tag.  If they do true is
 // returned, false otherwise.  Case is ignored.
 
@@ -96,22 +126,23 @@ bool FindTag(char c, const char* tag)
 // stored in messageString until bodyEnd is encountered.  Note that
 // messageString needs to be long enought to hold all the message plus
 // strlen(bodyEnd).
+// TODO - check this is OK for a null message
 
 void NextByte(char c)
 {
-  if(messageCount == 0)
+  if(messageCount == 0) // Yet to read any message?
   {
-    if(FindTag(c, bodyStart))
+    if(FindTag(c, bodyStart)) // No.
     {
       inMessage = true;
       return;
     }
-  } else
+  } else 
   {
-    if(FindTag(c, bodyEnd))
+    if(FindTag(c, bodyEnd)) // Yes - have read some message
     {
       inMessage = false;
-      messageString[messageCount - strlen(bodyEnd)] = 0;
+      messageString[messageCount - strlen(bodyEnd) + 1] = 0;
       return;
     }   
   }
@@ -160,8 +191,7 @@ void HTTPRequest()
     
   client.print("GET ");
   client.print(pageRoot);
-  client.print(myName);
-  client.print(".php");
+  client.print(page);
   if(strlen(messageString) > 0)
   {
     client.print("?");
@@ -205,25 +235,60 @@ void Disconnect()
   if(debug)
   {
     Serial.println();
-    Serial.println("disconnecting.");
+    Serial.println("disconnecting.\n");
   }
   client.stop();  
 }
 
 
+// Assemble the query part of the HTTP request in messageString
+
+void ComposeQuery()
+{
+  strcpy(messageString, "location=");
+  strcat(messageString, myName);
+  strcat(messageString, "&");
+  strcat(messageString, "temperature=");
+  strcat(messageString, Temperature()); 
+}
+
+
+// Time for the next HTTP request (includes a random component to reduce clashes)
+
+long NextTime()
+{
+  return (long)millis() + loopTime + random(2*randomTime) - randomTime;
+}
+
+// Act on whatever the server has told us to do
+
+void ParseMessage()
+{
+  
+}
+
 void loop()
 {
-  if(Connect())
+  if((long)millis() - nextTime > 0)
   {
-    messageString[0] = 0;
-    HTTPRequest();
-    GetMessage();
+    if(Connect())
+    {
+      messageString[0] = 0;
+      ComposeQuery();
+      HTTPRequest();
+      GetMessage();
+      Disconnect();
 
-    Serial.println(messageString);
+      if(debug)
+      {
+        Serial.print("Recieved: ");
+        Serial.println(messageString);
+      }
   
-    Disconnect();
+      ParseMessage();
 
-    delay(loopTime);
+      nextTime = NextTime();
+    }
   }
 }
 
