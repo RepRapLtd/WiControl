@@ -20,25 +20,48 @@
 WiFiClient client;
 bool debug = true;
 
+#define MAXC 80      // Maximum bytes in a message string
+#define TEMPC 10     // Maximum bytes in a temperature string
+
 const char* myName = "ElectronicsLab";   // What am I controlling?
 const char* pageRoot = "/heating/WiFi/"; // Where the .php scripts are on the server
-const char* page = "controllednode.php";  // The script we need
+const char* page = "controllednode.php"; // The script we need
 const char* server = "192.168.1.171";    // Server IP address
-const char* bodyStart = "<BODY>";
+
+const char* bodyStart = "<BODY>";        // The instructions are in the body of the loaded page
 const char* bodyEnd = "</BODY>";
-const long loopTime = 10000;             // Milliseconds
-const long randomTime = 2000;            // Milliseconds (must be < loopTime)
+
+const long sampleTime = 60000;           // Milliseconds between server requests
+const long randomTime = 5000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
 
 #define ABS_ZERO -273.15           // Celsius
 #define TEMP_SENSE_PIN 0           // Analogue pin number
 
 #define THERMISTOR_BETA 3528.0     // thermistor: RS 538-0806
-#define THERMISTOR_SERIES_R 1000.0 // Ohms in series with the thermistors
+#define THERMISTOR_SERIES_R 1000.0 // Ohms in series with the thermistor
 #define THERMISTOR_25_R 1000.0     // Thermistor ohms at 25 C = 298.15 K
 #define AD_RANGE 1023.0            // The A->D converter that measures temperatures gives an int this big as its max value
 
-#define MAXC 80
-#define TEMPC 10
+
+#define OUTPUT_PIN D2              // Turns the item on or off
+
+// LED control and blinking 
+
+#define LED_PIN 2
+#define OFF 1 // NB LED is inverted
+#define ON 0
+#define DOT 2
+const int dotOn = 100;
+const int dotOff = 500;
+#define DASH 3
+const int dashOn = 500;
+const int dashOff = 100;
+long nextBlink;
+byte blinkPattern;
+byte ledState;
+
+// Text and messages
+
 char messageString[MAXC];
 char tempString[TEMPC];
 int messageCount;
@@ -46,9 +69,21 @@ int tagCount;
 bool inMessage;
 long nextTime;
 
+
+
 void setup() 
 {
-  // Open serial communications and wait for port to open:
+  // I/O pins...
+  
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, OFF);
+  ledState = OFF;
+  pinMode(OUTPUT_PIN, OUTPUT);
+  digitalWrite(OUTPUT_PIN, 0);
+  pinMode(TEMP_SENSE_PIN, INPUT);
+  
+  // Open serial communications and wait for the port to open
+  
   Serial.begin(9600);
   while (!Serial) 
   {
@@ -56,6 +91,7 @@ void setup()
   }
   
   // Connect to WiFi network
+  
   if(debug)
   {
     Serial.println();
@@ -63,25 +99,75 @@ void setup()
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);
   }
-
   WiFi.hostname(myName);
   WiFi.begin(ssid, password);
- 
   while (WiFi.status() != WL_CONNECTED) 
   {
     delay(500);
     if(debug)
       Serial.print(".");
   }
-
   if(debug)
   {
     Serial.print("\nConnected to ");
     Serial.println(ssid);
   }
+
+  // Set up timings and LED behaviour
   
   randomSeed(analogRead(TEMP_SENSE_PIN));
   nextTime = (long)millis();
+  nextBlink = nextTime;
+  blinkPattern = OFF;
+}
+
+
+// Handles LED blink patterns
+
+void Blink()
+{
+  long now = millis();
+  
+  if(blinkPattern == OFF || blinkPattern == ON)
+  {
+    digitalWrite(LED_PIN, blinkPattern);
+    ledState = blinkPattern;
+    nextBlink = now;
+    return; 
+  }
+  
+  if(now - nextBlink < 0)
+    return;
+  
+  if(blinkPattern == DOT)
+  {
+    if(ledState == ON)
+    {
+      digitalWrite(LED_PIN, OFF);
+      ledState = OFF;
+      nextBlink = now + dotOff;
+    } else
+    {
+      digitalWrite(LED_PIN, ON);
+      ledState = ON;
+      nextBlink = now + dotOn;
+    }
+    return;
+  }
+
+  // The default (DASH) is the error signal
+  
+  if(ledState == ON)
+  {
+    digitalWrite(LED_PIN, OFF);
+    ledState = OFF;
+    nextBlink = now + dashOff;
+  } else
+  {
+    digitalWrite(LED_PIN, ON);
+    ledState = ON;
+    nextBlink = now + dashOn;
+  }
 }
 
 // Return the celsius temperature as a text string
@@ -126,7 +212,6 @@ bool FindTag(char c, const char* tag)
 // stored in messageString until bodyEnd is encountered.  Note that
 // messageString needs to be long enought to hold all the message plus
 // strlen(bodyEnd).
-// TODO - check this is OK for a null message
 
 void NextByte(char c)
 {
@@ -165,6 +250,7 @@ void NextByte(char c)
 void GetMessage()
 {
   messageCount = 0;
+  messageString[messageCount] = 0;
   tagCount = 0;
   inMessage = false;
   while(client.connected())
@@ -192,7 +278,7 @@ void HTTPRequest()
   client.print("GET ");
   client.print(pageRoot);
   client.print(page);
-  if(strlen(messageString) > 0)
+  if(messageString[0] != 0)
   {
     client.print("?");
     client.print(messageString);
@@ -257,14 +343,28 @@ void ComposeQuery()
 
 long NextTime()
 {
-  return (long)millis() + loopTime + random(2*randomTime) - randomTime;
+  return (long)millis() + sampleTime + random(2*randomTime) - randomTime;
 }
 
 // Act on whatever the server has told us to do
 
 void ParseMessage()
-{
-  
+{ 
+  if(!strcmp(messageString, "OFF"))
+  {
+    blinkPattern = OFF;
+    digitalWrite(OUTPUT_PIN, 0);
+    return;
+  }
+
+  if(!strcmp(messageString, "ON"))
+  {
+    blinkPattern = ON;
+    digitalWrite(OUTPUT_PIN, 1);
+    return;
+  }
+
+  blinkPattern = DASH;
 }
 
 void loop()
@@ -273,6 +373,7 @@ void loop()
   {
     if(Connect())
     {
+      blinkPattern = OFF;
       messageString[0] = 0;
       ComposeQuery();
       HTTPRequest();
@@ -288,7 +389,12 @@ void loop()
       ParseMessage();
 
       nextTime = NextTime();
+    } else
+    {
+      blinkPattern = DASH;
     }
   }
+
+  Blink();
 }
 
