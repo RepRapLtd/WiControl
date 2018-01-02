@@ -20,7 +20,7 @@
 WiFiClient client;
 bool debug = true;
 
-#define MAXC 80      // Maximum bytes in a message string
+#define MAXC 300     // Maximum bytes in a message string (need a bit of space for debugging info).
 #define TEMPC 10     // Maximum bytes in a temperature string
 
 const char* myName = "ElectronicsLab";   // What am I controlling?
@@ -31,8 +31,8 @@ const char* server = "192.168.1.171";    // Server IP address
 const char* bodyStart = "<BODY>";        // The instructions are in the body of the loaded page
 const char* bodyEnd = "</BODY>";
 
-const long sampleTime = 60000;           // Milliseconds between server requests
-const long randomTime = 5000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
+const long sampleTime = 10000;           // Milliseconds between server requests
+const long randomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
 
 #define ABS_ZERO -273.15           // Celsius
 #define TEMP_SENSE_PIN 0           // Analogue pin number
@@ -206,6 +206,25 @@ bool FindTag(char c, const char* tag)
   return false;
 }
 
+// See if a string starts with a tag
+
+bool TagStartsString(char* tag, char* string)
+{
+  int i = 0;
+  while(tag[i])
+  {
+    if(tag[i] != string[i])
+      return false;
+    i++;
+  }
+
+  // If the string has more than the tag, debug info is available from the server
+  
+  debug = string[i];
+  
+  return true;
+}
+
 
 // This takes bytes, c, of input and throws them away up to the
 // point where the string bodyStart is encountered.  Then they are
@@ -297,7 +316,7 @@ bool Connect()
   {
     if(debug)
     { 
-      Serial.print("Connected to server: ");
+      Serial.print("\nConnected to server: ");
       Serial.println(server);
     }
     return true;
@@ -305,7 +324,7 @@ bool Connect()
   {
     if(debug)
     {
-      Serial.print("Connection to ");
+      Serial.print("\nConnection to ");
       Serial.print(server);
       Serial.println(" failed.");
     }
@@ -320,8 +339,7 @@ void Disconnect()
 {
   if(debug)
   {
-    Serial.println();
-    Serial.println("disconnecting.\n");
+    Serial.println("Disconnecting.");
   }
   client.stop();  
 }
@@ -350,14 +368,14 @@ long NextTime()
 
 void ParseMessage()
 { 
-  if(!strcmp(messageString, "OFF"))
+  if(TagStartsString("OFF", messageString))
   {
     blinkPattern = OFF;
     digitalWrite(OUTPUT_PIN, 0);
     return;
   }
 
-  if(!strcmp(messageString, "ON"))
+  if(TagStartsString("ON", messageString))
   {
     blinkPattern = ON;
     digitalWrite(OUTPUT_PIN, 1);
