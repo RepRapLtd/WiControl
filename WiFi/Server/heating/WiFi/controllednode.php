@@ -14,8 +14,11 @@ $debugString = '';
 
 // Where the files are.
 
-$fileRoot = "Data/";
-$profileRoot = "aandc-profile-";
+$fileRoot = 'Data/';
+$profileRoot = 'aandc-profile-';
+$fileExtension = '.dat';
+$delimiter = '*';
+$timeDelimiter = ':';
 
 // Now
 
@@ -29,12 +32,106 @@ $unixTime = 0 + date_timestamp_get(date_create());
 
 function HMSToSeconds($timeOfDay)
 {
-   global $profile, $debug, $debugString, $fileRoot, $mySlaves, $iAmOn, $boostTime, $times, $temps, $profileRoot, $unixTime;
+   global $profile, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
 
    $parsed = date_parse($timeOfDay);
    $seconds = $parsed['hour'] * 3600 + $parsed['minute'] * 60 + $parsed['second'];
    return 0 + $seconds;
 }
+
+// This removes any '*' and ' ' from the start of a string.  Useful for parsing
+// the heating profile files.
+
+function EatSpaces()
+{
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+
+	while(substr($line, 0, 1) == ' ')
+		$line = substr($line, 1);
+}
+
+// This removes any '*' and ' ' from the start of a string.  Useful for parsing
+// the heating profile files.
+
+function EatDelimitersAndSpaces()
+{
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+
+	while(substr($line, 0, 1) == $delimiter || substr($line, 0, 1) == ' ')
+		$line = substr($line, 1);
+}
+
+// This puts the next line (up to \n) from the $profile into $line and removes
+// it from $profile.  It also checks that the line starts with a string delimiter.
+
+function NextLine()
+{
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+
+   $lineEnd = strpos($profile, "\n");
+   if(!$lineEnd)
+   {
+	$profile = 'X';
+	return false;
+   }
+
+   $line = substr($profile, 0, $lineEnd);
+   if(substr($line, 0, 1) != $delimiter)
+	exit('ERROR - NextLine(): line does not start with a '.$delimiter.': ' . $line);
+   $profile = substr($profile, 1 + $lineEnd);
+   return true;
+}
+
+// This returns the next name (up to but not includeing $delimiter) from $line and
+// removes that from $line (including any trailing spaces and $delimiters).  If there is
+// no next name false is returned.
+
+function NextName()
+{
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+
+   EatDelimitersAndSpaces();
+   $endName = strpos($line, $delimiter);
+   if(!$endName)
+	return false;
+   $name = str_replace(' ', '', substr($line, 0, $endName));
+   $line = substr($line, $endName);
+   EatDelimitersAndSpaces();
+   return $name;
+}
+
+// This returns the next number (up to but not includeing ' ') from $line and
+// removes that from $line (including any trailing ' ').  If there is no next number false
+// is returned.  Note times (hh:mm:ss) are considered numbers and returned.
+
+function NextNumber()
+{
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+
+   if($line == '')
+	return false;
+
+   EatSpaces();
+   $endNumber = strpos($line, ' ');
+   if(!$endNumber)
+   {
+      $number = str_replace('"', '', $line);
+      $line = '';
+   } else
+   {
+      $number = str_replace('"', '', substr($line, 0, $endNumber));
+      $line = substr($line, $endNumber);
+   }
+   EatSpaces();
+   return $number;
+}
+
 
 // This parses the profile file which is written by the web interface.
 
@@ -45,47 +142,85 @@ function HMSToSeconds($timeOfDay)
 // If $device is a slave:
 // $times is empty().
 
+
 function ParseProfile($device)
 {
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
 
-   global $profile, $debug, $debugString, $fileRoot, $mySlaves, $iAmOn, $boostTime, $times, $temps, $profileRoot, $unixTime;
-
-   $profileName = $fileRoot . $profileRoot . strtolower(date('l')) . ".dat";
+   $profileName = $fileRoot . $profileRoot . strtolower(date('l')) . $fileExtension;
    $profile = file_get_contents($profileName);
 
-/*   $iAmOn = True;
-   $boostTime = $unixTime - 20000;
-   $times = array(
-       HMSToSeconds("00:00:00"),
-       HMSToSeconds("07:30:00"),
-       HMSToSeconds("09:00:00"),
-       HMSToSeconds("18:00:00"),
-       HMSToSeconds("19:30:00"),
+   $listStart = strpos($profile, '---');
+   if(!$listStart)
+	exit('ERROR: ParseProfile() - string --- not found');
 
-	);
-   $temps = array(
-	15.0,
-	19.0,
-	17.0,
-	21.0,
-	18.0,
+   $profile = substr($profile, 4 + $listStart);
+   while(NextLine())
+   {
+	$thisLine = $line;
+	$name = NextName();
+	if($name == $device)
+	{
+		$slaveCount = 0;
+		$name = NextName();
+		while($name)
+		{
+			if($name != $device)
+			{
+				$mySlaves[$slaveCount] = $name;
+				$slaveCount++;
+			}
+			$name = NextName();
+		}
+
+		$number = NextNumber();
+		if(!$number)
+			exit('ERROR: ParseProfile() - on/off digit not found: '.$thisLine);
+		$iAmOn = (0+$number == '1');
+		$number = NextNumber();
+		if(!$number)
+			exit('ERROR: ParseProfile() - boost time not found: '.$thisLine);
+		$boostTime = 0 + $number;
+
+		$timeCount = 0;
+		$time = NextNumber();
+		while($time)
+		{
+			$times[$timeCount] = HMSToSeconds($time);
+			$temp = NextNumber();
+			if(!$temp)
+				exit('ERROR: ParseProfile() - time without temp: '.$thisLine);
+			$temps[$timeCount] = 0 + $temp;
+			$timeCount++;
+			$time = NextNumber();
+		}
+
+/* Debug parsing: */
+
+		echo $device.':<br> is ';
+		if($iAmOn)
+			echo 'ON<br>';
+		else
+			echo 'OFF<br>';
+
+		echo ' boost: '.$boostTime.' (Uxt: '.$unixTime.')<br> Ts&Ts:<br>';
+		for($i = 0; $i < sizeof($times); $i++)
+			echo ' '.$times[$i].' '.$temps[$i].'<br>';
 
 
-        );
-
-   $mySlaves = array(
-        "Boiler",
-        "HallWest",
-        "HallEast",
-
-        );*/
+		return;
+	}
+   }
+   $profile = 'X';
 }
 
 // Return the set temperature for $device at the current time.
 
 function SetTemperature($device) 
 {
-    global $profile, $debug, $debugString, $fileRoot, $mySlaves, $iAmOn, $boostTime, $times, $temps, $profileRoot, $unixTime;
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
 
     if(empty($profile))
 	exit('ERROR: SetTemperature() - profile not loaded');
@@ -96,10 +231,17 @@ function SetTemperature($device)
 	return -300.0; // Yes
 
 
-    // No
+    // No.  Am I on?
 
     if(!$iAmOn)
         return 10.0;
+
+    // Am I boosted?
+
+    if($boostTime > $unixTime)
+	return 28.0;
+
+    // None of the above - return the temperature from the profile.
 
     $secondsSinceMidnight = (time() % 86400);
 
@@ -115,21 +257,25 @@ function SetTemperature($device)
 }
 
 // If $device is a slave [see TurnOnDependentList() below] and it needs to be on,
-// return true.  A slave device needs to be on if it's .dat file has a
+// return true.  A slave device needs to be on if its .dat file has a
 // timestamp less than two minutes old.  As every device gets information
 // on what it should be doing once a minute +/- 5 seconds, every slave
-// device that needs to be on will have had it's .dat file touched less than
+// device that needs to be on will have had its .dat file touched less than
 // 2 minutes (120 seconds) ago.
 
 function IAmAnOnSlave($device)
 {
-    global $profile, $debug, $debugString, $fileRoot, $mySlaves, $iAmOn, $boostTime, $times, $temps, $profileRoot, $unixTime;
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
 
     if(empty($profile))
 	exit('ERROR: IAmAnOnSlave() - profile not loaded');
 
-    $fileName = $fileRoot . $device . ".dat";
-    $fileTouched = 0 + filemtime($fileName);
+    $fileName = $fileRoot . $device . $fileExtension;
+    $t = filemtime($fileName);
+    if(!$t)
+	exit('ERROR: IAmAnOnSlave() - slave file not found: ' . $fileName);
+    $fileTouched = 0 + $t;
     return ($unixTime - $fileTouched < 120);
 }
 
@@ -138,7 +284,8 @@ function IAmAnOnSlave($device)
 
 function TurnOnDependentList($device)
 {
-    global $profile, $debug, $debugString, $fileRoot, $mySlaves, $iAmOn, $boostTime, $times, $temps, $profileRoot, $unixTime;
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
 
     if(empty($profile))
 	exit('ERROR: TurnOnDependentList() - profile not loaded');
@@ -148,7 +295,7 @@ function TurnOnDependentList($device)
 
     for ($i = 0; $i < sizeof($mySlaves); $i++)
     {
-	$fileName = $fileRoot . $mySlaves[$i] . ".dat";
+	$fileName = $fileRoot . $mySlaves[$i] . $fileExtension;
 	touch($fileName);
     }
 }
@@ -157,10 +304,13 @@ function TurnOnDependentList($device)
 
 function SaveTemperature($device, $act, $temp, $s)
 {
-    global $profile, $debug, $debugString, $fileRoot, $mySlaves, $iAmOn, $boostTime, $times, $temps, $profileRoot, $unixTime;
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
 
-    $fileName = $fileRoot . $device . ".dat";
-    $fileHandle = fopen($fileName, "w");
+    $fileName = $fileRoot . $device . $fileExtension;
+    $fileHandle = fopen($fileName, 'w');
+    if(!$fileHandle)
+	exit('ERROR: SaveTemperature() - can not open file to write: '.$fileName); 
     fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act);
     fclose($fileHandle);
     if($debug)
