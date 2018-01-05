@@ -6,7 +6,7 @@
 
 ini_set('display_errors', 'On');
 error_reporting(E_ALL | E_STRICT);
-$debug = True;
+$debug = true;
 
 // Append debugging info to this string
 
@@ -17,6 +17,9 @@ $debugString = '';
 $fileRoot = 'Data/';
 $profileRoot = 'aandc-profile-';
 $fileExtension = '.dat';
+
+// Special characters
+
 $delimiter = '*';
 $timeDelimiter = ':';
 
@@ -40,7 +43,7 @@ function HMSToSeconds($timeOfDay)
    return 0 + $seconds;
 }
 
-// This removes any '*' and ' ' from the start of a string.  Useful for parsing
+// This removes ' ' from the start of a string.  Useful for parsing
 // the heating profile files.
 
 function EatSpaces()
@@ -48,7 +51,7 @@ function EatSpaces()
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
 	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
 
-	while(substr($line, 0, 1) == ' ')
+	while(substr($line, 0, 1) == ' ' || substr($line, 0, 1) == "\n")
 		$line = substr($line, 1);
 }
 
@@ -60,12 +63,13 @@ function EatDelimitersAndSpaces()
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
 	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
 
-	while(substr($line, 0, 1) == $delimiter || substr($line, 0, 1) == ' ')
+	while(substr($line, 0, 1) == $delimiter || substr($line, 0, 1) == ' ' || substr($line, 0, 1) == "\n")
 		$line = substr($line, 1);
 }
 
 // This puts the next line (up to \n) from the $profile into $line and removes
 // it from $profile.  It also checks that the line starts with a string delimiter.
+// If there are no more lines it returns false.
 
 function NextLine()
 {
@@ -163,6 +167,9 @@ function ParseProfile($device)
 	if($name == $device)
 	{
 		$slaveCount = 0;
+		$name = NextName(); // Thermometer device in the old system - ignore
+		if(!$name)
+			exit('Error: ParseProfile() - thermometer name missing.' . $thisLine);
 		$name = NextName();
 		while($name)
 		{
@@ -175,21 +182,21 @@ function ParseProfile($device)
 		}
 
 		$number = NextNumber();
-		if(!$number)
+		if($number === false) // NB 0 is a valid return
 			exit('ERROR: ParseProfile() - on/off digit not found: '.$thisLine);
 		$iAmOn = (0+$number == '1');
 		$number = NextNumber();
-		if(!$number)
+		if($number === false)
 			exit('ERROR: ParseProfile() - boost time not found: '.$thisLine);
 		$boostTime = 0 + $number;
 
 		$timeCount = 0;
 		$time = NextNumber();
-		while($time)
+		while(!($time === false))
 		{
 			$times[$timeCount] = HMSToSeconds($time);
 			$temp = NextNumber();
-			if(!$temp)
+			if($temp === false)
 				exit('ERROR: ParseProfile() - time without temp: '.$thisLine);
 			$temps[$timeCount] = 0 + $temp;
 			$timeCount++;
@@ -207,8 +214,13 @@ function ParseProfile($device)
 		echo ' boost: '.$boostTime.' (Uxt: '.$unixTime.')<br> Ts&Ts:<br>';
 		for($i = 0; $i < sizeof($times); $i++)
 			echo ' '.$times[$i].' '.$temps[$i].'<br>';
+		echo ' slaves:';
+		for($i = 0; $i < sizeof($mySlaves); $i++)
+			echo ' '.$mySlaves[$i];
+		echo '<br>';
 
 
+		$profile = 'X';
 		return;
 	}
    }
@@ -311,7 +323,7 @@ function SaveTemperature($device, $act, $temp, $s)
     $fileHandle = fopen($fileName, 'w');
     if(!$fileHandle)
 	exit('ERROR: SaveTemperature() - can not open file to write: '.$fileName); 
-    fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act);
+    fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . "\n");
     fclose($fileHandle);
     if($debug)
 	$debugString = $debugString . ', ' . $device . ' temp = ' . $temp . ', set = ' . $s;
