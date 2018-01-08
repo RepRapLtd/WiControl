@@ -35,9 +35,6 @@ $unixTime = 0 + date_timestamp_get(date_create());
 
 function HMSToSeconds($timeOfDay)
 {
-   global $profile, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
-
    $parsed = date_parse($timeOfDay);
    $seconds = $parsed['hour'] * 3600 + $parsed['minute'] * 60 + $parsed['second'];
    return 0 + $seconds;
@@ -46,47 +43,42 @@ function HMSToSeconds($timeOfDay)
 // This removes ' ' from the start of a string.  Useful for parsing
 // the heating profile files.
 
-function EatSpaces()
+function EatSpaces(&$text)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
-
-	while(substr($line, 0, 1) == ' ' || substr($line, 0, 1) == "\n")
-		$line = substr($line, 1);
+	while(substr($text, 0, 1) == ' ' || substr($text, 0, 1) == "\n")
+		$text = substr($text, 1);
 }
 
 // This removes any '*' and ' ' from the start of a string.  Useful for parsing
 // the heating profile files.
 
-function EatDelimitersAndSpaces()
+function EatDelimitersAndSpaces(&$text)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+	global $delimiter;
 
-	while(substr($line, 0, 1) == $delimiter || substr($line, 0, 1) == ' ' || substr($line, 0, 1) == "\n")
-		$line = substr($line, 1);
+	while(substr($text, 0, 1) == $delimiter || substr($text, 0, 1) == ' ' || substr($text, 0, 1) == "\n")
+		$text = substr($text, 1);
 }
 
-// This puts the next line (up to \n) from the $profile into $line and removes
+// This puts the next line (up to \n) from the $text into $line and removes
 // it from $profile.  It also checks that the line starts with a string delimiter.
 // If there are no more lines it returns false.
 
-function NextLine()
+function NextLine(&$text, &$ln)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+   global $delimiter;
 
-   $lineEnd = strpos($profile, "\n");
+   $lineEnd = strpos($text, "\n");
    if(!$lineEnd)
    {
-	$profile = 'X';
+	$text = 'X';
 	return false;
    }
 
-   $line = substr($profile, 0, $lineEnd);
-   if(substr($line, 0, 1) != $delimiter)
-	exit('ERROR - NextLine(): line does not start with a '.$delimiter.': ' . $line);
-   $profile = substr($profile, 1 + $lineEnd);
+   $ln = substr($text, 0, $lineEnd);
+   if(substr($ln, 0, 1) != $delimiter)
+	exit('ERROR - NextLine(): line does not start with a '.$delimiter.': ' . $ln);
+   $text = substr($text, 1 + $lineEnd);
    return true;
 }
 
@@ -94,46 +86,55 @@ function NextLine()
 // removes that from $line (including any trailing spaces and $delimiters).  If there is
 // no next name false is returned.
 
-function NextName()
+function NextName(&$text, &$nam)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+   global $delimiter;
 
-   EatDelimitersAndSpaces();
-   $endName = strpos($line, $delimiter);
+   EatDelimitersAndSpaces($text);
+   $endName = strpos($text, $delimiter);
    if(!$endName)
 	return false;
-   $name = str_replace(' ', '', substr($line, 0, $endName));
-   $line = substr($line, $endName);
-   EatDelimitersAndSpaces();
-   return $name;
+   $nam = str_replace(' ', '', substr($text, 0, $endName));
+   $text = substr($text, $endName);
+   EatDelimitersAndSpaces($text);
+   return true;
 }
 
 // This returns the next number (up to but not includeing ' ') from $line and
 // removes that from $line (including any trailing ' ').  If there is no next number false
 // is returned.  Note times (hh:mm:ss) are considered numbers and returned.
 
-function NextNumber()
+function NextNumber(&$text, &$num)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
-
-   if($line == '')
+   if($text == '')
 	return false;
 
-   EatSpaces();
-   $endNumber = strpos($line, ' ');
+   EatSpaces($text);
+   $endNumber = strpos($text, ' ');
    if(!$endNumber)
    {
-      $number = str_replace('"', '', $line);
-      $line = '';
+      $num = str_replace('"', '', $text);
+      $text = '';
    } else
    {
-      $number = str_replace('"', '', substr($line, 0, $endNumber));
-      $line = substr($line, $endNumber);
+      $num = str_replace('"', '', substr($text, 0, $endNumber));
+      $text = substr($text, $endNumber);
    }
-   EatSpaces();
-   return $number;
+   EatSpaces($text);
+   return true;
+}
+
+
+function GetTemperatureFromElsewhere(&$therm)
+{
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
+
+   $thermName = $fileRoot . $therm . $fileExtension;
+   $thermContents = file_get_contents($thermName);
+   EatSpaces($thermContents);
+   if(!NextNumber($thermContents, $therm))
+	 exit('ERROR: GetTemperatureFromElsewhere() - temperature not found:'.$thermContents);
 }
 
 
@@ -149,8 +150,8 @@ function NextNumber()
 
 function ParseProfile($device)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
 
    $profileName = $fileRoot . $profileRoot . strtolower(date('l')) . $fileExtension;
    $profile = file_get_contents($profileName);
@@ -160,47 +161,54 @@ function ParseProfile($device)
 	exit('ERROR: ParseProfile() - string --- not found');
 
    $profile = substr($profile, 4 + $listStart);
-   while(NextLine())
+   while(NextLine($profile, $line))
    {
 	$thisLine = $line;
-	$name = NextName();
+	if(!NextName($line, $name))
+		exit('Error: ParseProfile() - first name on line missing.' . $thisLine);
 	if($name == $device)
 	{
+		if(!NextName($line, $thermometer))
+			exit('Error: ParseProfile() - thermometer name on line missing.' . $thisLine);
+
+		if($thermometer == $device)
+		{
+			$thermometer = false;
+		} else
+		{
+			GetTemperatureFromElsewhere($thermometer);
+		}
+
 		$slaveCount = 0;
-		$name = NextName(); // Thermometer device in the old system - ignore
-		if(!$name)
-			exit('Error: ParseProfile() - thermometer name missing.' . $thisLine);
-		$name = NextName();
-		while($name)
+		$iAmMyOwnSlave = false;
+		while(NextName($line, $name))
 		{
 			if($name != $device)
 			{
 				$mySlaves[$slaveCount] = $name;
 				$slaveCount++;
+			} else
+			{
+				$iAmMyOwnSlave = true;
 			}
-			$name = NextName();
 		}
 
-		$number = NextNumber();
-		if($number === false) // NB 0 is a valid return
+		if(!NextNumber($line, $number))
 			exit('ERROR: ParseProfile() - on/off digit not found: '.$thisLine);
-		$iAmOn = (0+$number == '1');
-		$number = NextNumber();
-		if($number === false)
+		$iAmOn = ((0+$number) == 1);
+
+		if(!NextNumber($line, $number))
 			exit('ERROR: ParseProfile() - boost time not found: '.$thisLine);
 		$boostTime = 0 + $number;
 
 		$timeCount = 0;
-		$time = NextNumber();
-		while(!($time === false))
+		while(NextNumber($line, $time))
 		{
 			$times[$timeCount] = HMSToSeconds($time);
-			$temp = NextNumber();
-			if($temp === false)
+			if(!NextNumber($line, $temp))
 				exit('ERROR: ParseProfile() - time without temp: '.$thisLine);
 			$temps[$timeCount] = 0 + $temp;
 			$timeCount++;
-			$time = NextNumber();
 		}
 
 /* Debug parsing: */
@@ -211,10 +219,15 @@ function ParseProfile($device)
 		else
 			echo 'OFF<br>';
 
+		if(!($thermometer === false))
+			echo 'Temperature from elsewhere: ' . $thermometer . '<br>';
+
+		if($iAmMyOwnSlave)
+			echo 'I am my own slave <br>';
+
 		echo ' boost: '.$boostTime.' (Uxt: '.$unixTime.')<br> Ts&Ts:<br>';
 		for($i = 0; $i < sizeof($times); $i++)
-			echo ' '.$times[$i].' '.$temps[$i].'<br>';
-		echo ' slaves:';
+			echo ' '.$times[$i].' '.$temps[$i].'<br> slaves:';
 		for($i = 0; $i < sizeof($mySlaves); $i++)
 			echo ' '.$mySlaves[$i];
 		echo '<br>';
@@ -231,8 +244,8 @@ function ParseProfile($device)
 
 function SetTemperature($device) 
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
 
     if(empty($profile))
 	exit('ERROR: SetTemperature() - profile not loaded');
@@ -277,8 +290,8 @@ function SetTemperature($device)
 
 function IAmAnOnSlave($device)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
 
     if(empty($profile))
 	exit('ERROR: IAmAnOnSlave() - profile not loaded');
@@ -288,7 +301,7 @@ function IAmAnOnSlave($device)
     if(!$t)
 	exit('ERROR: IAmAnOnSlave() - slave file not found: ' . $fileName);
     $fileTouched = 0 + $t;
-    return ($unixTime - $fileTouched < 120);
+    return (($unixTime - $fileTouched) < 120);
 }
 
 // Touch the .dat files of slave devices that also need to be turned on if 
@@ -296,8 +309,8 @@ function IAmAnOnSlave($device)
 
 function TurnOnDependentList($device)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
 
     if(empty($profile))
 	exit('ERROR: TurnOnDependentList() - profile not loaded');
@@ -307,8 +320,11 @@ function TurnOnDependentList($device)
 
     for ($i = 0; $i < sizeof($mySlaves); $i++)
     {
-	$fileName = $fileRoot . $mySlaves[$i] . $fileExtension;
-	touch($fileName);
+	if($mySlaves[$i] != $device) // Don't touch my own file as it will be written to anyway
+	{
+		$fileName = $fileRoot . $mySlaves[$i] . $fileExtension;
+		touch($fileName);
+	}
     }
 }
 
@@ -316,8 +332,8 @@ function TurnOnDependentList($device)
 
 function SaveTemperature($device, $act, $temp, $s)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter;
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
 
     $fileName = $fileRoot . $device . $fileExtension;
     $fileHandle = fopen($fileName, 'w');
@@ -349,10 +365,20 @@ if($location == '')
 
 ParseProfile($location);
 
-$t = 0.0 + $temperature;
+// if $thermometer is true some other device returns my temperature, and that temperature
+// will now be in $thermometer.  Note use of === as 0 is a valid temperature.
+
+if($thermometer === false)
+{
+	$t = 0.0 + $temperature;
+} else
+{
+	$t = 0.0 + $thermometer;
+}
+
+// What temperature should I be?
+
 $set = SetTemperature($location);
-
-
 
 // Control the heating.  Default is off...
 
@@ -360,26 +386,32 @@ $action = 'OFF';
 
 if($set < -280.0)
 {
-  // $location is a slave device
+	// $location is a slave device
 
-  if(IAmAnOnSlave($location))
-  {
-     $action = 'ON';
-  }
+	if(IAmAnOnSlave($location))
+	{
+	     $action = 'ON';
+	}
 
-  if($debug)
-     $debugString = $debugString . ' (I am a slave.)';
+	if($debug)
+	     $debugString = $debugString . ' (I am a slave.)';
 } else
 {
-  // $location is a master device
+	// $location is a master device
 
-  if($set > $t)
-  {
-    TurnOnDependentList($location);
-    $action = 'ON';
-  }
-  SaveTemperature($location, $action, $t, $set);
+	if($set > $t)
+	{
+	    TurnOnDependentList($location);
+	    if($iAmMyOwnSlave)
+	    	$action = 'ON';
+	    else if($debug)
+		$debugString = $debugString . ' (I do not control myself.)';
+	    
+	}
+	SaveTemperature($location, $action, $t, $set);
 }
+
+	
 
 // Tell the device what to do
 
