@@ -2,15 +2,29 @@
 <head><title>controllednode</title></head>
 <body><?php
 
+/*
+ * Program to serve HTTP requests from a node on the WiFi Heating Control system.
+ *  
+ * Adrian Bwowyer
+ * RepRap Ltd
+ * http://reprapltd.com
+ * 
+ * 29 December 2017
+ *
+ * Licence: GPL
+ */
+
+// HTTP requests to this look like: http://host-url/heating/WiFi/controllednode.php?location=Kitchen&temperature=20[&debugOn=1]
+
 // Debugging...
 
 ini_set('display_errors', 'On');
 error_reporting(E_ALL | E_STRICT);
-$debug = true;
+$debug = false;
 
 // Append debugging info to this string
 
-$debugString = '';
+$debugString = '<br><br>';
 
 // Where the files are.
 
@@ -60,9 +74,9 @@ function EatDelimitersAndSpaces(&$text)
 		$text = substr($text, 1);
 }
 
-// This puts the next line (up to \n) from the $text into $line and removes
-// it from $profile.  It also checks that the line starts with a string delimiter.
-// If there are no more lines it returns false.
+// This puts the next line (up to \n) from the $text into $ln and removes
+// it from $text.  It also checks that the line starts with a string delimiter.
+// If there are no more lines it returns false. It assumes that the last line ends with a "\n".
 
 function NextLine(&$text, &$ln)
 {
@@ -82,9 +96,9 @@ function NextLine(&$text, &$ln)
    return true;
 }
 
-// This returns the next name (up to but not includeing $delimiter) from $line and
-// removes that from $line (including any trailing spaces and $delimiters).  If there is
-// no next name false is returned.
+// This returns the next name (up to but not includeing $delimiter) from $text and
+// removes that from $text (including any trailing spaces and $delimiters).  If there is
+// no next name false is returned.  If the name contains ' ' these are removed.
 
 function NextName(&$text, &$nam)
 {
@@ -100,8 +114,8 @@ function NextName(&$text, &$nam)
    return true;
 }
 
-// This returns the next number (up to but not includeing ' ') from $line and
-// removes that from $line (including any trailing ' ').  If there is no next number false
+// This returns the next number (up to but not includeing ' ') from $text and
+// removes that from $text (including any trailing ' ').  If there is no next number false
 // is returned.  Note times (hh:mm:ss) are considered numbers and returned.
 
 function NextNumber(&$text, &$num)
@@ -124,6 +138,8 @@ function NextNumber(&$text, &$num)
    return true;
 }
 
+// Some devices use another device ($therm) to measure the temperature they should be using.  This loads
+// that temperature from the little file recorded by the other device.
 
 function GetTemperatureFromElsewhere(&$therm)
 {
@@ -141,10 +157,16 @@ function GetTemperatureFromElsewhere(&$therm)
 // This parses the profile file which is written by the web interface.
 
 // If $device is a master:
+
 // The result is an array of dependent slaves for $device, $mySlaves, the boolean $iAmOn set,
 // The Unix time $boostTime set, and the day's list of pairs of times and temperatures, $times and $temps.
+// $iAmMyOwnSlave true means I need to turn myself on or off.  False means I don't need to throw my
+// internal switch. If !($thermometer === false) then it contains the temperature I need to
+// use in preference to any that my own device has supplied.  (Note the === is needed because 0 is a
+// valid temperature.)
 
 // If $device is a slave:
+
 // $times is empty().
 
 
@@ -156,9 +178,12 @@ function ParseProfile($device)
    $profileName = $fileRoot . $profileRoot . strtolower(date('l')) . $fileExtension;
    $profile = file_get_contents($profileName);
 
+   // Ignore the old Panstamp control information at the start of the file. There is a line
+   // with --- on between that and the stuff we want.
+
    $listStart = strpos($profile, '---');
    if(!$listStart)
-	exit('ERROR: ParseProfile() - string --- not found');
+	exit('ERROR: ParseProfile() - string --- not found.');
 
    $profile = substr($profile, 4 + $listStart);
    while(NextLine($profile, $line))
@@ -166,6 +191,9 @@ function ParseProfile($device)
 	$thisLine = $line;
 	if(!NextName($line, $name))
 		exit('Error: ParseProfile() - first name on line missing.' . $thisLine);
+
+	// Is this the line for this device?
+
 	if($name == $device)
 	{
 		if(!NextName($line, $thermometer))
@@ -211,29 +239,34 @@ function ParseProfile($device)
 			$timeCount++;
 		}
 
-/* Debug parsing: */
+// Debug parsing
 
-		echo $device.':<br> is ';
-		if($iAmOn)
-			echo 'ON<br>';
-		else
-			echo 'OFF<br>';
+		if($debug)
+		{
+			$debugString = $debugString . $device.':<br> is ';
+			if($iAmOn)
+				$debugString = $debugString . 'active<br>';
+			else
+				$debugString = $debugString . 'inactive (10C)<br>';
 
-		if(!($thermometer === false))
-			echo 'Temperature from elsewhere: ' . $thermometer . '<br>';
+			if(!($thermometer === false))
+				$debugString = $debugString . 'Temperature from elsewhere: ' . $thermometer . '<br>';
 
-		if($iAmMyOwnSlave)
-			echo 'I am my own slave <br>';
+			if($iAmMyOwnSlave)
+				$debugString = $debugString . 'I am my own slave <br>';
 
-		echo ' boost: '.$boostTime.' (Uxt: '.$unixTime.')<br> Ts&Ts:<br>';
-		for($i = 0; $i < sizeof($times); $i++)
-			echo ' '.$times[$i].' '.$temps[$i].'<br> slaves:';
-		for($i = 0; $i < sizeof($mySlaves); $i++)
-			echo ' '.$mySlaves[$i];
-		echo '<br>';
+			$debugString = $debugString . ' boost: '.$boostTime.' (Uxt: '.$unixTime.')<br> Ts&Ts:<br>';
+			for($i = 0; $i < sizeof($times); $i++)
+				$debugString = $debugString . ' '.$times[$i].' '.$temps[$i].'<br>';
+			$debugString = $debugString . 'slaves:<br>';
+			for($i = 0; $i < sizeof($mySlaves); $i++)
+				$debugString = $debugString . ' '.$mySlaves[$i];
+			$debugString = $debugString . '<br>';
+		}
 
+		// No more information needed from $profile, but it has to contain something.
 
-		$profile = 'X';
+		$profile = 'X'; 
 		return;
 	}
    }
@@ -247,24 +280,24 @@ function SetTemperature($device)
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
 	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
 
-    if(empty($profile))
+    if(empty($profile)) // That's why $profile has to contain something...
 	exit('ERROR: SetTemperature() - profile not loaded');
 
     // Am I a slave device?
 
     if(empty($times))
-	return -300.0; // Yes
+	return -300.0; // Yes - return an impossible (< abs 0) temperature to flag the fact
 
 
     // No.  Am I on?
 
     if(!$iAmOn)
-        return 10.0;
+        return 10.0; // Just to prevent pipes freezing in cold weather...
 
     // Am I boosted?
 
     if($boostTime > $unixTime)
-	return 28.0;
+	return 28.0; // I think that's hot enought to guarantee that it turns on...
 
     // None of the above - return the temperature from the profile.
 
@@ -342,31 +375,30 @@ function SaveTemperature($device, $act, $temp, $s)
     fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . "\n");
     fclose($fileHandle);
     if($debug)
-	$debugString = $debugString . ', ' . $device . ' temp = ' . $temp . ', set = ' . $s;
+	$debugString = $debugString . $device . ' state: temp = ' . $temp . ', set = ' . $s;
 }
 
 //***************************************************************
 
 // Gather data...
 
-$location = '';
-$temperature = '20';
-
 // Get the query sring from the HTTP request.
 // This should be: "html://...../controllednode.php?location=where/what-the-device-is&temperature=the-device's-temperature"
-// If the device does not have a temperature it should send -300.0 (impossible as below abs zero)
+// If the device does not have a temperature it can send -300.0 (impossible as below abs zero)
 
 parse_str($_SERVER['QUERY_STRING']);
 
-// Check we have a $device/$location at least...
+// Check we have a $device/$location and $temperature from the HTTP query...
 
-if($location == '')
-	exit('ERROR - $location undefined');
+if(empty($location) || empty($temperature))
+	exit('ERROR - $location or $temperature undefined');
+
+$debug = !empty($debugOn);
 
 ParseProfile($location);
 
-// if $thermometer is true some other device returns my temperature, and that temperature
-// will now be in $thermometer.  Note use of === as 0 is a valid temperature.
+// if $thermometer is not false some other device returned my temperature, and that temperature
+// will now be in $thermometer.  Note use of ===, because 0 (casts to false) is a valid temperature.
 
 if($thermometer === false)
 {

@@ -11,6 +11,9 @@
  * http://reprapltd.com
  * 
  * 29 December 2017
+ * 
+ * Licence: GPL
+ * 
  */
 
 #include <ESP8266WiFi.h>
@@ -20,16 +23,22 @@
 WiFiClient client;
 bool debug = true;
 
-#define MAXC 300     // Maximum bytes in a message string (need a bit of space for debugging info).
-#define TEMPC 10     // Maximum bytes in a temperature string
+#define MAXC 1000     // Maximum bytes in a message string (need a bit of space for debugging info).
+#define TEMPC 10      // Maximum bytes in a temperature string
 
-const char* myName = "ElectronicsLab";   // What am I controlling?
+#define BAUD 9600     // Serial comms speed
+
+const char* myName = "Kitchen";   // What am I controlling?
 const char* pageRoot = "/heating/WiFi/"; // Where the .php scripts are on the server
 const char* page = "controllednode.php"; // The script we need
-const char* server = "192.168.1.171";    // Server IP address
+const char* server = "192.168.1.171";    // Server IP address/URL
+
+// Bits of HTML we need to know (not case sensitive)
 
 const char* bodyStart = "<BODY>";        // The instructions are in the body of the loaded page
 const char* bodyEnd = "</BODY>";
+const char* htmlBreak = "<BR>";
+
 
 const long sampleTime = 10000;           // Milliseconds between server requests
 const long randomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
@@ -90,12 +99,14 @@ void setup()
     ; // wait for serial port to connect.
   }
   
-  // Connect to WiFi network
+  // Identify then connect to WiFi network
   
   if(debug)
   {
     Serial.println();
     Serial.println();
+    Serial.print("I am: ");
+    Serial.println(myName);
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);
   }
@@ -208,19 +219,15 @@ bool FindTag(char c, const char* tag)
 
 // See if a string starts with a tag
 
-bool TagStartsString(char* tag, char* string)
+bool TagStartsString(const char* tag, char* s)
 {
   int i = 0;
   while(tag[i])
   {
-    if(tag[i] != string[i])
+    if(toupper(tag[i]) != toupper(s[i]))
       return false;
     i++;
   }
-
-  // If the string has more than the tag, debug info is available from the server
-  
-  debug = string[i];
   
   return true;
 }
@@ -255,10 +262,29 @@ void NextByte(char c)
   {
     messageString[messageCount] = c;
     messageCount++;
-    if(messageCount >= MAXC)
+    if(messageCount >= MAXC)  // Stop buffer overflow
     {
       messageCount = MAXC - 1;
     }
+  }
+}
+
+
+// Run through a string replacing HTML "<br>" with "   \n"
+
+void BreakReplace(char* s)
+{
+  int p0 = 0;
+
+  while(s[p0])
+  {
+    if(TagStartsString(htmlBreak, &s[p0]))
+    {
+      for(int i = 0; i < 3; i++)
+        s[p0++] = ' ';
+      s[p0] = '\n';
+    }
+    p0++;
   } 
 }
 
@@ -280,6 +306,14 @@ void GetMessage()
       c = client.read();
       NextByte(c);
     }
+  }
+
+  if(debug)
+  {
+    BreakReplace(messageString);
+    Serial.print("\nReceived: \n");
+    Serial.println(messageString);
+    Serial.println();
   }
 }
 
@@ -316,7 +350,7 @@ bool Connect()
   {
     if(debug)
     { 
-      Serial.print("\nConnected to server: ");
+      Serial.print("\n>>>Connected to server: ");
       Serial.println(server);
     }
     return true;
@@ -339,7 +373,7 @@ void Disconnect()
 {
   if(debug)
   {
-    Serial.println("Disconnecting.");
+    Serial.println("<<<Disconnecting.");
   }
   client.stop();  
 }
@@ -353,7 +387,12 @@ void ComposeQuery()
   strcat(messageString, myName);
   strcat(messageString, "&");
   strcat(messageString, "temperature=");
-  strcat(messageString, Temperature()); 
+  strcat(messageString, Temperature());
+  if(debug)
+  {
+    strcat(messageString, "&");
+    strcat(messageString, "debugOn=1");
+  }  
 }
 
 
@@ -361,15 +400,24 @@ void ComposeQuery()
 
 long NextTime()
 {
-  return (long)millis() + sampleTime + random(2*randomTime) - randomTime;
+  long f = sampleTime + random(2*randomTime) - randomTime;
+  if(debug)
+  {
+    Serial.print("Next server request will be in ");
+    Serial.print(f);
+    Serial.println(" milliseconds.");
+  }
+  return (long)millis() + f;
 }
 
 // Act on whatever the server has told us to do
 
 void ParseMessage()
-{ 
+{     
   if(TagStartsString("OFF", messageString))
   {
+    if(debug)
+       Serial.println("Switching off");
     blinkPattern = OFF;
     digitalWrite(OUTPUT_PIN, 0);
     return;
@@ -377,11 +425,16 @@ void ParseMessage()
 
   if(TagStartsString("ON", messageString))
   {
+    if(debug)
+      Serial.println("Switching on");
     blinkPattern = ON;
     digitalWrite(OUTPUT_PIN, 1);
     return;
   }
 
+  if(debug)
+      Serial.println("Error! Message wasn't ON or OFF!");
+      
   blinkPattern = DASH;
 }
 
@@ -389,6 +442,9 @@ void loop()
 {
   if((long)millis() - nextTime > 0)
   {
+    if(debug)
+      Serial.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      
     if(Connect())
     {
       blinkPattern = OFF;
@@ -398,11 +454,11 @@ void loop()
       GetMessage();
       Disconnect();
 
-      if(debug)
-      {
-        Serial.print("Recieved: ");
-        Serial.println(messageString);
-      }
+//      if(debug)
+//      {
+//        Serial.print("Recieved: ");
+//        Serial.println(messageString);
+//      }
   
       ParseMessage();
 
@@ -410,7 +466,10 @@ void loop()
     } else
     {
       blinkPattern = DASH;
-    }
+    }  
+        
+    if(debug)
+      Serial.println("------------------------------------------------------------");
   }
 
   Blink();
