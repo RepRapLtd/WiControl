@@ -28,10 +28,12 @@ bool debug = true;
 
 #define BAUD 9600     // Serial comms speed
 
-const char* myName = "Kitchen";   // What am I controlling?
-const char* pageRoot = "/heating/WiFi/"; // Where the .php scripts are on the server
-const char* page = "controllednode.php"; // The script we need
-const char* server = "192.168.1.171";    // Server IP address/URL
+const char* myName = "Office";   // What am I controlling?
+const char* pageRoot = "/WiFiHeating/Workshop/"; // Where the .php script is on the server
+const char* page = "controllednode.php";    // The script we need
+char* server = "adrianbowyer.com";    // Server IP address/URL
+char* backupServer = "192.168.1.171"; // Server IP address/URL
+char* currentServer;                        // The one in use
 
 // Bits of HTML we need to know (not case sensitive)
 
@@ -40,8 +42,8 @@ const char* bodyEnd = "</BODY>";
 const char* htmlBreak = "<BR>";
 
 
-const long sampleTime = 10000;           // Milliseconds between server requests
-const long randomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
+const long sampleTime = 60000;           // Milliseconds between server requests
+const long randomTime = 5000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
 
 #define ABS_ZERO -273.15           // Celsius
 #define TEMP_SENSE_PIN 0           // Analogue pin number
@@ -328,7 +330,8 @@ void HTTPRequest()
 {
   // Note use of \r\n to force adherence to the HTTP standard.
     
-  client.print("GET ");
+  client.print("GET http://");
+  client.print(currentServer);
   client.print(pageRoot);
   client.print(page);
   if(messageString[0] != 0)
@@ -348,10 +351,11 @@ bool Connect()
 {
   if (client.connect(server, 80)) 
   {
+    currentServer = server;
     if(debug)
     { 
       Serial.print("\n>>>Connected to server: ");
-      Serial.println(server);
+      Serial.println(currentServer);
     }
     return true;
   } else 
@@ -361,6 +365,24 @@ bool Connect()
       Serial.print("\nConnection to ");
       Serial.print(server);
       Serial.println(" failed.");
+    }
+    if (client.connect(backupServer, 80)) 
+    {
+      currentServer = backupServer;
+      if(debug)
+      { 
+        Serial.print("\n>>>Connected to server: ");
+        Serial.println(currentServer);
+      }
+      return true;
+    } else 
+    {
+      if(debug)
+      {
+        Serial.print("\nConnection to ");
+        Serial.print(backupServer);
+        Serial.println(" failed.");
+      }
     }
   }
   return false;  
@@ -453,12 +475,6 @@ void loop()
       HTTPRequest();
       GetMessage();
       Disconnect();
-
-//      if(debug)
-//      {
-//        Serial.print("Recieved: ");
-//        Serial.println(messageString);
-//      }
   
       ParseMessage();
 

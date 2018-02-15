@@ -14,7 +14,7 @@
  * Licence: GPL
  */
 
-// HTTP requests to this look like: http://host-url/heating/WiFi/controllednode.php?location=Kitchen&temperature=20[&debugOn=1]
+// HTTP requests to this look like: http://host-url/heating/WiFi/Building/controllednode.php?location=Room&temperature=20[&debugOn=1]
 
 // Debugging...
 
@@ -29,7 +29,7 @@ $debugString = '<br><br>';
 // Where the files are.
 
 $fileRoot = 'Data/';
-$profileRoot = 'aandc-profile-';
+$profileRoot = 'workshop-profile-';
 $fileExtension = '.dat';
 
 // Special characters
@@ -301,7 +301,15 @@ function SetTemperature($device)
 
     // None of the above - return the temperature from the profile.
 
-    $secondsSinceMidnight = (time() % 86400);
+    $secondsSinceMidnight = $unixTime % 86400; //(time() % 86400);
+    
+    if($debug)
+    {
+        $h = intval($secondsSinceMidnight/3600);
+        $m = intval(($secondsSinceMidnight - $h*3600)/60);
+        $s = intval($secondsSinceMidnight - $h*3600 - $m*60);
+        $debugString = $debugString . 'Server time: ' . $h . ':' . $m . ':' . $s .'<br>'; 
+    }
 
     for ($i = 1; $i < sizeof($times); $i++) 
     {
@@ -458,3 +466,4 @@ if($debug)
 
 ?></body>
 </html>
+
