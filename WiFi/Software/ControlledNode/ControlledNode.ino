@@ -14,6 +14,7 @@
  * 
  * Licence: GPL
  * 
+ * 
  */
 
 #include <ESP8266WiFi.h>
@@ -21,7 +22,6 @@
 #include "local_wifi.h" // Separated to prevent passwords appearing on Github
 
 WiFiClient client;
-bool debug = true;
 
 #define MAXC 1000     // Maximum bytes in a message string (need a bit of space for debugging info).
 #define TEMPC 10      // Maximum bytes in a temperature string
@@ -42,6 +42,9 @@ const char* bodyEnd = "</BODY>";
 const char* htmlBreak = "<BR>";
 
 
+const long debugSampleTime = 10000;           // Milliseconds between server requests
+const long debugRandomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
+
 const long sampleTime = 60000;           // Milliseconds between server requests
 const long randomTime = 5000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
 
@@ -53,8 +56,10 @@ const long randomTime = 5000;            // +/- Milliseconds (must be < sampleTi
 #define THERMISTOR_25_R 1000.0     // Thermistor ohms at 25 C = 298.15 K
 #define AD_RANGE 1023.0            // The A->D converter that measures temperatures gives an int this big as its max value
 
+#define DEBUG_PIN 0
+bool debug = true;
 
-#define OUTPUT_PIN D2              // Turns the item on or off
+#define OUTPUT_PIN 4             // Turns the item on or off
 
 // LED control and blinking 
 
@@ -92,6 +97,8 @@ void setup()
   pinMode(OUTPUT_PIN, OUTPUT);
   digitalWrite(OUTPUT_PIN, 0);
   pinMode(TEMP_SENSE_PIN, INPUT);
+  pinMode(DEBUG_PIN, INPUT_PULLUP);
+  debug = !digitalRead(DEBUG_PIN);
   
   // Open serial communications and wait for the port to open
   
@@ -349,12 +356,15 @@ void HTTPRequest()
 
 bool Connect()
 {
-  if (client.connect(server, 80)) 
+  int k;
+  if (k = client.connect(server, 80)) 
   {
     currentServer = server;
     if(debug)
     { 
-      Serial.print("\n>>>Connected to server: ");
+      Serial.print("\n>>>Connected (");
+      Serial.print(k); 
+      Serial.print(") to server: ");
       Serial.println(currentServer);
     }
     return true;
@@ -422,7 +432,12 @@ void ComposeQuery()
 
 long NextTime()
 {
-  long f = sampleTime + random(2*randomTime) - randomTime;
+  long f;
+  if(debug)
+    f = debugSampleTime + random(2*debugRandomTime) - debugRandomTime;
+  else
+    f = sampleTime + random(2*randomTime) - randomTime;
+    
   if(debug)
   {
     Serial.print("Next server request will be in ");
@@ -489,5 +504,7 @@ void loop()
   }
 
   Blink();
+
+  debug = !digitalRead(DEBUG_PIN);
 }
 
