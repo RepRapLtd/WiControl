@@ -118,7 +118,10 @@ function AllBoost()
 		btn.style.backgroundColor = 'Yellow';
 		btn.textContent="Boost all";
 	}
-	SaveDay(NewFileToSave(), today , true);
+
+	var res = { r: "" };
+	if(NewFileToSave(res))
+		SaveDay(res.r, today , true);
 }
 
 function AllOff()
@@ -136,7 +139,9 @@ function AllOff()
 		btn.style.backgroundColor = 'Yellow';
 		btn.textContent="Switch all off";
 	}
-	SaveDay(NewFileToSave(), today , true);
+	var res = { r: "" };
+	if(NewFileToSave(res))
+		SaveDay(res.r, today , true);
 }
 	
 function Header()
@@ -181,13 +186,28 @@ function Header()
 
 }
 
+
+function CheckSaveDay(thisDay)
+{
+	var res = { r: "" };
+	if(NewFileToSave(res))
+		SaveDay(res.r, thisDay , true);
+}
+
+function CheckSaveProfile()
+{
+	var res = { r: "" };
+	if(NewFileToSave(res))
+		SaveProfile(res.r, GetProfileName());
+}
+
 function Footer()
 {
 	document.write('</tbody></table>');
-	document.write('<br><button style="background-color:white" type="button" name="Save" onclick="SaveDay(NewFileToSave(), \'' + today + '\', true)"><H2>Save</H2></button>');
+	document.write('<br><button style="background-color:white" type="button" name="Save" onclick="CheckSaveDay( \'' + today + '\')"><H2>Save</H2></button>');
 	document.write('<button style="background-color:white" type="button" name="CopyWeek" onclick="WeekCopy()"><H2>Copy to weekdays</H2></button>');
 	document.write('<button style="background-color:white" type="button" name="CopyWeekend" onclick="WeekendCopy()"><H2>Copy to weekends</H2></button>');
-	document.write('<br><br><button style="background-color:white" type="button" name="SaveToFile" onclick="SaveProfile(NewFileToSave(), GetProfileName())"><H2>Save To File:</H2></button>');
+	document.write('<br><br><button style="background-color:white" type="button" name="SaveToFile" onclick="CheckSaveProfile()"><H2>Save To File:</H2></button>');
 	document.write('&nbsp;&nbsp;<input size="30" style="height:60px;font-size:14pt;" text-align="right" name="profileFile" value = "enter filename here" onfocus="if (this.value==\'enter filename here\') this.value=\'\';">');
 
 	ProfileLoadFiles();
@@ -215,17 +235,38 @@ function GetProfileName()
 	return theForm.elements["profileFile"].value;
 }
 
-function GetTableLine(curline, i)
+function SecondsSinceMidnight(aTime)
 {
-	var result = curline.substring(0, DataStart(curline));
-   var theForm = document.forms["settings"];
+	var h = aTime.substring(0, 2);
+	var m = aTime.substring(3, 5);
+	var s = aTime.substring(6, 8);
+	//alert(aTime + ' ' + h + ' ' + m + ' ' + s);
+	h = Number(h);
+	m = Number(m);
+	s = Number(s);
+	var t = Number(h*3600 + m*60 + s);
+	//alert(t + ' ' + h + ' ' + m + ' ' + s);
+	if(isNaN(h) || isNaN(m) || isNaN(s) || h > 23 || m > 59 || s > 59)
+	{
+		return -2;
+	} 
+	return t;
+}
+
+function GetTableLine(curline, i, result)
+{
+	var thisRoom = curline.substring(0, DataStart(curline));
+	result.r = thisRoom;
+	thisRoom = thisRoom.substring(1);
+	thisRoom = thisRoom.substring(0, thisRoom.indexOf("*"));
+   	var theForm = document.forms["settings"];
 	var rowLength = times+2;
 
 	if(off[i])
-		result += "0";
+		result.r += "0";
 	else
-		result += "1";
-	result += " ";
+		result.r += "1";
+	result.r += " ";
 
 	var boostTime = 3600;
 
@@ -236,11 +277,12 @@ function GetTableLine(curline, i)
 	}
 
 	if(boost[i])
-		result += Math.floor(Date.now()/1000) + boostTime;
+		result.r += Math.floor(Date.now()/1000) + boostTime;
 	else
-		result += Math.floor(Date.now()/1000) - boostTime - 1000;
+		result.r += Math.floor(Date.now()/1000) - boostTime - 1000;
 
 	var location = locations[i];
+	var lastT = -1;
 	for(var j = 0; j < rowLength; j++)
 	{
 		var timeCell = location + 'time' + j;
@@ -251,33 +293,46 @@ function GetTableLine(curline, i)
 			 break;
                 if(time.lastIndexOf(':') < 3)
                      time += ":00";
-		result += " " + time + " " + temp;
+		var ssm = SecondsSinceMidnight(time);
+		//alert(ssm + ' ' + lastT);
+		if(ssm <= lastT)
+		{
+			alert("There is a fault with time " + (1+j) + " in room " + thisRoom + ". The settings will not be saved.");
+			return false;
+		}
+		lastT = ssm;
+		result.r += " " + time + " " + temp;
 	}
-	return result;
+	return true;
 }
 
-function NewFileToSave()
+
+function NewFileToSave(result)
 {
-	var result = "";
+   result.r = "";
 
    for(var i = 0; i < controlFileLines.length; i++) 
    {
         var curLine = controlFileLines[i];
-		  result += curLine + '\n';
+		  result.r += curLine + '\n';
         if(curLine == '---')
 			break;
 	}
 
 	var i = 0;
 	
+   var res = { r: "" };
    for(j = deviceCount+1; j <= deviceCount+rows; j++)
    {
         curLine = controlFileLines[j];
-		  result += GetTableLine(curLine, i) + '\n';
-		  i++;
+	if(!GetTableLine(curLine, i, res))
+		return false;
+	
+	result.r += res.r + '\n';
+	i++;
    }
 
-	return result;
+   return true;
 }
 
 
@@ -346,20 +401,26 @@ function SaveDay(toSend, day, lastShot)
 
 function WeekCopy()
 {
-	var toSend = NewFileToSave();
-	SaveDay(toSend, 'Monday', false);
-	SaveDay(toSend, 'Tuesday', false);
-	SaveDay(toSend, 'Wednesday', false);
-	SaveDay(toSend, 'Thursday', false);
-	SaveDay(toSend, 'Friday', true);
+	var res = { r: "" };
+	if(NewFileToSave(res))
+	{
+		SaveDay(res.r, 'Monday', false);
+		SaveDay(res.r, 'Tuesday', false);
+		SaveDay(res.r, 'Wednesday', false);
+		SaveDay(res.r, 'Thursday', false);
+		SaveDay(res.r, 'Friday', true);
+	}
 }
 
 
 function WeekendCopy()
 {
-	var toSend = NewFileToSave();
-	SaveDay(toSend, 'Saturday', false);
-	SaveDay(toSend, 'Sunday', true);
+	var res = { r: "" };
+	if(NewFileToSave(res))
+	{
+		SaveDay(res.r, 'Saturday', false);
+		SaveDay(res.r, 'Sunday', true);
+	}
 }
 
 function DataStart(tableLine)
@@ -421,7 +482,11 @@ function BoostButton(location, cmd, save)
       boost[ind] = true;
    }
 	if(save)
-	SaveDay(NewFileToSave(), today , true);
+	{
+		var res = { r: "" };
+		if(NewFileToSave(res))
+			SaveDay(res.r, today , true);
+	}
 }
 
 function OffButton(location, cmd, save)
@@ -444,7 +509,11 @@ function OffButton(location, cmd, save)
       off[ind] = true;
    }
 	if(save)
-	SaveDay(NewFileToSave(), today , true);
+	{
+		var res = { r: "" };
+		if(NewFileToSave(res))
+			SaveDay(res.r, today , true);
+	}
 }
 
 function SetButtons()

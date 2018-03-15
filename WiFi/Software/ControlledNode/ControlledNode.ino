@@ -59,7 +59,7 @@ const long randomTime = 5000;            // +/- Milliseconds (must be < sampleTi
 #define DEBUG_PIN 0
 bool debug = true;
 
-#define OUTPUT_PIN 4             // Turns the item on or off
+#define OUTPUT_PIN 16             // Turns the item on or off
 
 // LED control and blinking 
 
