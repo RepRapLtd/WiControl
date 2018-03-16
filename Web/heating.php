@@ -246,7 +246,7 @@ function SecondsSinceMidnight(aTime)
 	s = Number(s);
 	var t = Number(h*3600 + m*60 + s);
 	//alert(t + ' ' + h + ' ' + m + ' ' + s);
-	if(isNaN(h) || isNaN(m) || isNaN(s) || h > 23 || m > 59 || s > 59)
+	if(isNaN(h) || isNaN(m) || isNaN(s) || h > 23 || m > 59 || s > 59 || h < 0 || m < 0 || s < 0)
 	{
 		return -2;
 	} 
@@ -288,7 +288,12 @@ function GetTableLine(curline, i, result)
 		var timeCell = location + 'time' + j;
 		var tempCell = location + 'temp' + j;
 		var time = theForm.elements[timeCell].value;
-                var temp = theForm.elements[tempCell].value;
+                var temp = Number(theForm.elements[tempCell].value);
+		if(isNaN(temp) || temp < -10 || temp > 50)
+		{
+			alert("There is an error in temperature " + (1+j) + " in room " + thisRoom + ". The settings will not be saved.");
+			return false;			
+		}
 		if(time == '')
 			 break;
                 if(time.lastIndexOf(':') < 3)
@@ -297,7 +302,7 @@ function GetTableLine(curline, i, result)
 		//alert(ssm + ' ' + lastT);
 		if(ssm <= lastT)
 		{
-			alert("There is a fault with time " + (1+j) + " in room " + thisRoom + ". The settings will not be saved.");
+			alert("There is an error in time " + (1+j) + " in room " + thisRoom + ". The settings will not be saved.");
 			return false;
 		}
 		lastT = ssm;
