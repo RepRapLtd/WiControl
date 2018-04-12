@@ -1,0 +1,38 @@
+Partlist
+
+Exported from wifiboard-v2.brd at 30/03/2018 15:42
+
+EAGLE Version 8.2.1 Copyright (c) 1988-2017 Autodesk, Inc.
+
+Assembly variant: 
+
+Part       Value          Package                      Library               Position (mm)         Orientation
+
+12V-IN                    1X02                         pinhead               (1.905 25.0825)       MR270
+C1         1000uF         B45181B                      rcl                   (7.9375 23.8125)      MR0
+C2         1000uF         B45181B                      rcl                   (32.0675 32.7025)     MR90
+C3         1uF            C0805                        rcl                   (56.515 24.4475)      R90
+C5         0.1u           C0805                        rcl                   (42.8625 28.2575)     R0
+C6         0.1u           C0805                        rcl                   (48.26 6.35)          R0
+FUSE       FUSE           FUSE                         alexa                 (68.58 5.08)          MR0
+GPIO                      1X05                         pinhead               (45.72 20.0025)       MR270
+IC2        78033AF        TO252                        adafruit              (20.32 34.925)        R270
+LED1                      LED3MM                       led                   (59.055 33.9725)      MR0
+PROG                      1X02                         pinhead               (13.6525 17.145)      MR0
+Q1         FDD8870        DPAK                         SparkFun-DiscreteSemi (51.435 36.5125)      R270
+R1         6R8            0207/10                      rcl                   (6.985 30.48)         MR0
+R2         1K             M0805                        rcl                   (51.7525 20.32)       R0
+R3         10K            M0805                        rcl                   (30.1625 38.735)      R180
+R4         10K            R0805                        rcl                   (49.53 8.89)          R0
+R5         10K            R0805                        rcl                   (14.2875 20.955)      R90
+R6         10K            R0805                        rcl                   (18.0975 23.8125)     R270
+R7         10K            R0805                        rcl                   (50.4825 17.145)      R90
+R8         10K            R0805                        rcl                   (17.78 20.6375)       R180
+R9         1K             R0805                        rcl                   (64.77 34.29)         R0
+RELAY      OMRON-G6DS     OMRON-G6DS-1A-H              alexa                 (75.565 31.115)       MR270
+RESET                     TACTILE_SWITCH_SMD_4.6X2.8MM SparkFun-Switches     (44.45 3.4925)        MR90
+THERMISTOR                1X02                         pinhead               (53.6575 24.4475)     MR270
+U2                        ESP12E-SMD                   esp8266modules        (30.1625 16.51)       R180
+USB-3V3                   1X06                         pinhead               (10.16 9.8425)        MR180
+X1         AC-N           MKDSN1,5/2-5,08              con-phoenix-508       (87.63 30.1625)       MR90
+X2         AC-L           MKDSN1,5/2-5,08              con-phoenix-508       (87.63 12.7)          MR90
