@@ -35,7 +35,8 @@ const char* password = "--------"; // Your WiFi network's password
 #include "local_wifi.h"
 
 
-#define WIFIBOARD-V2
+//#define WIFIBOARD-V2
+#define WEMOS1
 
 #ifdef WIFIBOARD-V2
  #define LEDPIN 2                    // D4 on later PCBs?
@@ -48,7 +49,18 @@ const char* password = "--------"; // Your WiFi network's password
  #define T_CORRECTION 1.5            // Final fudge to get it just right/variation in beta from spec 
 #endif
 
-float switchTemperature = 25.0;      // The temperature at which to swich on or off the load
+#ifdef WEMOS1
+ #define LEDPIN 2                    // D4 on later PCBs?
+ #define HEATPIN D2                  
+ #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
+ #define THERMISTOR_SERIES_R 1000   // Ohms in series with the thermistors
+ #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
+ #define TOP_VOLTAGE 3.3           // The voltage at the top of the series resistor
+ #define MAX_AD_VOLTAGE TOP_VOLTAGE          // The voltage that gives full-range (i.e. AD_RANGE) on the A->D converter
+ #define T_CORRECTION 6            // Final fudge to get it just right/variation in beta from spec 
+#endif
+
+float switchTemperature = 28.0;      // The temperature at which to swich on or off the load
 bool cooling = true;                 // true: switch load on for high temperatures; false: switch it off
 bool debug = true;                   // Set false to turn of diagnostics
 const unsigned long checkTime=10000; // Milliseconds - check the temperature this often
@@ -65,6 +77,7 @@ int ledPin = LEDPIN;
 int heatPin = HEATPIN;
 
 ESP8266WebServer server(80);
+bool gotWiFi = false;
 
 float lastTemperature = ABS_ZERO;
 
@@ -103,8 +116,14 @@ void control(boolean hot)
 
 void handleRoot() 
 {
+  if(!gotWiFi)
+    return;
+    
   digitalWrite(ledPin, 0);
-
+  String inString = "";
+  inString += server.arg(0);
+  if(inString.length() > 0)
+    switchTemperature = (float)inString.toInt();
   int i = ringPointer;
   int count = 0;
   char *cur = message;
@@ -126,7 +145,11 @@ void handleRoot()
   digitalWrite(ledPin, 1);
 }
 
-void handleNotFound(){
+void handleNotFound()
+{
+  if(!gotWiFi)
+    return;
+    
   digitalWrite(ledPin, 0);
   String message = "File Not Found\n\n";
   message += "URI: ";
@@ -167,33 +190,43 @@ void setup(void)
   Serial.println();
 
   // Wait for connection
-  while (WiFi.status() != WL_CONNECTED)
+  int count = 0;
+  while (WiFi.status() != WL_CONNECTED && count < 50)
   {
     delay(500);
     Serial.print(".");
-  }
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  if (MDNS.begin("esp8266")) 
-  {
-    Serial.println("MDNS responder started");
+    count++;
   }
 
-  server.on("/", handleRoot);
+  gotWiFi = WiFi.status() == WL_CONNECTED;
 
-/*  server.on("/inline", []()
+  if(gotWiFi)
   {
-    server.send(200, "text/plain", "this works as well");
-  });*/
-
-  server.onNotFound(handleNotFound);
-
-  server.begin();
-  Serial.println("HTTP server started");
+    Serial.print("\nConnected to ");
+    Serial.println(ssid);
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+  
+    if (MDNS.begin("esp8266")) 
+    {
+      Serial.println("MDNS responder started");
+    }
+  
+    server.on("/", handleRoot);
+  
+  /*  server.on("/inline", []()
+    {
+      server.send(200, "text/plain", "this works as well");
+    });*/
+  
+    server.onNotFound(handleNotFound);
+  
+    server.begin();
+    Serial.println("HTTP server started");
+  } else
+  {
+    Serial.println("\nWiFi connection failed.");
+  }
   
   lastTime = millis();
 }
@@ -227,7 +260,8 @@ void loop(void)
     lastTime = millis();
   }
 
-  server.handleClient();
+  if(gotWiFi)
+    server.handleClient();
 }
 
 
