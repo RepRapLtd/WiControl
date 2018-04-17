@@ -4,7 +4,19 @@
  * This makes periodic requests to the server to report its state (on or off,
  * current temperature etc) and to find out what to do next.
  * 
+ * The general form of a request is (N.B. "/" caracters should be in the strings):
  * 
+ * GET http://currentServer/pageRoot/page/?messageString
+ * 
+ * where messageString is something like
+ * 
+ * location=Office&temperature=20&debugOn=1
+ * 
+ * Select 
+ * 
+ *   Board: WeMos D1 R1 
+ * 
+ * to compile.
  * 
  * Adrian Bwowyer
  * RepRap Ltd
@@ -19,7 +31,48 @@
 
 #include <ESP8266WiFi.h>
 
+//-----------------------------------------------------------------------------------------------------
+
+// User configuration area
+
+
+/*
+
+The file local_wifi.h included below should contain two lines:
+
+const char* ssid = "-------";      // The name of your WiFi network
+const char* password = "--------"; // Your WiFi network's password
+
+*/
+
 #include "local_wifi.h" // Separated to prevent passwords appearing on Github
+
+#define WIFIBOARD-V2
+//#define WEMOS1
+
+#ifdef WIFIBOARD-V2
+ #define LED_PIN 2                    // D4 on later PCBs?
+ #define OUTPUT_PIN D3                  //GPIO5
+ #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
+ #define THERMISTOR_SERIES_R 10000   // Ohms in series with the thermistors
+ #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
+ #define TOP_VOLTAGE 3.303           // The voltage at the top of the series resistor
+ #define MAX_AD_VOLTAGE 1.0          // The voltage that gives full-range (i.e. AD_RANGE) on the A->D converter
+ #define T_CORRECTION 1.5            // Final fudge to get it just right/variation in beta from spec 
+#endif
+
+#ifdef WEMOS1
+ #define LED_PIN 2                    // D4 on later PCBs?
+ #define OUTPUT_PIN D2                  
+ #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
+ #define THERMISTOR_SERIES_R 1000   // Ohms in series with the thermistors
+ #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
+ #define TOP_VOLTAGE 3.3           // The voltage at the top of the series resistor
+ #define MAX_AD_VOLTAGE TOP_VOLTAGE          // The voltage that gives full-range (i.e. AD_RANGE) on the A->D converter
+ #define T_CORRECTION 6            // Final fudge to get it just right/variation in beta from spec 
+#endif
+
+//-----------------------------------------------------------------------------------------------------------
 
 WiFiClient client;
 
@@ -45,25 +98,18 @@ const char* htmlBreak = "<BR>";
 const long debugSampleTime = 10000;           // Milliseconds between server requests
 const long debugRandomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
 
-const long sampleTime = 60000;           // Milliseconds between server requests
-const long randomTime = 5000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
+const long sampleTime = 10000;           // Milliseconds between server requests
+const long randomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
 
 #define ABS_ZERO -273.15           // Celsius
 #define TEMP_SENSE_PIN 0           // Analogue pin number
-
-#define THERMISTOR_BETA 3528.0     // thermistor: RS 538-0806
-#define THERMISTOR_SERIES_R 1000.0 // Ohms in series with the thermistor
-#define THERMISTOR_25_R 1000.0     // Thermistor ohms at 25 C = 298.15 K
 #define AD_RANGE 1023.0            // The A->D converter that measures temperatures gives an int this big as its max value
 
 #define DEBUG_PIN 0
 bool debug = true;
 
-#define OUTPUT_PIN 16             // Turns the item on or off
-
 // LED control and blinking 
 
-#define LED_PIN 2
 #define OFF 1 // NB LED is inverted
 #define ON 0
 #define DOT 2
@@ -195,7 +241,8 @@ void Blink()
 char* Temperature()
 {
   double r = (double)analogRead(TEMP_SENSE_PIN);
-  r = ABS_ZERO + THERMISTOR_BETA/log( (r*THERMISTOR_SERIES_R/(AD_RANGE - r))/
+  //Serial.println(r);
+  r = T_CORRECTION + ABS_ZERO + THERMISTOR_BETA/log( (r*THERMISTOR_SERIES_R/(AD_RANGE*TOP_VOLTAGE/MAX_AD_VOLTAGE - r))/
       ( THERMISTOR_25_R*exp(-THERMISTOR_BETA/(25.0 - ABS_ZERO)) ) );
   if(r >= 10.0 || r < 0.0) // Assumes temp is always bigger than -9.9 C...
     dtostrf(r, 4, 1, tempString);
