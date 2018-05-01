@@ -38,6 +38,21 @@ $delimiter = '*';
 $timeDelimiter = ':';
 
 // Now
+/* This is untested
+$juneSolstice = date_create();
+$juneSolstice.setMonth(5); // zero-based
+$juneSolstice.setDate(21);
+
+$decemberSolstice = date_create();
+$decemberSolstice.setMonth(11); // zero-based
+$decemberSolstice.setDate(21);
+
+
+$winterOffset = Math.max($juneSolstice.getTimezoneOffset(), $decemberSolstice.getTimezoneOffset());
+$summerOffset = Math.min($juneSolstice.getTimezoneOffset(), $decemberSolstice.getTimezoneOffset());
+*/
+
+date_default_timezone_set("Europe/London");
 
 $unixTime = 0 + date_timestamp_get(date_create());
 
