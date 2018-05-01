@@ -58,7 +58,8 @@ const char* password = "--------"; // Your WiFi network's password
  #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
  #define TOP_VOLTAGE 3.303           // The voltage at the top of the series resistor
  #define MAX_AD_VOLTAGE 1.0          // The voltage that gives full-range (i.e. AD_RANGE) on the A->D converter
- #define T_CORRECTION 1.5            // Final fudge to get it just right/variation in beta from spec 
+ #define T_CORRECTION 1.5            // Final fudge to get it just right/variation in beta from spec
+ #define DEBUG_PIN D5
 #endif
 
 #ifdef WEMOS1
@@ -70,7 +71,16 @@ const char* password = "--------"; // Your WiFi network's password
  #define TOP_VOLTAGE 3.3           // The voltage at the top of the series resistor
  #define MAX_AD_VOLTAGE TOP_VOLTAGE          // The voltage that gives full-range (i.e. AD_RANGE) on the A->D converter
  #define T_CORRECTION 6            // Final fudge to get it just right/variation in beta from spec 
+ #define DEBUG_PIN D5                 // Ground this pin to turn debugging on
 #endif
+
+const long debugSampleTime = 60000;           // Milliseconds between server requests
+const long debugRandomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
+
+const long sampleTime = 60000;           // Milliseconds between server requests
+const long randomTime = 5000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
+
+const long rebootTime = 3600000;           // Milliseconds between resets.
 
 //-----------------------------------------------------------------------------------------------------------
 
@@ -94,18 +104,10 @@ const char* bodyStart = "<BODY>";        // The instructions are in the body of 
 const char* bodyEnd = "</BODY>";
 const char* htmlBreak = "<BR>";
 
-
-const long debugSampleTime = 10000;           // Milliseconds between server requests
-const long debugRandomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
-
-const long sampleTime = 10000;           // Milliseconds between server requests
-const long randomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
-
 #define ABS_ZERO -273.15           // Celsius
 #define TEMP_SENSE_PIN 0           // Analogue pin number
 #define AD_RANGE 1023.0            // The A->D converter that measures temperatures gives an int this big as its max value
 
-#define DEBUG_PIN 0
 bool debug = true;
 
 // LED control and blinking 
@@ -131,7 +133,7 @@ int tagCount;
 bool inMessage;
 long nextTime;
 
-
+long nextReset;
 
 void setup() 
 {
@@ -184,6 +186,7 @@ void setup()
   randomSeed(analogRead(TEMP_SENSE_PIN));
   nextTime = (long)millis();
   nextBlink = nextTime;
+  nextReset = nextTime + rebootTime;
   blinkPattern = OFF;
 }
 
@@ -524,6 +527,9 @@ void ParseMessage()
 
 void loop()
 {
+  if((long)millis() - nextReset > 0)
+    ESP.restart();
+  
   if((long)millis() - nextTime > 0)
   {
     if(debug)
