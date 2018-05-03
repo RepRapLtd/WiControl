@@ -55,6 +55,10 @@ $summerOffset = Math.min($juneSolstice.getTimezoneOffset(), $decemberSolstice.ge
 date_default_timezone_set("Europe/London");
 
 $unixTime = 0 + date_timestamp_get(date_create());
+if (date('I', time()))
+{
+	$unixTime += 3600;
+}
 
 
 // ***********************************************************************
@@ -288,6 +292,24 @@ function ParseProfile($device)
    $profile = 'X';
 }
 
+function SecondsSinceMidnight()
+{
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
+
+	return $unixTime % 86400; //(time() % 86400);
+}
+
+function ServerTime()
+{
+	$secondsSinceMidnight = SecondsSinceMidnight();
+        $h = intval($secondsSinceMidnight/3600);
+        $m = intval(($secondsSinceMidnight - $h*3600)/60);
+        $s = intval($secondsSinceMidnight - $h*3600 - $m*60);
+        return '' . $h . ':' . $m . ':' . $s; 
+}
+
+
 // Return the set temperature for $device at the current time.
 
 function SetTemperature($device) 
@@ -297,6 +319,13 @@ function SetTemperature($device)
 
     if(empty($profile)) // That's why $profile has to contain something...
 	exit('ERROR: SetTemperature() - profile not loaded');
+
+    $secondsSinceMidnight = SecondsSinceMidnight();
+    
+    if($debug)
+    {
+        $debugString = $debugString . 'Server time: ' . ServerTime() .'<br>'; 
+    }
 
     // Am I a slave device?
 
@@ -315,16 +344,6 @@ function SetTemperature($device)
 	return 28.0; // I think that's hot enought to guarantee that it turns on...
 
     // None of the above - return the temperature from the profile.
-
-    $secondsSinceMidnight = $unixTime % 86400; //(time() % 86400);
-    
-    if($debug)
-    {
-        $h = intval($secondsSinceMidnight/3600);
-        $m = intval(($secondsSinceMidnight - $h*3600)/60);
-        $s = intval($secondsSinceMidnight - $h*3600 - $m*60);
-        $debugString = $debugString . 'Server time: ' . $h . ':' . $m . ':' . $s .'<br>'; 
-    }
 
     for ($i = 1; $i < sizeof($times); $i++) 
     {
@@ -395,7 +414,7 @@ function SaveTemperature($device, $act, $temp, $s)
     $fileHandle = fopen($fileName, 'w');
     if(!$fileHandle)
 	exit('ERROR: SaveTemperature() - can not open file to write: '.$fileName); 
-    fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . "\n");
+    fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . ' Server time: ' . ServerTime() . "\n");
     fclose($fileHandle);
     if($debug)
 	$debugString = $debugString . $device . ' state: temp = ' . $temp . ', set = ' . $s;
@@ -406,7 +425,7 @@ function SaveTemperature($device, $act, $temp, $s)
 // Gather data...
 
 // Get the query sring from the HTTP request.
-// This should be: "html://...../controllednode.php?location=where/what-the-device-is&temperature=the-device's-temperature"
+// This should be: "html://...../controllednode.php?location=where/what-the-device-is&temperature=the-device's-temperature[&debugOn=1]"
 // If the device does not have a temperature it can send -300.0 (impossible as below abs zero)
 
 parse_str($_SERVER['QUERY_STRING']);
