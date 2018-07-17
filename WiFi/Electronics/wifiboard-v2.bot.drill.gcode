@@ -4,7 +4,7 @@
 ;(This file generated from the board:)
 ;(.../WiFi/Electronics/wifiboard-v2.brd)
 ;(Current profile is .../pcb-gcode/profiles/generic.pp  )
-;(This file generated 27/03/2018 13:17)
+;(This file generated 08/05/2018 12:00)
 ;(Settings from pcb-machine.h)
 ;(spindle on time = 1000.0000)
 ;(spindle speed = 20000.0000)
