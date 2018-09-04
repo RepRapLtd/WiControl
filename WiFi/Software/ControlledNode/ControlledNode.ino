@@ -74,7 +74,7 @@ const char* password = "--------"; // Your WiFi network's password
  #define DEBUG_PIN D5                 // Ground this pin to turn debugging on
 #endif
 
-const long debugSampleTime = 60000;           // Milliseconds between server requests
+const long debugSampleTime = 15000;           // Milliseconds between server requests
 const long debugRandomTime = 2000;            // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
 
 const long sampleTime = 60000;           // Milliseconds between server requests
@@ -85,6 +85,8 @@ const long rebootTime = 3600000;           // Milliseconds between resets.
 //-----------------------------------------------------------------------------------------------------------
 
 WiFiClient client;
+
+// Typical HTML response with debugging is about 350 bytes.
 
 #define MAXC 1000     // Maximum bytes in a message string (need a bit of space for debugging info).
 #define TEMPC 10      // Maximum bytes in a temperature string
@@ -301,6 +303,7 @@ bool TagStartsString(const char* tag, char* s)
 void NextByte(char c)
 {
   if(messageCount == 0) // Yet to read any message?
+  
   {
     if(FindTag(c, bodyStart)) // No.
     {
@@ -321,9 +324,11 @@ void NextByte(char c)
   {
     messageString[messageCount] = c;
     messageCount++;
-    if(messageCount >= MAXC)  // Stop buffer overflow
+
+    
+    if(messageCount >= MAXC - 2)  // Stop buffer overflow
     {
-      messageCount = MAXC - 1;
+      messageCount = MAXC - 2;
     }
   }
 }
@@ -357,14 +362,35 @@ void GetMessage()
   messageString[messageCount] = 0;
   tagCount = 0;
   inMessage = false;
+
+
+
+  
+  
   while(client.connected())
   {
     char c;
     if(client.available())
     {
       c = client.read();
-      NextByte(c);
+      messageString[messageCount]= c;
+      messageCount++;
+      if(messageCount >= MAXC - 2) // Prevent buffer overflow
+        messageCount = MAXC - 2;
+      //NextByte(c);
     }
+  }
+
+  // Parse the message; this reduces its length, so it should be OK
+  // to have it overwrite itself.
+  
+  messageString[messageCount] = 0;
+  messageCount = 0;
+  int mc = 0;
+  while(messageString[mc])
+  {
+    NextByte(messageString[mc]);
+    mc++;
   }
 
   if(debug)
@@ -383,11 +409,14 @@ void GetMessage()
 // If no data is to be transmitted ensure that 
 // messageString[0] = 0.
 
-void HTTPRequest()
+void HTTPRequest(char* request)
 {
+
+  client.print(request);
+  
   // Note use of \r\n to force adherence to the HTTP standard.
     
-  client.print("GET http://");
+/*  client.print("GET http://");
   client.print(currentServer);
   client.print(pageRoot);
   client.print(page);
@@ -397,7 +426,8 @@ void HTTPRequest()
     client.print(messageString);
   }
   client.print(" HTTP/1.0\r\n\r\n");
-  client.print("Connection: close\r\n\r\n");  
+  client.print("Connection: close\r\n\r\n"); 
+  */ 
 }
 
 
@@ -465,7 +495,14 @@ void Disconnect()
 
 void ComposeQuery()
 {
-  strcpy(messageString, "location=");
+  // Note use of \r\n to force adherence to the HTTP standard.
+
+  strcpy(messageString, "GET http://");
+  strcat(messageString, currentServer);
+  strcat(messageString, pageRoot);
+  strcat(messageString, page);
+  strcat(messageString, "?");
+  strcat(messageString, "location=");
   strcat(messageString, myName);
   strcat(messageString, "&");
   strcat(messageString, "temperature=");
@@ -474,7 +511,9 @@ void ComposeQuery()
   {
     strcat(messageString, "&");
     strcat(messageString, "debugOn=1");
-  }  
+  }
+  strcat(messageString, " HTTP/1.0\r\n\r\n");
+  strcat(messageString, "Connection: close\r\n\r\n"); 
 }
 
 
@@ -540,7 +579,14 @@ void loop()
       blinkPattern = OFF;
       messageString[0] = 0;
       ComposeQuery();
-      HTTPRequest();
+      if(debug)
+      {
+        Serial.println("Sending:");
+        Serial.println(messageString);
+        Serial.println();
+      }
+      HTTPRequest(messageString);
+      
       GetMessage();
       Disconnect();
   
