@@ -1,0 +1,6 @@
+// Put your wifi details here and rename this file local-wifi.h
+
+const char* ssid = "**********";
+const char* password = "**********";
+
+

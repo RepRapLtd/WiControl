@@ -31,6 +31,10 @@
 
 #include <ESP8266WiFi.h>
 
+#include <ESP8266WiFiMulti.h>
+#include <ESP8266HTTPClient.h>
+ESP8266WiFiMulti WiFiMulti;
+
 //-----------------------------------------------------------------------------------------------------
 
 // User configuration area
@@ -51,7 +55,7 @@ const char* password = "--------"; // Your WiFi network's password
 //#define WEMOS1
 
 #ifdef WIFIBOARD-V2
- #define LED_PIN 2                    // D4 on later PCBs?
+ #define ESP8266_LED_PIN 2                    // D4 on later PCBs?
  #define OUTPUT_PIN D3                  //GPIO5
  #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
  #define THERMISTOR_SERIES_R 10000   // Ohms in series with the thermistors
@@ -63,7 +67,7 @@ const char* password = "--------"; // Your WiFi network's password
 #endif
 
 #ifdef WEMOS1
- #define LED_PIN 2                    // D4 on later PCBs?
+ #define ESP8266_LED_PIN 2                    // D4 on later PCBs?
  #define OUTPUT_PIN D2                  
  #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
  #define THERMISTOR_SERIES_R 1000   // Ohms in series with the thermistors
@@ -84,7 +88,7 @@ const long rebootTime = 3600000;           // Milliseconds between resets.
 
 //-----------------------------------------------------------------------------------------------------------
 
-WiFiClient client;
+//WiFiClient client;
 
 // Typical HTML response with debugging is about 350 bytes.
 
@@ -141,8 +145,8 @@ void setup()
 {
   // I/O pins...
   
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, OFF);
+  pinMode(ESP8266_LED_PIN, OUTPUT);
+  digitalWrite(ESP8266_LED_PIN, OFF);
   ledState = OFF;
   pinMode(OUTPUT_PIN, OUTPUT);
   digitalWrite(OUTPUT_PIN, 0);
@@ -169,9 +173,11 @@ void setup()
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);
   }
-  WiFi.hostname(myName);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) 
+
+  WiFi.mode(WIFI_STA);
+  WiFiMulti.addAP(ssid, password);
+/*  
+  while (WiFiMulti.run() != WL_CONNECTED) 
   {
     delay(500);
     if(debug)
@@ -182,7 +188,7 @@ void setup()
     Serial.print("\nConnected to ");
     Serial.println(ssid);
   }
-
+*/
   // Set up timings and LED behaviour
   
   randomSeed(analogRead(TEMP_SENSE_PIN));
@@ -201,7 +207,7 @@ void Blink()
   
   if(blinkPattern == OFF || blinkPattern == ON)
   {
-    digitalWrite(LED_PIN, blinkPattern);
+    digitalWrite(ESP8266_LED_PIN, blinkPattern);
     ledState = blinkPattern;
     nextBlink = now;
     return; 
@@ -214,12 +220,12 @@ void Blink()
   {
     if(ledState == ON)
     {
-      digitalWrite(LED_PIN, OFF);
+      digitalWrite(ESP8266_LED_PIN, OFF);
       ledState = OFF;
       nextBlink = now + dotOff;
     } else
     {
-      digitalWrite(LED_PIN, ON);
+      digitalWrite(ESP8266_LED_PIN, ON);
       ledState = ON;
       nextBlink = now + dotOn;
     }
@@ -230,12 +236,12 @@ void Blink()
   
   if(ledState == ON)
   {
-    digitalWrite(LED_PIN, OFF);
+    digitalWrite(ESP8266_LED_PIN, OFF);
     ledState = OFF;
     nextBlink = now + dashOff;
   } else
   {
-    digitalWrite(LED_PIN, ON);
+    digitalWrite(ESP8266_LED_PIN, ON);
     ledState = ON;
     nextBlink = now + dashOn;
   }
@@ -355,7 +361,7 @@ void BreakReplace(char* s)
 
 // This listens to the host and saves the transmitted message in
 // messageString.
-
+/*
 void GetMessage()
 {
   messageCount = 0;
@@ -402,12 +408,15 @@ void GetMessage()
   }
 }
 
+*/
 
 // Send an HTTP request to get the required message
 // Any data needing to be transmitted can be placed in
 // messageString and will be preceeded by "?"
 // If no data is to be transmitted ensure that 
 // messageString[0] = 0.
+
+/*
 
 void HTTPRequest(char* request)
 {
@@ -416,7 +425,7 @@ void HTTPRequest(char* request)
   
   // Note use of \r\n to force adherence to the HTTP standard.
     
-/*  client.print("GET http://");
+  client.print("GET http://");
   client.print(currentServer);
   client.print(pageRoot);
   client.print(page);
@@ -427,13 +436,14 @@ void HTTPRequest(char* request)
   }
   client.print(" HTTP/1.0\r\n\r\n");
   client.print("Connection: close\r\n\r\n"); 
-  */ 
+   
 }
-
+*/
 
 // Connect to the server.  Return true if successful,
 // false otherwise.
 
+/*
 bool Connect()
 {
   int k;
@@ -478,7 +488,9 @@ bool Connect()
   return false;  
 }
 
+*/
 
+/*
 // Disconnect from the server
 
 void Disconnect()
@@ -490,14 +502,15 @@ void Disconnect()
   client.stop();  
 }
 
-
+*/
 // Assemble the query part of the HTTP request in messageString
 
 void ComposeQuery()
 {
   // Note use of \r\n to force adherence to the HTTP standard.
 
-  strcpy(messageString, "GET http://");
+  //strcpy(messageString, "GET http://");
+  strcpy(messageString, "http://");
   strcat(messageString, currentServer);
   strcat(messageString, pageRoot);
   strcat(messageString, page);
@@ -512,8 +525,8 @@ void ComposeQuery()
     strcat(messageString, "&");
     strcat(messageString, "debugOn=1");
   }
-  strcat(messageString, " HTTP/1.0\r\n\r\n");
-  strcat(messageString, "Connection: close\r\n\r\n"); 
+  //strcat(messageString, " HTTP/1.0\r\n\r\n");
+  //strcat(messageString, "Connection: close\r\n\r\n"); 
 }
 
 
@@ -573,7 +586,71 @@ void loop()
   {
     if(debug)
       Serial.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-      
+
+    while (WiFiMulti.run() != WL_CONNECTED) 
+    {
+      delay(500);
+      if(debug)
+        Serial.print(".");
+    }
+    if(debug)
+    {
+      Serial.print("\nConnected to ");
+      Serial.println(ssid);
+    }
+
+    HTTPClient http;
+    blinkPattern = OFF;
+    messageString[0] = 0;
+    currentServer = server;
+    ComposeQuery();
+    if(debug)
+    {
+      Serial.println("Sending:");
+      Serial.println(messageString);
+      Serial.println();
+    }
+    http.begin(messageString);
+
+    int httpCode = http.GET();
+
+    // httpCode will be negative on error
+    if (httpCode > 0) 
+    {
+      // HTTP header has been send and Server response header has been handled
+      if(debug) Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+
+      // file found at server
+      if (httpCode == HTTP_CODE_OK) 
+      {
+        String payload = http.getString();
+        if(debug) Serial.println(payload);
+        strcpy(messageString, payload.c_str());
+        int mc = 0;
+        while(messageString[mc])
+        {
+          NextByte(messageString[mc]);
+          mc++;
+        }
+        if(debug)
+        {
+          BreakReplace(messageString);
+          Serial.print("\nReceived: \n");
+          Serial.println(messageString);
+          Serial.println();
+        }
+        ParseMessage();
+      }
+    } else 
+    {
+      if(debug) Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+      blinkPattern = DASH;
+    }
+
+    http.end();
+
+/*
+    
     if(Connect())
     {
       blinkPattern = OFF;
@@ -597,9 +674,11 @@ void loop()
     {
       blinkPattern = DASH;
     }  
-        
+*/        
     if(debug)
       Serial.println("------------------------------------------------------------");
+      
+    nextTime = NextTime();     
   }
 
   Blink();
