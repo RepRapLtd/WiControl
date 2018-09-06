@@ -54,10 +54,12 @@ $summerOffset = Math.min($juneSolstice.getTimezoneOffset(), $decemberSolstice.ge
 
 date_default_timezone_set("Europe/London");
 
+$summerTime = false;
 $unixTime = 0 + date_timestamp_get(date_create());
 if (date('I', time()))
 {
 	$unixTime += 3600;
+	$summerTime = true;
 }
 
 
@@ -163,7 +165,7 @@ function NextNumber(&$text, &$num)
 function GetTemperatureFromElsewhere(&$therm)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
 
    $thermName = $fileRoot . $therm . $fileExtension;
    $thermContents = file_get_contents($thermName);
@@ -192,7 +194,7 @@ function GetTemperatureFromElsewhere(&$therm)
 function ParseProfile($device)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
 
    $profileName = $fileRoot . $profileRoot . strtolower(date('l')) . $fileExtension;
    $profile = file_get_contents($profileName);
@@ -295,7 +297,7 @@ function ParseProfile($device)
 function SecondsSinceMidnight()
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
 
 	return $unixTime % 86400; //(time() % 86400);
 }
@@ -315,7 +317,7 @@ function ServerTime()
 function SetTemperature($device) 
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
 
     if(empty($profile)) // That's why $profile has to contain something...
 	exit('ERROR: SetTemperature() - profile not loaded');
@@ -366,7 +368,7 @@ function SetTemperature($device)
 function IAmAnOnSlave($device)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime, $summerTime;
 
     if(empty($profile))
 	exit('ERROR: IAmAnOnSlave() - profile not loaded');
@@ -376,6 +378,10 @@ function IAmAnOnSlave($device)
     if(!$t)
 	exit('ERROR: IAmAnOnSlave() - slave file not found: ' . $fileName);
     $fileTouched = 0 + $t;
+    if($summerTime)
+    	$fileTouched += 3600;
+    if($debug)
+    	$debugString = $debugString . 'File touched time: ' . $fileTouched . ', Unix time: ' . $unixTime .'<br>';
     return (($unixTime - $fileTouched) < 120);
 }
 
@@ -385,7 +391,7 @@ function IAmAnOnSlave($device)
 function TurnOnDependentList($device)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
 
     if(empty($profile))
 	exit('ERROR: TurnOnDependentList() - profile not loaded');
@@ -408,13 +414,14 @@ function TurnOnDependentList($device)
 function SaveTemperature($device, $act, $temp, $s)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer;
+	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
 
     $fileName = $fileRoot . $device . $fileExtension;
     $fileHandle = fopen($fileName, 'w');
     if(!$fileHandle)
 	exit('ERROR: SaveTemperature() - can not open file to write: '.$fileName); 
     fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . ' Server time: ' . ServerTime() . "\n");
+    //fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . "\n");
     fclose($fileHandle);
     if($debug)
 	$debugString = $debugString . $device . ' state: temp = ' . $temp . ', set = ' . $s;
@@ -468,7 +475,7 @@ if($set < -280.0)
 	}
 
 	if($debug)
-	     $debugString = $debugString . ' (I am a slave.)';
+	     $debugString = $debugString . ' (I am a slave and I am ' . $action . '.)';
 } else
 {
 	// $location is a master device

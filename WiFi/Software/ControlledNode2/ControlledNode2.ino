@@ -58,6 +58,7 @@ const char* password = "--------"; // Your WiFi network's password
 
 #ifdef WIFIBOARD-V2
  #define ESP8266_LED_PIN 2           // ESP8266 internal LED; D4 on later PCBs?
+ #define USER_LED_PIN D6             // GPIO 12 - Front panel LED
  #define OUTPUT_PIN D3               // GPIO5 This is the switched MOSFET/relay
  #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
  #define THERMISTOR_SERIES_R 10000   // Ohms in series with the thermistor
@@ -70,6 +71,7 @@ const char* password = "--------"; // Your WiFi network's password
 
 #ifdef WEMOS1
  #define ESP8266_LED_PIN 2            // D4 on later PCBs?
+ #define USER_LED_PIN D6              // GPIO 12 - Front panel LED
  #define OUTPUT_PIN D2                // This is the switched MOSFET/relay                  
  #define THERMISTOR_BETA 3528.0       // thermistor: RS 538-0806
  #define THERMISTOR_SERIES_R 1000     // Ohms in series with the thermistor
@@ -88,30 +90,26 @@ const long randomTime = 5000;         // +/- Milliseconds (must be < sampleTime)
 
 const long rebootTime = 3600000;      // Milliseconds between resets.
 
-//-----------------------------------------------------------------------------------------------------------
-
-// Typical HTML response with debugging is about 350 bytes.
-
-//#define MAXC 1000     // Maximum bytes in a message string (need a bit of space for debugging info).
-#define TEMPC 10      // Maximum bytes in a temperature string
-
 #define BAUD 9600     // Serial comms speed
 
 const int version = 2;
-const String myName = "Office";                   // What am I controlling?
+const String myName = "Boiler";                   // What am I controlling?
 const String pageRoot = "/WiFiHeating/Workshop/"; // Where the .php script is on the server
 const String page = "controllednode.php";         // The script we need
 String server = "adrianbowyer.com";               // Server IP address/URL
 String backupServer = "192.168.1.171";            // Backup server IP address/URL
 String currentServer = server;                    // The one in use
 
-// Bits of HTML we need to know (not case sensitive)
+//-----------------------------------------------------------------------------------------------------------
+
+
+// Bits of HTML we need to know (both cases of these are tried in atempting matches)
 
 const String bodyStart = "<body>";        // The instructions are in the body of the loaded page
 const String bodyEnd = "</body>";
 const String htmlBreak = "<br>";
 
-// The thermistor
+// The thermistor for measuring temperature
 
 #define ABS_ZERO -273.15           // Celsius
 #define TEMP_SENSE_PIN 0           // Analogue pin number
@@ -154,7 +152,9 @@ void setup()
    // I/O pins...
   
   pinMode(ESP8266_LED_PIN, OUTPUT);
+  pinMode(USER_LED_PIN, OUTPUT);
   digitalWrite(ESP8266_LED_PIN, OFF);
+  digitalWrite(USER_LED_PIN, !OFF);
   ledState = OFF;
   pinMode(OUTPUT_PIN, OUTPUT);
   digitalWrite(OUTPUT_PIN, 0);
@@ -164,8 +164,7 @@ void setup()
 
   Serial.begin(BAUD);
 
-  // Dunno if this is needed...
-  delay(4000);
+  while(!Serial);
 
   if(debug)
   {
@@ -176,6 +175,10 @@ void setup()
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);
   }
+
+  // Needed for WiFi stability
+  
+  delay(4000);
 
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP(ssid, password);
@@ -190,11 +193,13 @@ void setup()
 
 }
 
+
 // Amuse the user with blinking lights
 
 void Leds(int onOff)
 {
   digitalWrite(ESP8266_LED_PIN, onOff);
+  digitalWrite(USER_LED_PIN, !onOff);
   ledState = onOff;
 }
 
@@ -252,6 +257,7 @@ void Blink()
   }
 }
 
+
 // Return the celsius temperature as a text string
 
 String Temperature()
@@ -263,6 +269,7 @@ String Temperature()
   return String(r, 1);
 }
 
+
 // Assemble the HTTP request in the message String
 
 void ComposeQuery()
@@ -273,13 +280,17 @@ void ComposeQuery()
   message.concat(page);
   message.concat("?location=");
   message.concat(myName);
-  message.concat("&temperature");
+  message.concat("&temperature=");
   message.concat(Temperature());
   if(debug)
   {
     message.concat("&debugOn=1");
   }
 }
+
+
+// Decide the time delay before the next server request.  This is usually quick (~15s) for debugging
+// (so you can see what's going on), or slow (~60s) for normal operation.
 
 long NextTime()
 {
@@ -297,6 +308,10 @@ long NextTime()
   }
   return (long)millis() + f;
 }
+
+
+// Print the HTML body returned from the server on Serial output replacing
+// HTML controls with readable stuff.
 
 void PrintWebPageReturned(int bod)
 {
@@ -339,6 +354,9 @@ void PrintWebPageReturned(int bod)
   Serial.println("--------\n");  
 }
 
+
+// Turn the load (central heating valve, or whatever) on or off
+
 void SwitchOnOrOff(bool on)
 {
   if(on)
@@ -355,6 +373,10 @@ void SwitchOnOrOff(bool on)
   blinkPattern = OFF;
   digitalWrite(OUTPUT_PIN, 0);  
 }
+
+
+// Go through the body of the HTML returned from the server and decide what
+// action it's instructing us to take.
 
 void ParseMessage()
 {
@@ -404,19 +426,27 @@ void ParseMessage()
     PrintWebPageReturned(bod);
 }
 
+
+// What it says...
+
 void loop() 
 {
+  // Check for watchdog reset time
+  
     if((long)millis() - nextReset > 0)
     {
       if(debug)
         Serial.println("\n\n*** Watchdog reset.\n");
+      delay(2000); // Allow the serial output buffer to flush
       ESP.restart();
     }
 
-  // HTTP request in 1 second...
+  // If the HTTP request will be in 1 second, flash the LEDs...
   
   if((1000 + (long)millis()) - nextTime > 0)
     blinkPattern=FLASH;
+
+  // Time for another HTTP request?
   
   if((long)millis() - nextTime > 0)
   {
@@ -447,10 +477,12 @@ void loop()
       if (httpCode > 0) 
       {
         // HTTP header has been send and Server response header has been handled
+        
         if(debug)
           Serial.printf("HTTP GET returned code: %d\n", httpCode);
   
         // file found at server
+        
         if (httpCode == HTTP_CODE_OK) 
         {
           message = http.getString();
@@ -469,10 +501,11 @@ void loop()
       }
   
       http.end();
+      
     } else
     {
       if(debug)
-        Serial.print(". ");    
+        Serial.println("Not WL_CONNECTED.");    
     }
   
     nextTime = NextTime();
@@ -480,6 +513,8 @@ void loop()
 
   debug = !digitalRead(DEBUG_PIN);
 
+  // Entertain the user
+  
   Blink();
 
 }
