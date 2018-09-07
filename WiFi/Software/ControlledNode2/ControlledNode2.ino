@@ -10,7 +10,7 @@
  * 
  * where messageString is something like
  * 
- * location=Office&temperature=20&debugOn=1
+ * building=Workshop&location=Office&temperature=20&debugOn=1
  * 
  * Select 
  * 
@@ -93,8 +93,9 @@ const long rebootTime = 3600000;      // Milliseconds between resets.
 #define BAUD 9600     // Serial comms speed
 
 const int version = 2;
-const String myName = "ChemistryLab";                   // What am I controlling?
-const String pageRoot = "/WiFiHeating/Workshop/"; // Where the .php script is on the server
+const String myName = "ElectronicsLab";             // What room/device am I controlling?
+const String building = "Workshop";               // Which building is the device in?
+const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
 const String page = "controllednode.php";         // The script we need
 String server = "adrianbowyer.com";               // Server IP address/URL
 String backupServer = "192.168.1.171";            // Backup server IP address/URL
@@ -144,6 +145,11 @@ String message = "";
 
 long nextTime;
 long nextReset;
+long onSecondCount;
+long offSecondCount;
+long seconds;
+
+bool loadIsOn;
 
 ESP8266WiFiMulti WiFiMulti;
 
@@ -171,7 +177,9 @@ void setup()
     Serial.println();
     Serial.println();
     Serial.print("I am: ");
-    Serial.println(myName);
+    Serial.print(myName);
+    Serial.print(" in ");
+    Serial.println(building);    
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);
   }
@@ -186,11 +194,14 @@ void setup()
   // Set up timings and LED behaviour
   
   randomSeed(analogRead(TEMP_SENSE_PIN));
+  blinkPattern = OFF;
+  onSecondCount = -1;
+  offSecondCount = -1;
+  loadIsOn = false;
   nextTime = (long)millis();
   nextBlink = nextTime;
+  seconds = nextTime;
   nextReset = nextTime + rebootTime;
-  blinkPattern = OFF;
-
 }
 
 
@@ -278,7 +289,9 @@ void ComposeQuery()
   message.concat(currentServer);
   message.concat(pageRoot);
   message.concat(page);
-  message.concat("?location=");
+  message.concat("?building=");
+  message.concat(building);
+  message.concat("&location=");
   message.concat(myName);
   message.concat("&temperature=");
   message.concat(Temperature());
@@ -354,24 +367,79 @@ void PrintWebPageReturned(int bod)
   Serial.println("--------\n");  
 }
 
+// This gets called once a second and
+// handles delayed switching.
 
-// Turn the load (central heating valve, or whatever) on or off
-
-void SwitchOnOrOff(bool on)
+void TimedOnOrOff()
 {
-  if(on)
+  if(onSecondCount > 0)
+    onSecondCount--;
+
+  if(onSecondCount == 0)
   {
-   if(debug)
+    if(debug)
        Serial.println("Switching on.");
     blinkPattern = ON;
     digitalWrite(OUTPUT_PIN, 1);
-    return;    
+    loadIsOn = true;
+    onSecondCount = -1;
   }
 
+  if(offSecondCount > 0)
+    offSecondCount--;
+
+  if(offSecondCount == 0)
+  {
+    if(debug)
+       Serial.println("Switching off.");
+    blinkPattern = OFF;
+    digitalWrite(OUTPUT_PIN, 0);
+    loadIsOn = false;
+    offSecondCount = -1;
+  }    
+}
+
+
+// Turn the load (central heating valve, or whatever) on or off
+// This doesn't actually change the state of the load, it just
+// sets a seconds count (which can be 0) for when that change is to be made in the future.
+
+void SwitchOnOrOff(bool on, long tim)
+{
   if(debug)
-    Serial.println("Switching off.");
-  blinkPattern = OFF;
-  digitalWrite(OUTPUT_PIN, 0);  
+    Serial.print("Switching ");
+    
+  if(on)
+  {
+   if(onSecondCount >= 0)
+   {
+    if(debug)
+      Serial.println("**ON timer running");
+    return;
+   }
+   onSecondCount = tim;
+   if(debug)
+   {
+    Serial.print("ON in ");
+    Serial.print(onSecondCount);
+    Serial.println(" seconds.");
+   }
+   return;    
+  }
+
+  if(offSecondCount >= 0)
+  {
+    if(debug)
+      Serial.println("**OFF timer running");
+    return;
+  }
+  offSecondCount = tim;
+  if(debug)
+  {
+    Serial.print("OFF in ");
+    Serial.print(offSecondCount);
+    Serial.println(" seconds.");
+  } 
 }
 
 
@@ -416,14 +484,26 @@ void ParseMessage()
       }
       return;     
     }
-    SwitchOnOrOff(false);
+    SwitchOnOrOff(false, message.substring(toDo+4).toInt());
   } else
   {
-    SwitchOnOrOff(true);
+    SwitchOnOrOff(true, message.substring(toDo+3).toInt());
   }
 
   if(debug)
     PrintWebPageReturned(bod);
+}
+
+// This handles counting seconds and doing things when a second ticks
+
+void SecondCounter()
+{
+  long t = millis();
+  if(t - seconds > 0)
+  {
+    seconds = t + 1000;
+    TimedOnOrOff();
+  }
 }
 
 
@@ -450,6 +530,11 @@ void loop()
   
   if((long)millis() - nextTime > 0)
   {
+    if(loadIsOn)
+      blinkPattern=ON;
+    else
+      blinkPattern=OFF;
+      
     // wait for WiFi connection
     if ((WiFiMulti.run() == WL_CONNECTED)) 
     {
@@ -516,6 +601,10 @@ void loop()
   // Entertain the user
   
   Blink();
+
+  // Timing by seconds
+  
+  SecondCounter();
 
 }
 

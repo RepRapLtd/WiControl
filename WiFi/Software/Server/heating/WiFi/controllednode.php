@@ -14,7 +14,7 @@
  * Licence: GPL
  */
 
-// HTTP requests to this look like: http://host-url/heating/WiFi/Building/controllednode.php?location=Room&temperature=20[&debugOn=1]
+// HTTP requests to this look like: http://host-url/WiFiHeating/controllednode.php?building=Building&location=Room&temperature=20[&debugOn=1]
 
 // Debugging...
 
@@ -28,8 +28,8 @@ $debugString = '<br><br>';
 
 // Where the files are.
 
-$fileRoot = 'Data/';
-$profileRoot = 'workshop-profile-';
+$fileRoot = '/Data/';
+$profileText = '-profile-';
 $fileExtension = '.dat';
 
 // Special characters
@@ -38,19 +38,6 @@ $delimiter = '*';
 $timeDelimiter = ':';
 
 // Now
-/* This is untested
-$juneSolstice = date_create();
-$juneSolstice.setMonth(5); // zero-based
-$juneSolstice.setDate(21);
-
-$decemberSolstice = date_create();
-$decemberSolstice.setMonth(11); // zero-based
-$decemberSolstice.setDate(21);
-
-
-$winterOffset = Math.max($juneSolstice.getTimezoneOffset(), $decemberSolstice.getTimezoneOffset());
-$summerOffset = Math.min($juneSolstice.getTimezoneOffset(), $decemberSolstice.getTimezoneOffset());
-*/
 
 date_default_timezone_set("Europe/London");
 
@@ -162,18 +149,61 @@ function NextNumber(&$text, &$num)
 // Some devices use another device ($therm) to measure the temperature they should be using.  This loads
 // that temperature from the little file recorded by the other device.
 
-function GetTemperatureFromElsewhere(&$therm)
+function GetTemperatureFromElsewhere($house, &$therm)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
+	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
+	$summerTime, $onDelay, $offDelay;
 
-   $thermName = $fileRoot . $therm . $fileExtension;
+   $thermName = $house . $fileRoot . $therm . $fileExtension;
    $thermContents = file_get_contents($thermName);
    EatSpaces($thermContents);
    if(!NextNumber($thermContents, $therm))
 	 exit('ERROR: GetTemperatureFromElsewhere() - temperature not found:'.$thermContents);
 }
 
+
+// This reads the first part of the profile file until it finds the device,
+// then gets the on and off delays in seconds for that device's switching.
+
+function GetSwitchingDelays($device)
+{
+   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
+	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
+	$summerTime, $onDelay, $offDelay;
+
+   // The first time the name $device appears will be a line like
+   // *Boiler* 5 0 30.0 0.0
+   // The first two numbers were for the old Panstamp and can be
+   // ignored. The third is the delay in seconds before switching
+   // on, the fourth the delay for switching off.
+
+   while(NextLine($profile, $line))
+   {
+	$thisLine = $line;
+	if(!NextName($line, $name))
+		exit('Error: ParseProfile() - first name on line missing.' . $thisLine);
+
+	// Is this the line for this device?
+
+	if($name == $device)
+	{
+	   if(!NextNumber($line, $number))
+		exit('ERROR: GetSwitchingDelays() - number 1 not found: '.$thisLine);
+	   if(!NextNumber($line, $number))
+		exit('ERROR: GetSwitchingDelays() - number 2 not found: '.$thisLine);
+	   if(!NextNumber($line, $number))
+		exit('ERROR: GetSwitchingDelays() - number 3 not found: '.$thisLine);
+           $onDelay = $number;
+	   if(!NextNumber($line, $number))
+		exit('ERROR: GetSwitchingDelays() - number 4 not found: '.$thisLine);
+	   $offDelay = $number;
+           return;
+	}
+   }
+
+   exit('ERROR: GetSwitchingDelays() - device ' . $device . ' not found.');
+}
 
 // This parses the profile file which is written by the web interface.
 
@@ -190,21 +220,25 @@ function GetTemperatureFromElsewhere(&$therm)
 
 // $times is empty().
 
-
-function ParseProfile($device)
+function ParseProfile($house, $device)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
+	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
+	$summerTime, $onDelay, $offDelay;
 
-   $profileName = $fileRoot . $profileRoot . strtolower(date('l')) . $fileExtension;
+   $profileName = $house . $fileRoot . strtolower($house) . $profileText . strtolower(date('l')) . $fileExtension;
    $profile = file_get_contents($profileName);
+
+   // N.B. GetSwitchingDelays() will eat some of the start of $profile, but shouldn't get to the '---'
+
+   GetSwitchingDelays($device);
 
    // Ignore the old Panstamp control information at the start of the file. There is a line
    // with --- on between that and the stuff we want.
 
    $listStart = strpos($profile, '---');
-   if(!$listStart)
-	exit('ERROR: ParseProfile() - string --- not found.');
+   if($listStart === false)
+	exit('ERROR: ParseProfile() - string --- not found in ' . $profile);
 
    $profile = substr($profile, 4 + $listStart);
    while(NextLine($profile, $line))
@@ -225,7 +259,7 @@ function ParseProfile($device)
 			$thermometer = false;
 		} else
 		{
-			GetTemperatureFromElsewhere($thermometer);
+			GetTemperatureFromElsewhere($house, $thermometer);
 		}
 
 		$slaveCount = 0;
@@ -297,7 +331,8 @@ function ParseProfile($device)
 function SecondsSinceMidnight()
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
+	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
+	$summerTime, $onDelay, $offDelay;
 
 	return $unixTime % 86400; //(time() % 86400);
 }
@@ -317,7 +352,8 @@ function ServerTime()
 function SetTemperature($device) 
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
+	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
+	$summerTime, $onDelay, $offDelay;
 
     if(empty($profile)) // That's why $profile has to contain something...
 	exit('ERROR: SetTemperature() - profile not loaded');
@@ -365,15 +401,16 @@ function SetTemperature($device)
 // device that needs to be on will have had its .dat file touched less than
 // 2 minutes (120 seconds) ago.
 
-function IAmAnOnSlave($device)
+function IAmAnOnSlave($house, $device)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime, $summerTime;
+	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
+	$summerTime, $onDelay, $offDelay;
 
     if(empty($profile))
 	exit('ERROR: IAmAnOnSlave() - profile not loaded');
 
-    $fileName = $fileRoot . $device . $fileExtension;
+    $fileName = $house . $fileRoot . $device . $fileExtension;
     $t = filemtime($fileName);
     if(!$t)
 	exit('ERROR: IAmAnOnSlave() - slave file not found: ' . $fileName);
@@ -388,10 +425,11 @@ function IAmAnOnSlave($device)
 // Touch the .dat files of slave devices that also need to be turned on if 
 // master $device is on.  
 
-function TurnOnDependentList($device)
+function TurnOnDependentList($house, $device)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
+	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
+	$summerTime, $onDelay, $offDelay;
 
     if(empty($profile))
 	exit('ERROR: TurnOnDependentList() - profile not loaded');
@@ -403,7 +441,7 @@ function TurnOnDependentList($device)
     {
 	if($mySlaves[$i] != $device) // Don't touch my own file as it will be written to anyway
 	{
-		$fileName = $fileRoot . $mySlaves[$i] . $fileExtension;
+		$fileName = $house . $fileRoot . $mySlaves[$i] . $fileExtension;
 		touch($fileName);
 	}
     }
@@ -411,17 +449,17 @@ function TurnOnDependentList($device)
 
 // Save the status of a master device in its .dat file.
 
-function SaveTemperature($device, $act, $temp, $s)
+function SaveTemperature($house, $device, $act, $temp, $s)
 {
    global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileRoot, $unixTime, $delimiter, $timeDelimiter, $thermometer, $summerTime;
+	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
+	$summerTime, $onDelay, $offDelay;
 
-    $fileName = $fileRoot . $device . $fileExtension;
+    $fileName = $house . $fileRoot . $device . $fileExtension;
     $fileHandle = fopen($fileName, 'w');
     if(!$fileHandle)
 	exit('ERROR: SaveTemperature() - can not open file to write: '.$fileName); 
     fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . ' Server time: ' . ServerTime() . "\n");
-    //fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . "\n");
     fclose($fileHandle);
     if($debug)
 	$debugString = $debugString . $device . ' state: temp = ' . $temp . ', set = ' . $s;
@@ -439,12 +477,13 @@ parse_str($_SERVER['QUERY_STRING']);
 
 // Check we have a $device/$location and $temperature from the HTTP query...
 
-if(empty($location) || empty($temperature))
-	exit('ERROR - $location or $temperature undefined');
+if(empty($location) || empty($temperature) || empty($building))
+	exit('ERROR - $location, $temperature or $building undefined');
+
 
 $debug = !empty($debugOn);
 
-ParseProfile($location);
+ParseProfile($building, $location);
 
 // if $thermometer is not false some other device returned my temperature, and that temperature
 // will now be in $thermometer.  Note use of ===, because 0 (casts to false) is a valid temperature.
@@ -469,7 +508,7 @@ if($set < -280.0)
 {
 	// $location is a slave device
 
-	if(IAmAnOnSlave($location))
+	if(IAmAnOnSlave($building, $location))
 	{
 	     $action = 'ON';
 	}
@@ -482,17 +521,20 @@ if($set < -280.0)
 
 	if($set > $t)
 	{
-	    TurnOnDependentList($location);
+	    TurnOnDependentList($building, $location);
 	    if($iAmMyOwnSlave)
 	    	$action = 'ON';
 	    else if($debug)
 		$debugString = $debugString . ' (I do not control myself.)';
 	    
 	}
-	SaveTemperature($location, $action, $t, $set);
+	SaveTemperature($building, $location, $action, $t, $set);
 }
 
-	
+if($action == 'ON')
+ $action = $action . ' ' . $onDelay;
+else
+ $action = $action . ' ' . $offDelay; 	
 
 // Tell the device what to do
 
