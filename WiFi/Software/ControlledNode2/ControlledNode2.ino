@@ -93,7 +93,7 @@ const long rebootTime = 3600000;      // Milliseconds between resets.
 #define BAUD 9600     // Serial comms speed
 
 const int version = 2;
-const String myName = "Boiler";                   // What am I controlling?
+const String myName = "ChemistryLab";                   // What am I controlling?
 const String pageRoot = "/WiFiHeating/Workshop/"; // Where the .php script is on the server
 const String page = "controllednode.php";         // The script we need
 String server = "adrianbowyer.com";               // Server IP address/URL
@@ -491,13 +491,13 @@ void loop()
         {
           blinkPattern = DASH;
           if(debug)
-            Serial.println("Returned code not HTTP_CODE_OK");
+            Serial.println("\nReturned code not HTTP_CODE_OK");
         }
       } else 
       {
         blinkPattern = DASH;
         if(debug)
-          Serial.printf("HTTP GET failed, error: %s\n", http.errorToString(httpCode).c_str());
+          Serial.printf("\nHTTP GET failed, error: %s\n", http.errorToString(httpCode).c_str());
       }
   
       http.end();
@@ -505,7 +505,7 @@ void loop()
     } else
     {
       if(debug)
-        Serial.println("Not WL_CONNECTED.");    
+        Serial.println("\nNot WL_CONNECTED.");    
     }
   
     nextTime = NextTime();
