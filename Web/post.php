@@ -1,11 +1,20 @@
 <?php
 
-if (isset($HTTP_RAW_POST_DATA))
+$name = "";
+$postData = file_get_contents('php://input');
+if ($postData != '')
 {
    if($_GET["file"] == "")
-       file_put_contents("" . htmlspecialchars($_GET["building"]) . "-profile-" . htmlspecialchars($_GET["day"]) . ".dat", $HTTP_RAW_POST_DATA);
-   else
-	file_put_contents("" . htmlspecialchars($_GET["building"]) . "-Profiles/" . htmlspecialchars($_GET["file"]) . ".dat",$HTTP_RAW_POST_DATA);
-   echo('Saved');
-}
+   {
+       $name = $name . htmlspecialchars($_GET["building"]) . "-profile-" . htmlspecialchars($_GET["day"]) . ".dat";
+       file_put_contents("" . $name, $postData);
+   } else
+   {
+       $name = $name . htmlspecialchars($_GET["building"]) . "-Profiles/" . htmlspecialchars($_GET["file"]) . ".dat";
+       file_put_contents("" . $name ,$postData);
+   }
+   echo('Saved to ' . $name);
+} else
+  echo('No post data - not saved');
 ?>
+
