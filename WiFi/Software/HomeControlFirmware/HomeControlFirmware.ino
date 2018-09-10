@@ -1,5 +1,5 @@
 /*
- * Program to run a node on the WiFi Heating Control system.
+ * Program to run a node on the WiFi Home Control system.
  * 
  * This makes periodic requests to the server to report its state (on or off,
  * current temperature etc) and to find out what to do next.
@@ -30,109 +30,16 @@
  * 
  */
 
-#include <Arduino.h>
+#include "HomeControlFirmware.h"
+#include "Load.h"
 
-#include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
-
-#include <ESP8266HTTPClient.h>
-
-//-----------------------------------------------------------------------------------------------------
-
-// User configuration area
-
-
-/*
-
-The file local_wifi.h included below should contain two lines:
-
-const char* ssid = "-------";      // The name of your WiFi network
-const char* password = "--------"; // Your WiFi network's password
-
-*/
-
-#include "local_wifi.h" // Separated to prevent passwords appearing on Github
-
-#define WIFIBOARD-V2
-//#define WEMOS1
-
-#ifdef WIFIBOARD-V2
- #define ESP8266_LED_PIN 2           // ESP8266 internal LED; D4 on later PCBs?
- #define USER_LED_PIN D6             // GPIO 12 - Front panel LED
- #define OUTPUT_PIN D3               // GPIO5 This is the switched MOSFET/relay
- #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
- #define THERMISTOR_SERIES_R 10000   // Ohms in series with the thermistor
- #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
- #define TOP_VOLTAGE 3.303           // The voltage at the top of the series resistor
- #define MAX_AD_VOLTAGE 1.0          // The voltage that gives full-range (i.e. AD_RANGE - see below) on the A->D converter
- #define T_CORRECTION 1.5            // Final fudge to get it just right/variation in beta from spec
- #define DEBUG_PIN D5                // Ground this pin to turn debugging on
-#endif
-
-#ifdef WEMOS1
- #define ESP8266_LED_PIN 2            // D4 on later PCBs?
- #define USER_LED_PIN D6              // GPIO 12 - Front panel LED
- #define OUTPUT_PIN D2                // This is the switched MOSFET/relay                  
- #define THERMISTOR_BETA 3528.0       // thermistor: RS 538-0806
- #define THERMISTOR_SERIES_R 1000     // Ohms in series with the thermistor
- #define THERMISTOR_25_R 1000.0       // Thermistor ohms at 25 C = 298.15 K
- #define TOP_VOLTAGE 3.3              // The voltage at the top of the series resistor
- #define MAX_AD_VOLTAGE TOP_VOLTAGE   // The voltage that gives full-range (i.e. AD_RANGE - see below) on the A->D converter
- #define T_CORRECTION 6               // Final fudge to get it just right/variation in beta from spec 
- #define DEBUG_PIN D5                 // Ground this pin to turn debugging on
-#endif
-
-const long debugSampleTime = 15000;   // Milliseconds between server requests when debugging
-const long debugRandomTime = 2000;    // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
-
-const long sampleTime = 60000;        // Milliseconds between server requests
-const long randomTime = 5000;         // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
-
-const long rebootTime = 3600000;      // Milliseconds between resets.
-
-#define BAUD 9600     // Serial comms speed
-
-const int version = 2;
-const String myName = "ElectronicsLab";             // What room/device am I controlling?
-const String building = "Workshop";               // Which building is the device in?
-const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
-const String page = "controllednode.php";         // The script we need
-String server = "adrianbowyer.com";               // Server IP address/URL
-String backupServer = "192.168.1.171";            // Backup server IP address/URL
 String currentServer = server;                    // The one in use
 
-//-----------------------------------------------------------------------------------------------------------
-
-
-// Bits of HTML we need to know (both cases of these are tried in atempting matches)
-
-const String bodyStart = "<body>";        // The instructions are in the body of the loaded page
-const String bodyEnd = "</body>";
-const String htmlBreak = "<br>";
-
-// The thermistor for measuring temperature
-
-#define ABS_ZERO -273.15           // Celsius
-#define TEMP_SENSE_PIN 0           // Analogue pin number
-#define AD_RANGE 1023.0            // The A->D converter that measures temperatures gives an int this big as its max value
 
 // This is turned off and on when running by freeing/grounding DEBUG_PIN
 
 bool debug = true;
 
-// LED control and blinking 
-
-#define OFF 1 // N.B. ESP8266 LED is inverted
-#define ON 0
-#define DOT 2
-const int dotOn = 100;
-const int dotOff = 500;
-#define DASH 3
-const int dashOn = 500;
-const int dashOff = 100;
-#define FLASH 4
-const int flashOn = 100;
-const int flashOff = 100;
 long nextBlink;
 byte blinkPattern;
 byte ledState;
@@ -143,7 +50,6 @@ String message = "";
 
 // Timing and resets
 
-long nextTime;
 long nextReset;
 long onSecondCount;
 long offSecondCount;
@@ -153,20 +59,35 @@ bool loadIsOn;
 
 ESP8266WiFiMulti WiFiMulti;
 
+
 void setup() 
 {
    // I/O pins...
+
+  if(ESP8266_LED_PIN >= 0)
+  {
+    pinMode(ESP8266_LED_PIN, OUTPUT);
+    digitalWrite(ESP8266_LED_PIN, OFF);
+  }
+
+  if(USER_LED_PIN >= 0)
+  {
+    pinMode(USER_LED_PIN, OUTPUT);
+    digitalWrite(USER_LED_PIN, !OFF);
+  }
   
-  pinMode(ESP8266_LED_PIN, OUTPUT);
-  pinMode(USER_LED_PIN, OUTPUT);
-  digitalWrite(ESP8266_LED_PIN, OFF);
-  digitalWrite(USER_LED_PIN, !OFF);
   ledState = OFF;
-  pinMode(OUTPUT_PIN, OUTPUT);
-  digitalWrite(OUTPUT_PIN, 0);
+    
   pinMode(TEMP_SENSE_PIN, INPUT);
   pinMode(DEBUG_PIN, INPUT_PULLUP);
   debug = !digitalRead(DEBUG_PIN);
+  randomSeed(analogRead(TEMP_SENSE_PIN));
+
+  // Set up each load 'by hand'.
+  // Subsequently they will be refered to by their array index.
+  // TODO make a load a class.
+  
+
 
   Serial.begin(BAUD);
 
@@ -176,9 +97,9 @@ void setup()
   {
     Serial.println();
     Serial.println();
-    Serial.print("I am: ");
-    Serial.print(myName);
-    Serial.print(" in ");
+    Serial.print("I control: ");
+// PRINT LOADS HERE
+    Serial.print("in ");
     Serial.println(building);    
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);
@@ -193,24 +114,45 @@ void setup()
 
   // Set up timings and LED behaviour
   
-  randomSeed(analogRead(TEMP_SENSE_PIN));
   blinkPattern = OFF;
   onSecondCount = -1;
   offSecondCount = -1;
-  loadIsOn = false;
-  nextTime = (long)millis();
-  nextBlink = nextTime;
+  nextBlink = (long)millis();
   seconds = nextTime;
   nextReset = nextTime + rebootTime;
 }
+
+
+// Decide the time delay before the next server request.  This is usually quick (~15s) for debugging
+// (so you can see what's going on), or slow (~60s) for normal operation. 
+
+long NextTime()
+{
+  long f;
+  if(debug)
+    f = debugSampleTime + random(2*debugRandomTime) - debugRandomTime;
+  else
+    f = sampleTime + random(2*randomTime) - randomTime;
+    
+  if(debug)
+  {
+    Serial.print("Next server request will be in ");
+    Serial.print(f);
+    Serial.println(" milliseconds.");
+  }
+  return (long)millis() + f;
+}
+
 
 
 // Amuse the user with blinking lights
 
 void Leds(int onOff)
 {
-  digitalWrite(ESP8266_LED_PIN, onOff);
-  digitalWrite(USER_LED_PIN, !onOff);
+  if(ESP8266_LED_PIN > 0)
+    digitalWrite(ESP8266_LED_PIN, onOff);
+  if(USER_LED_PIN > 0)
+    digitalWrite(USER_LED_PIN, !onOff);
   ledState = onOff;
 }
 
@@ -283,7 +225,7 @@ String Temperature()
 
 // Assemble the HTTP request in the message String
 
-void ComposeQuery()
+void ComposeQuery(String* load)
 {
   message = "http://";
   message.concat(currentServer);
@@ -292,34 +234,13 @@ void ComposeQuery()
   message.concat("?building=");
   message.concat(building);
   message.concat("&location=");
-  message.concat(myName);
+  message.concat(&load);
   message.concat("&temperature=");
   message.concat(Temperature());
   if(debug)
   {
     message.concat("&debugOn=1");
   }
-}
-
-
-// Decide the time delay before the next server request.  This is usually quick (~15s) for debugging
-// (so you can see what's going on), or slow (~60s) for normal operation.
-
-long NextTime()
-{
-  long f;
-  if(debug)
-    f = debugSampleTime + random(2*debugRandomTime) - debugRandomTime;
-  else
-    f = sampleTime + random(2*randomTime) - randomTime;
-    
-  if(debug)
-  {
-    Serial.print("Next server request will be in ");
-    Serial.print(f);
-    Serial.println(" milliseconds.");
-  }
-  return (long)millis() + f;
 }
 
 
@@ -607,4 +528,34 @@ void loop()
   SecondCounter();
 
 }
+
+//***************************************************************************************************
+
+// The Load class
+
+Load::Load(String* l, int p, Load* n)
+{
+  location = l;
+  pin = p;
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, 0);
+  next = n;
+  nextTime = NextTime();
+  iAmOn = false;
+  onSeconds = -1;
+  offSeconds = -1;
+
+  
+}
+
+Load* Load::Next() { return next; }
+
+long Load::NextTime() { return nextTime; }
+
+void Load::SecondTick()
+{
+  
+}
+
+
 
