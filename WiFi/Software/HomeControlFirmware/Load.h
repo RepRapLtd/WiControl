@@ -20,22 +20,23 @@ class Load
 {
   public:
   
-  Load(String* l, int p, Load* n);
+  Load(const String l, int p, Load* n);
   Load* Next();
   long NextTime();
   void SecondTick();
-
+  String Location();
+  void SwitchOnOrOff(bool on, long tim);
+  void ActIfItsTime();
 
   private:
   
-  String* location;
+  String location;
   int pin;
   long nextTime;
   bool iAmOn;
   long onSeconds;
   long offSeconds;
   Load* next;
-  
 };
 
 

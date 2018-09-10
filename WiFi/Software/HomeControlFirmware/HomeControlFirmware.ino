@@ -35,7 +35,6 @@
 
 String currentServer = server;                    // The one in use
 
-
 // This is turned off and on when running by freeing/grounding DEBUG_PIN
 
 bool debug = true;
@@ -51,13 +50,10 @@ String message = "";
 // Timing and resets
 
 long nextReset;
-long onSecondCount;
-long offSecondCount;
 long seconds;
 
-bool loadIsOn;
-
 ESP8266WiFiMulti WiFiMulti;
+Load* loads;
 
 
 void setup() 
@@ -84,10 +80,8 @@ void setup()
   randomSeed(analogRead(TEMP_SENSE_PIN));
 
   // Set up each load 'by hand'.
-  // Subsequently they will be refered to by their array index.
-  // TODO make a load a class.
-  
 
+  loads = new Load(l0, OUTPUT_PIN_0, (Load*)NULL);
 
   Serial.begin(BAUD);
 
@@ -98,7 +92,13 @@ void setup()
     Serial.println();
     Serial.println();
     Serial.print("I control: ");
-// PRINT LOADS HERE
+    Load* load = loads;
+    while(load)
+    {
+      Serial.print(load->Location());
+      Serial.print(' ');
+      load = load->Next();
+    }
     Serial.print("in ");
     Serial.println(building);    
     Serial.print("Connecting to WiFi: ");
@@ -115,11 +115,9 @@ void setup()
   // Set up timings and LED behaviour
   
   blinkPattern = OFF;
-  onSecondCount = -1;
-  offSecondCount = -1;
   nextBlink = (long)millis();
-  seconds = nextTime;
-  nextReset = nextTime + rebootTime;
+  seconds = nextBlink;
+  nextReset = nextBlink + rebootTime;
 }
 
 
@@ -225,7 +223,7 @@ String Temperature()
 
 // Assemble the HTTP request in the message String
 
-void ComposeQuery(String* load)
+void ComposeQuery(Load* load)
 {
   message = "http://";
   message.concat(currentServer);
@@ -234,7 +232,7 @@ void ComposeQuery(String* load)
   message.concat("?building=");
   message.concat(building);
   message.concat("&location=");
-  message.concat(&load);
+  message.concat(load->Location());
   message.concat("&temperature=");
   message.concat(Temperature());
   if(debug)
@@ -293,81 +291,19 @@ void PrintWebPageReturned(int bod)
 
 void TimedOnOrOff()
 {
-  if(onSecondCount > 0)
-    onSecondCount--;
-
-  if(onSecondCount == 0)
+  Load* load = loads;
+  while(load)
   {
-    if(debug)
-       Serial.println("Switching on.");
-    blinkPattern = ON;
-    digitalWrite(OUTPUT_PIN, 1);
-    loadIsOn = true;
-    onSecondCount = -1;
+    load->SecondTick();
+    load = load->Next();
   }
-
-  if(offSecondCount > 0)
-    offSecondCount--;
-
-  if(offSecondCount == 0)
-  {
-    if(debug)
-       Serial.println("Switching off.");
-    blinkPattern = OFF;
-    digitalWrite(OUTPUT_PIN, 0);
-    loadIsOn = false;
-    offSecondCount = -1;
-  }    
-}
-
-
-// Turn the load (central heating valve, or whatever) on or off
-// This doesn't actually change the state of the load, it just
-// sets a seconds count (which can be 0) for when that change is to be made in the future.
-
-void SwitchOnOrOff(bool on, long tim)
-{
-  if(debug)
-    Serial.print("Switching ");
-    
-  if(on)
-  {
-   if(onSecondCount >= 0)
-   {
-    if(debug)
-      Serial.println("**ON timer running");
-    return;
-   }
-   onSecondCount = tim;
-   if(debug)
-   {
-    Serial.print("ON in ");
-    Serial.print(onSecondCount);
-    Serial.println(" seconds.");
-   }
-   return;    
-  }
-
-  if(offSecondCount >= 0)
-  {
-    if(debug)
-      Serial.println("**OFF timer running");
-    return;
-  }
-  offSecondCount = tim;
-  if(debug)
-  {
-    Serial.print("OFF in ");
-    Serial.print(offSecondCount);
-    Serial.println(" seconds.");
-  } 
 }
 
 
 // Go through the body of the HTML returned from the server and decide what
 // action it's instructing us to take.
 
-void ParseMessage()
+void ParseMessage(Load* load)
 {
   int bod = message.indexOf(bodyStart);
   
@@ -405,10 +341,10 @@ void ParseMessage()
       }
       return;     
     }
-    SwitchOnOrOff(false, message.substring(toDo+4).toInt());
+    load->SwitchOnOrOff(false, message.substring(toDo+4).toInt());
   } else
   {
-    SwitchOnOrOff(true, message.substring(toDo+3).toInt());
+    load->SwitchOnOrOff(true, message.substring(toDo+3).toInt());
   }
 
   if(debug)
@@ -419,10 +355,10 @@ void ParseMessage()
 
 void SecondCounter()
 {
-  long t = millis();
-  if(t - seconds > 0)
+  long tim = millis();
+  if(tim - seconds > 0)
   {
-    seconds = t + 1000;
+    seconds = tim + 1000;
     TimedOnOrOff();
   }
 }
@@ -434,87 +370,21 @@ void loop()
 {
   // Check for watchdog reset time
   
-    if((long)millis() - nextReset > 0)
-    {
-      if(debug)
-        Serial.println("\n\n*** Watchdog reset.\n");
-      delay(2000); // Allow the serial output buffer to flush
-      ESP.restart();
-    }
-
-  // If the HTTP request will be in 1 second, flash the LEDs...
-  
-  if((1000 + (long)millis()) - nextTime > 0)
-    blinkPattern=FLASH;
-
-  // Time for another HTTP request?
-  
-  if((long)millis() - nextTime > 0)
+  if((long)millis() - nextReset > 0)
   {
-    if(loadIsOn)
-      blinkPattern=ON;
-    else
-      blinkPattern=OFF;
-      
-    // wait for WiFi connection
-    if ((WiFiMulti.run() == WL_CONNECTED)) 
-    {
-      if(debug)
-        Serial.println();
-  
-      HTTPClient http;
-  
-      ComposeQuery();
-  
-      if(debug)
-      {
-        Serial.print("\nSending: ");
-        Serial.println(message);
-      }
-   
-      http.begin(message);
-      
-      // start connection and send HTTP header
-      
-      int httpCode = http.GET();
-  
-      // httpCode will be negative on error
-      
-      if (httpCode > 0) 
-      {
-        // HTTP header has been send and Server response header has been handled
-        
-        if(debug)
-          Serial.printf("HTTP GET returned code: %d\n", httpCode);
-  
-        // file found at server
-        
-        if (httpCode == HTTP_CODE_OK) 
-        {
-          message = http.getString();
-          ParseMessage();
-        } else
-        {
-          blinkPattern = DASH;
-          if(debug)
-            Serial.println("\nReturned code not HTTP_CODE_OK");
-        }
-      } else 
-      {
-        blinkPattern = DASH;
-        if(debug)
-          Serial.printf("\nHTTP GET failed, error: %s\n", http.errorToString(httpCode).c_str());
-      }
-  
-      http.end();
-      
-    } else
-    {
-      if(debug)
-        Serial.println("\nNot WL_CONNECTED.");    
-    }
-  
-    nextTime = NextTime();
+    if(debug)
+      Serial.println("\n\n*** Watchdog reset.\n");
+    delay(2000); // Allow the serial output buffer to flush
+    ESP.restart();
+  }
+
+  // Time for a load to do something?
+
+  Load* load = loads;
+  while(load)
+  {
+    load->ActIfItsTime();
+    load = load->Next();
   }
 
   debug = !digitalRead(DEBUG_PIN);
@@ -533,7 +403,7 @@ void loop()
 
 // The Load class
 
-Load::Load(String* l, int p, Load* n)
+Load::Load(const String l, int p, Load* n)
 {
   location = l;
   pin = p;
@@ -544,17 +414,175 @@ Load::Load(String* l, int p, Load* n)
   iAmOn = false;
   onSeconds = -1;
   offSeconds = -1;
-
-  
 }
 
 Load* Load::Next() { return next; }
 
 long Load::NextTime() { return nextTime; }
 
+String Load::Location() { return location; }
+
 void Load::SecondTick()
 {
+  if(onSeconds > 0)
+    onSeconds--;
+
+  if(onSeconds == 0)
+  {
+    if(debug)
+    {
+       Serial.print("Switching on ");
+       Serial.println(location);
+    }
+    blinkPattern = ON;
+    digitalWrite(pin, 1);
+    iAmOn = true;
+    onSeconds = -1;
+  }
+
+  if(offSeconds > 0)
+    offSeconds--;
+
+  if(offSeconds == 0)
+  {
+    if(debug)
+    {
+       Serial.print("Switching off ");
+       Serial.println(location);
+    }
+    blinkPattern = OFF;
+    digitalWrite(pin, 0);
+    iAmOn = false;
+    offSeconds = -1;
+  }      
+}
+
+// Turn the load (central heating valve, or whatever) on or off
+// This doesn't actually change the state of the load, it just
+// sets a seconds count (which can be 0) for when that change is to be made in the future.
+
+void Load::SwitchOnOrOff(bool on, long tim)
+{
+  if(debug)
+  {
+    Serial.print("Switching ");
+    Serial.print(location);
+  }
+    
+  if(on)
+  {
+   if(onSeconds >= 0)
+   {
+    if(debug)
+      Serial.println(" **ON timer running");
+    return;
+   }
+   onSeconds = tim;
+   if(debug)
+   {
+    Serial.print(" ON in ");
+    Serial.print(onSeconds);
+    Serial.println(" seconds.");
+   }
+   return;    
+  }
+
+  if(offSeconds >= 0)
+  {
+    if(debug)
+      Serial.println(" **OFF timer running");
+    return;
+  }
+  offSeconds = tim;
+  if(debug)
+  {
+    Serial.print("OFF in ");
+    Serial.print(offSeconds);
+    Serial.println(" seconds.");
+  }   
+}
+
+
+void Load::ActIfItsTime()
+{
   
+  long tim = (long)millis();
+    
+  // If the HTTP request will be in 1 second, flash the LEDs...
+ 
+  if((1000 + tim) - nextTime > 0)
+    blinkPattern=FLASH;
+
+  // Is it time to send another request to the server?
+  
+  if(tim - nextTime < 0)
+    return;
+    
+  if(iAmOn)
+        blinkPattern=ON;
+  else
+        blinkPattern=OFF;
+        
+  // wait for WiFi connection
+  
+  if ((WiFiMulti.run() == WL_CONNECTED)) 
+  {
+     if(debug)
+       Serial.println();
+    
+     HTTPClient http;
+    
+     ComposeQuery(this);
+    
+     if(debug)
+     {
+       Serial.print("\nSending: ");
+       Serial.println(message);
+     }
+     
+     http.begin(message);
+        
+     // start connection and send HTTP header
+        
+     int httpCode = http.GET();
+    
+     // httpCode will be negative on error
+        
+     if (httpCode > 0) 
+     {
+       // HTTP header has been send and Server response header has been handled
+          
+       if(debug)
+         Serial.printf("HTTP GET returned code: %d\n", httpCode);
+    
+       // file found at server
+          
+       if (httpCode == HTTP_CODE_OK) 
+       {
+         message = http.getString();
+         ParseMessage(this);
+       } else
+       {
+         blinkPattern = DASH;
+         if(debug)
+           Serial.println("\nReturned code not HTTP_CODE_OK");
+       }
+     } else 
+     {
+       blinkPattern = DASH;
+       if(debug)
+         Serial.printf("\nHTTP GET failed, error: %s\n", http.errorToString(httpCode).c_str());
+     }
+    
+     http.end();
+        
+   } else
+   {
+        if(debug)
+          Serial.println("\nNot WL_CONNECTED.");    
+   }
+    
+   nextTime = NextTime();
 }
 
 
