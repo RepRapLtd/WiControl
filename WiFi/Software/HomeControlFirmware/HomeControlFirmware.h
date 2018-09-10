@@ -61,8 +61,11 @@ const char* password = "--------"; // Your WiFi network's password
 
 #ifdef WIFIBOARD-V2
  #define ESP8266_LED_PIN 2           // ESP8266 internal LED; D4 on later PCBs?
- #define USER_LED_PIN D6             // GPIO 12 - Front panel LED
+ #define USER_LED_PIN D6             // GPIO12 - Front panel LED
  #define OUTPUT_PIN_0 D3             // GPIO5 This is the switched MOSFET/relay
+ #define OUTPUT_PIN_1 D3             // GPIO
+ #define OUTPUT_PIN_2 D3             // GPIO
+ #define OUTPUT_PIN_3 D6             // GPIO12 - If you use this you must set USER_LED_PIN to -1
  #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
  #define THERMISTOR_SERIES_R 10000   // Ohms in series with the thermistor
  #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
@@ -74,8 +77,11 @@ const char* password = "--------"; // Your WiFi network's password
 
 #ifdef WEMOS1
  #define ESP8266_LED_PIN 2            // D4 on later PCBs?
- #define USER_LED_PIN D6              // GPIO 12 - Front panel LED
- #define OUTPUT_PIN_0 D2              // This is the switched MOSFET/relay                  
+ #define USER_LED_PIN D6              // GPIO12 - Front panel LED
+ #define OUTPUT_PIN_0 D2              // This is the switched MOSFET/relay
+ #define OUTPUT_PIN_1 D3              // GPIO
+ #define OUTPUT_PIN_2 D3              // GPIO
+ #define OUTPUT_PIN_3 D6              // GPIO12 - If you use this you must set USER_LED_PIN to -1                  
  #define THERMISTOR_BETA 3528.0       // thermistor: RS 538-0806
  #define THERMISTOR_SERIES_R 1000     // Ohms in series with the thermistor
  #define THERMISTOR_25_R 1000.0       // Thermistor ohms at 25 C = 298.15 K
@@ -95,7 +101,10 @@ const long rebootTime = 3600000;      // Milliseconds between resets.
 
 const int version = 2;
 const int numberOfLocations = 1;                  // How many things am I controlling? (Max 4 at the moment)
-const String l0 = "ElectronicsLab";               // What room/device am I controlling?
+const String l0 = "ElectronicsLab";               // What room/device(s) am I controlling?
+//const String l1 = "";
+//const String l2 = "";
+//const String l3 = "";
 const String building = "Workshop";               // Which building is the device in?
 const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
 const String page = "controllednode.php";         // The script we need
@@ -131,6 +140,6 @@ const int flashOff = 100;
 
 // Prototype needed by the Load class
 
-long NextTime();
+long TillNextTime();
 
 #endif

@@ -28,6 +28,13 @@
  * Licence: GPL
  * 
  * 
+ * 
+ * *******************************************************************************************
+ * 
+ * To control multiple devices with one controller, set their names in l1, l2 etc in 
+ * HomeControlFirmware.h then uncomment the lines chaining them in the setup() function below.
+ * Note that if you use the last device (which uses the user LED pin to control
+ * something) you must also set USER_LED_PIN to -1 in HomeControlFirmware.h.
  */
 
 #include "HomeControlFirmware.h"
@@ -79,9 +86,12 @@ void setup()
   debug = !digitalRead(DEBUG_PIN);
   randomSeed(analogRead(TEMP_SENSE_PIN));
 
-  // Set up each load 'by hand'.
+  // Set up the chain of loads (only 1 if you like).
 
   loads = new Load(l0, OUTPUT_PIN_0, (Load*)NULL);
+  //loads = new Load(l1, OUTPUT_PIN_1, loads);
+  //loads = new Load(l2, OUTPUT_PIN_2, loads);
+  //loads = new Load(l3, OUTPUT_PIN_3, loads);
 
   Serial.begin(BAUD);
 
@@ -124,7 +134,7 @@ void setup()
 // Decide the time delay before the next server request.  This is usually quick (~15s) for debugging
 // (so you can see what's going on), or slow (~60s) for normal operation. 
 
-long NextTime()
+long TillNextTime()
 {
   long f;
   if(debug)
@@ -214,7 +224,6 @@ void Blink()
 String Temperature()
 {
   double r = (double)analogRead(TEMP_SENSE_PIN);
-  //Serial.println(r);
   r = T_CORRECTION + ABS_ZERO + THERMISTOR_BETA/log( (r*THERMISTOR_SERIES_R/(AD_RANGE*TOP_VOLTAGE/MAX_AD_VOLTAGE - r))/
       ( THERMISTOR_25_R*exp(-THERMISTOR_BETA/(25.0 - ABS_ZERO)) ) );
   return String(r, 1);
@@ -410,7 +419,7 @@ Load::Load(const String l, int p, Load* n)
   pinMode(pin, OUTPUT);
   digitalWrite(pin, 0);
   next = n;
-  nextTime = NextTime();
+  nextTime = TillNextTime();
   iAmOn = false;
   onSeconds = -1;
   offSeconds = -1;
@@ -496,7 +505,7 @@ void Load::SwitchOnOrOff(bool on, long tim)
   offSeconds = tim;
   if(debug)
   {
-    Serial.print("OFF in ");
+    Serial.print(" OFF in ");
     Serial.print(offSeconds);
     Serial.println(" seconds.");
   }   
@@ -517,7 +526,7 @@ void Load::ActIfItsTime()
   
   if(tim - nextTime < 0)
     return;
-    
+
   if(iAmOn)
         blinkPattern=ON;
   else
@@ -582,7 +591,7 @@ void Load::ActIfItsTime()
           Serial.println("\nNot WL_CONNECTED.");    
    }
     
-   nextTime = NextTime();
+   nextTime = TillNextTime();
 }
 
 
