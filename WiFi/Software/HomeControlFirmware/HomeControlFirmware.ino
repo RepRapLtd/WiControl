@@ -86,12 +86,16 @@ void setup()
   debug = !digitalRead(DEBUG_PIN);
   randomSeed(analogRead(TEMP_SENSE_PIN));
 
-  // Set up the chain of loads (only 1 if you like).
+  // Set up the chain of loads (only 1 if you like).  Uncomment
+  // These from OUTPUT_PIN_1 in order. Don't forget to fill
+  // in l1, l2 etc in HomeControlFirmware.h .
 
   loads = new Load(l0, OUTPUT_PIN_0, (Load*)NULL);
   //loads = new Load(l1, OUTPUT_PIN_1, loads);
   //loads = new Load(l2, OUTPUT_PIN_2, loads);
   //loads = new Load(l3, OUTPUT_PIN_3, loads);
+  //loads = new Load(l4, OUTPUT_PIN_4, loads);
+  //loads = new Load(l5, OUTPUT_PIN_5, loads);
 
   Serial.begin(BAUD);
 

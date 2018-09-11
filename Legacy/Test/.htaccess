@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Heating_Control"
+AuthUserFile "/home2/adrianbo/.htpasswds/public_html/Heating_Control/passwd"
+require valid-user

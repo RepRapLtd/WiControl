@@ -56,40 +56,74 @@ const char* password = "--------"; // Your WiFi network's password
 
 #include "local_wifi.h" // Separated to prevent passwords appearing on Github
 
-#define WIFIBOARD-V2
-//#define WEMOS1
+/*
+  * WeMos D1 R1 pins from .arduino15/packages/esp8266/hardware/esp8266/2.4.2/variants/d1/pins_arduino.h
+  * The numbers are GPIO numbers.
+  * 
+  * #define LED_BUILTIN 2 // D9
+  *
+  * static const uint8_t D0   = 3;
+  * static const uint8_t D1   = 1;
+  * static const uint8_t D2   = 16;
+  * static const uint8_t D3   = 5;  // SCL
+  * static const uint8_t D4   = 4;  // SDA
+  * static const uint8_t D5   = 14; // SCK
+  * static const uint8_t D6   = 12; // MISO (not top pin 10 below; Arduino def)
+  * static const uint8_t D7   = 13; // MOSI (not top pin 9 below; Arduino def)
+  * static const uint8_t D8   = 0;
+  * static const uint8_t D9   = 2;
+  * static const uint8_t D10  = 15;
+  * static const uint8_t D11  = 13; // = D7
+  * static const uint8_t D12  = 12; // = D6
+  * static const uint8_t D13  = 14; // = D5
+  * static const uint8_t D14  = 4;  // = D4
+  * static const uint8_t D15  = 5;  // = D3
+  *
+  *
+  * Pins looking down on top, aerial at the bottom, outside numbers are GPIO numbers
+  * 
+  *                     M  M
+  *         C  I        I  O
+  *         L  N  1     S  S
+  *         K  T  0  9  O  I
+  *        
+  *         14 13 12 11 10 9
+  *  GND 15                   8  VCC
+  *  15  16                   7  13
+  *   2  17                   6  12
+  *   0  18                   5  14
+  *   4  19                   4  16
+  *   5  20                   3  EN
+  *   3  21                   2  ADC/A0
+  *   1  22                   1  RST
+  *                     |
+  *          \/\/\/\/\/\/ 
+  *          
+  *   The MOSFET is driven by GPIO5/Pin-20/D3/OUTPUT_PIN_0.
+  *   The 5-pin header is:
+  *   
+  *     1 Pin-7/GPIO13/D7/OUTPUT_PIN_2
+  *     2 Pin-6/GPIO12/D6/USER_LED_PIN
+  *     3 Pin-5/GPIO14/D5/debug
+  *     4 Pin-4/GPIO16/D2/OUTPUT_PIN_1
+  *     5 GND
+  */
 
-#ifdef WIFIBOARD-V2
- #define ESP8266_LED_PIN 2           // ESP8266 internal LED; D4 on later PCBs?
- #define USER_LED_PIN D6             // GPIO12 - Front panel LED
- #define OUTPUT_PIN_0 D3             // GPIO5 This is the switched MOSFET/relay
- #define OUTPUT_PIN_1 D3             // GPIO
- #define OUTPUT_PIN_2 D3             // GPIO
- #define OUTPUT_PIN_3 D6             // GPIO12 - If you use this you must set USER_LED_PIN to -1
- #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
- #define THERMISTOR_SERIES_R 10000   // Ohms in series with the thermistor
- #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
- #define TOP_VOLTAGE 3.303           // The voltage at the top of the series resistor
- #define MAX_AD_VOLTAGE 1.0          // The voltage that gives full-range (i.e. AD_RANGE - see below) on the A->D converter
- #define T_CORRECTION 1.5            // Final fudge to get it just right/variation in beta from spec
- #define DEBUG_PIN D5                // Ground this pin to turn debugging on
-#endif
-
-#ifdef WEMOS1
- #define ESP8266_LED_PIN 2            // D4 on later PCBs?
- #define USER_LED_PIN D6              // GPIO12 - Front panel LED
- #define OUTPUT_PIN_0 D2              // This is the switched MOSFET/relay
- #define OUTPUT_PIN_1 D3              // GPIO
- #define OUTPUT_PIN_2 D3              // GPIO
- #define OUTPUT_PIN_3 D6              // GPIO12 - If you use this you must set USER_LED_PIN to -1                  
- #define THERMISTOR_BETA 3528.0       // thermistor: RS 538-0806
- #define THERMISTOR_SERIES_R 1000     // Ohms in series with the thermistor
- #define THERMISTOR_25_R 1000.0       // Thermistor ohms at 25 C = 298.15 K
- #define TOP_VOLTAGE 3.3              // The voltage at the top of the series resistor
- #define MAX_AD_VOLTAGE TOP_VOLTAGE   // The voltage that gives full-range (i.e. AD_RANGE - see below) on the A->D converter
- #define T_CORRECTION 6               // Final fudge to get it just right/variation in beta from spec 
- #define DEBUG_PIN D5                 // Ground this pin to turn debugging on
-#endif
+#define ESP8266_LED_PIN LED_BUILTIN // GPIO2/D9 ESP8266 internal LED; D4 on Wemos D1 R2
+#define USER_LED_PIN D6             // GPIO12 - Front panel LED
+#define OUTPUT_PIN_0 D3             // GPIO5 This is the switched MOSFET/relay
+#define OUTPUT_PIN_1 D2             // GPIO16
+#define OUTPUT_PIN_2 D7             // GPIO13
+#define OUTPUT_PIN_3 9              // GPIO9 - direct wire to top of ESP8266
+#define OUTPUT_PIN_4 10             // GPIO10 - direct wire to top of ESP8266 
+#define OUTPUT_PIN_5 D6             // GPIO12 - If you use this you must set USER_LED_PIN to -1
+#define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
+#define THERMISTOR_SERIES_R 10000   // Ohms in series with the thermistor
+#define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
+#define TOP_VOLTAGE 3.303           // The voltage at the top of the series resistor
+#define MAX_AD_VOLTAGE 1.0          // The voltage that gives full-range (i.e. AD_RANGE - see below) on the A->D converter
+#define T_CORRECTION 1.5            // Final fudge to get it just right/variation in beta from spec
+#define DEBUG_PIN D5                // D5 Ground this pin to turn debugging on
 
 const long debugSampleTime = 15000;   // Milliseconds between server requests when debugging
 const long debugRandomTime = 2000;    // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
@@ -102,9 +136,11 @@ const long rebootTime = 3600000;      // Milliseconds between resets.
 const int version = 2;
 const int numberOfLocations = 1;                  // How many things am I controlling? (Max 4 at the moment)
 const String l0 = "ElectronicsLab";               // What room/device(s) am I controlling?
-//const String l1 = "";
-//const String l2 = "";
-//const String l3 = "";
+const String l1 = "";
+const String l2 = "";
+const String l3 = "";
+const String l4 = "";
+const String l5 = "";
 const String building = "Workshop";               // Which building is the device in?
 const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
 const String page = "controllednode.php";         // The script we need
