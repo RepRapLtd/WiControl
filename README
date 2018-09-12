@@ -7,37 +7,43 @@ https://reprapltd.com
 
 Licence: GPL
 
-This is a system for controlling devices in buildings (primarily, but not exclusively, heating) with a web interface.
+This is a system for controlling devices in buildings (primarily, but not exclusively, heating; it will also do lighting and other things) with a web interface.  It is fully open-source and free.  The licence is the GPL.
 
 There are two versions:
 
-1. Raspberry Pi + PanStamp. This has been working for a few years, and is now frozen and will not be developed further.
+  1. Raspberry Pi + PanStamp in the directory PanStamp. This has been working for a few years, and is now frozen and will not be developed further.
 
-2. WiFi based on the ESP-8266.  This is in development.
+  2. WiFi based on the ESP-8266 in the directory ESP-8266.  This is in development.
 
 Both start with a php script that serves web pages where you can edit, for example, temperature profiles for individual rooms.  That data is saved in files on the server.
 
-The Pi (or ESP-8266s) then get that data and decide(s) what to turn on and off.
+The ESP-8266s (or Pi) then get that data and decide(s) what to turn on and off.
 
-The files need to be organised, and more documentation written...
+More documentation needs to be written...
 
-More importantly, security is minimal and needs to be properly organised.
+More importantly, security is minimal and needs to be properly implemented.
+
+
+WiControl - ESP-8266
+====================
+
+This version does everything that the PanStamp version did, but more simply and robustly (the robustness has nothing to do with the hardware change; the PanStamps are fine; it has to do with a simplification of the protocols and hardware).
+
+This version of the system will also support Google Home and Amazon Echo/Alexa.
+
+Some more instructions here would be a good idea...
 
 
 WiControl - Raspberry Pi + PanStamp
 ===================================
 
-This is a system for the wireless control of building heating (and other systems like lighting etc, though it was primarily designed for heating).
-
-It allows temperature profiles to be set for each individual room for all times of the day and every day of the week.
+This allows temperature profiles to be set for each individual room for all times of the day and every day of the week.
 
 It can be controlled using a web browser from anywhere.
 
 It uses Panstamps (http://www.panstamp.com/) for the individual rooms and a Raspberry Pi (https://www.raspberrypi.org/) as the main building controller.
 
 This repository contains all the software and all the hardware designs.
-
-It is fully open-source and free.  The licence is the GPL.
 
 One thing it lacks is full documentation, as I created it for my own use and I know how it works.  Sorry.
 
@@ -108,7 +114,7 @@ $ popd
 You next need to install the heating software:
 
 $ git clone https://github.com/RepRapLtd/WiControl.git
-$ cd WiControl
+$ cd WiControl/PanStamp
 
 Copy the control file:
 
@@ -135,14 +141,11 @@ Finally
 
 $ sudo crontab -e
 
-and add lines at the end like this:
+and add a line at the end like this:
 
 * * * * * /home/pi/WiControl/run-heat-control
-0 4   *   *   *    /sbin/shutdown -r +5
 
-That will cause the shell script run-heat-control to be run once a minute, and cause a
-system reboot at 04:05 in the morning to keep everything clean and tidy.  The sudo is
-needed because shutdown needs root privilege.
+That will cause the shell script run-heat-control to be run once a minute.
 
 
 On the PanStamps:
