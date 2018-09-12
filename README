@@ -1,5 +1,31 @@
-WiControl
-=========
+Wireless Home/Building Control System
+=====================================
+
+Adrian Bowyer
+RepRap Ltd
+https://reprapltd.com
+
+Licence: GPL
+
+This is a system for controlling devices in buildings (primarily, but not exclusively, heating) with a web interface.
+
+There are two versions:
+
+1. Raspberry Pi + PanStamp. This has been working for a few years, and is now frozen and will not be developed further.
+
+2. WiFi based on the ESP-8266.  This is in development.
+
+Both start with a php script that serves web pages where you can edit, for example, temperature profiles for individual rooms.  That data is saved in files on the server.
+
+The Pi (or ESP-8266s) then get that data and decide(s) what to turn on and off.
+
+The files need to be organised, and more documentation written...
+
+More importantly, security is minimal and needs to be properly organised.
+
+
+WiControl - Raspberry Pi + PanStamp
+===================================
 
 This is a system for the wireless control of building heating (and other systems like lighting etc, though it was primarily designed for heating).
 
