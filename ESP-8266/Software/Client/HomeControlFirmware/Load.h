@@ -27,6 +27,7 @@ class Load
   String Location();
   void SwitchOnOrOff(bool on, long tim);
   void ActIfItsTime();
+  void ChangeLocation(String l);
 
   private:
   

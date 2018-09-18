@@ -135,7 +135,7 @@ const long rebootTime = 3600000;      // Milliseconds between resets.
 
 const int version = 2;
 const int numberOfLocations = 1;                  // How many things am I controlling? (Max 4 at the moment)
-const String l0 = "ElectronicsLab";               // What room/device(s) am I controlling?
+const String l0 = "Office";                       // What room/device(s) am I controlling?
 const String l1 = "";
 const String l2 = "";
 const String l3 = "";

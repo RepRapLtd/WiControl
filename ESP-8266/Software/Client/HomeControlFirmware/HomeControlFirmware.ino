@@ -53,6 +53,7 @@ byte ledState;
 // Text and messages
 
 String message = "";
+String newLocation = ""; // For debugging
 
 // Timing and resets
 
@@ -114,7 +115,8 @@ void setup()
       load = load->Next();
     }
     Serial.print("in ");
-    Serial.println(building);    
+    Serial.println(building);
+    Serial.println("Type a new location to become that (when debugging only).");    
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);
   }
@@ -410,6 +412,21 @@ void loop()
   
   SecondCounter();
 
+  // Is the user debugging and do they want to change the location?
+  
+  if(Serial.available() > 0 && debug)
+  {
+    char c = (char)Serial.read();
+    if(c == '\n')
+    {
+      Serial.print("Changing location to ");
+      Serial.println(newLocation);
+      loads->ChangeLocation(newLocation);
+      newLocation = "";
+    } else
+    newLocation.concat(c);
+  }
+
 }
 
 //***************************************************************************************************
@@ -434,6 +451,8 @@ Load* Load::Next() { return next; }
 long Load::NextTime() { return nextTime; }
 
 String Load::Location() { return location; }
+
+void Load::ChangeLocation(String l) { location = l; }
 
 void Load::SecondTick()
 {

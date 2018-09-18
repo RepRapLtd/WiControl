@@ -16,7 +16,9 @@
 
 // HTTP requests to this look like: http://host-url/WiFiHeating/controllednode.php?building=Building&location=Room&temperature=20[&debugOn=1]
 
-// Debugging...
+// Note to self: don't forget "\n" means newline; '\n' means \n...
+
+// Debugging
 
 ini_set('display_errors', 'On');
 error_reporting(E_ALL | E_STRICT);
@@ -36,6 +38,12 @@ $fileExtension = '.dat';
 
 $delimiter = '*';
 $timeDelimiter = ':';
+
+// Occasional side effect when called - create the file of current temperatures about once a minute.
+
+$creatingTemperatureFile = false;
+$temperatureFileContents = "";
+$temperatureFileName = "";
 
 // Now
 
@@ -71,7 +79,7 @@ function EatSpaces(&$text)
 		$text = substr($text, 1);
 }
 
-// This removes any '*' and ' ' from the start of a string.  Useful for parsing
+// This removes any '*' ($delimiter) and ' ' from the start of a string.  Useful for parsing
 // the heating profile files.
 
 function EatDelimitersAndSpaces(&$text)
@@ -106,9 +114,9 @@ function NextLine(&$text, &$ln)
 
 // This returns the next name (up to but not includeing $delimiter) from $text and
 // removes that from $text (including any trailing spaces and $delimiters).  If there is
-// no next name false is returned.  If the name contains ' ' these are removed.
+// no next name false is returned.
 
-function NextName(&$text, &$nam)
+function NextNameWithSpaces(&$text, &$nam)
 {
    global $delimiter;
 
@@ -116,11 +124,25 @@ function NextName(&$text, &$nam)
    $endName = strpos($text, $delimiter);
    if(!$endName)
 	return false;
-   $nam = str_replace(' ', '', substr($text, 0, $endName));
+   $nam = substr($text, 0, $endName);
    $text = substr($text, $endName);
    EatDelimitersAndSpaces($text);
    return true;
 }
+
+// This returns the next name (up to but not includeing $delimiter) from $text and
+// removes that from $text (including any trailing spaces and $delimiters).  If there is
+// no next name false is returned.  If the name contains ' ' these are removed.
+
+function NextName(&$text, &$nam)
+{
+   global $delimiter;
+
+   $result = NextNameWithSpaces($text, $nam);
+   $nam = str_replace(' ', '', $nam);
+   return $result;
+}
+
 
 // This returns the next number (up to but not includeing ' ') from $text and
 // removes that from $text (including any trailing ' ').  If there is no next number false
@@ -147,19 +169,27 @@ function NextNumber(&$text, &$num)
 }
 
 // Some devices use another device ($therm) to measure the temperature they should be using.  This loads
-// that temperature from the little file recorded by the other device.
+// that temperature from the little file recorded by the other device, overwriting $therm.  In addition it loads 
+// the set temperature and whether the device is ON or OFF, which allows it also to be used for constructing
+// the list-of-current-temperatures file.
 
-function GetTemperatureFromElsewhere($house, &$therm)
+function GetTemperatureFromElsewhere($house, &$therm, &$set, &$on)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
-	$summerTime, $onDelay, $offDelay;
+include 'globals.php';
 
    $thermName = $house . $fileRoot . $therm . $fileExtension;
    $thermContents = file_get_contents($thermName);
    EatSpaces($thermContents);
    if(!NextNumber($thermContents, $therm))
-	 exit('ERROR: GetTemperatureFromElsewhere() - temperature not found:'.$thermContents);
+	 exit('ERROR: GetTemperatureFromElsewhere() - current temperature not found:'.$thermContents);
+   if(!NextNumber($thermContents, $set))
+	 exit('ERROR: GetTemperatureFromElsewhere() - set temperature not fo und:'.$thermContents);
+   if(substr($thermContents, 0, 3) == 'OFF')
+	$on = false;
+   else if(substr($thermContents, 0, 2) == 'ON')
+	$on = true;
+   else
+	exit('ERROR: GetTemperatureFromElsewhere() - device is neither ON nor OFF:'.$thermContents);
 }
 
 
@@ -168,9 +198,7 @@ function GetTemperatureFromElsewhere($house, &$therm)
 
 function GetSwitchingDelays($device)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
-	$summerTime, $onDelay, $offDelay;
+include 'globals.php';
 
    // The first time the name $device appears will be a line like
    // *Boiler* 5 0 30.0 0.0
@@ -180,7 +208,10 @@ function GetSwitchingDelays($device)
 
    while(NextLine($profile, $line))
    {
+        // Save the original line for the moment in case we need to report errors in it.
+
 	$thisLine = $line;
+
 	if(!NextName($line, $name))
 		exit('Error: ParseProfile() - first name on line missing.' . $thisLine);
 
@@ -205,6 +236,33 @@ function GetSwitchingDelays($device)
    exit('ERROR: GetSwitchingDelays() - device ' . $device . ' not found.');
 }
 
+// This adds a line to the temperature record file for device $name.
+// This file is loaded by the control web interface to show the
+// current state of the system.
+//
+// A line looks like:
+//
+//   *name* temperature set-temperature on/off
+//   *Electronics Lab* 23 10 0
+//                           ^ 0 for off, 1 for on.
+
+function AddALineToTheTemperatureFile($house, $name)
+{
+include 'globals.php';
+
+	$temp = str_replace(' ', '', $name);
+	$set = 0;
+	$on = false;
+
+	GetTemperatureFromElsewhere($house, $temp, $set, $on);
+
+	$temperatureFileContents = $temperatureFileContents . $delimiter . $name . $delimiter . ' ' . $temp . ' ' . $set;
+	if($on)
+		$temperatureFileContents = $temperatureFileContents . " 1\n";
+	else
+		$temperatureFileContents = $temperatureFileContents . " 0\n";
+}
+
 // This parses the profile file which is written by the web interface.
 
 // If $device is a master:
@@ -222,12 +280,29 @@ function GetSwitchingDelays($device)
 
 function ParseProfile($house, $device)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
-	$summerTime, $onDelay, $offDelay;
+include 'globals.php';
 
    $profileName = $house . $fileRoot . strtolower($house) . $profileText . strtolower(date('l')) . $fileExtension;
    $profile = file_get_contents($profileName);
+
+   // Do we need to update the list of room temperatures for the web interface?
+   // Do this about once a minute.
+
+   $temperatureFileName = $house . $fileRoot . strtolower($house) . "-temperatures" . $fileExtension;
+   $t = filemtime($temperatureFileName);
+   if(!$t)
+	exit('ERROR: ParseProfile() - temperature list file not found: ' . $temperatureFileName);
+   $fileTouched = 0 + $t;
+   if($summerTime)
+    	$fileTouched += 3600;
+   if(($unixTime - $fileTouched) > 60)
+   {
+   	if($debug)
+    		$debugString = $debugString . 'Updating the temperature list in ' . $temperatureFileName .'<br>';
+        $creatingTemperatureFile = true;
+	$temperatureFileContents = "";
+   }
+      
 
    // N.B. GetSwitchingDelays() will eat some of the start of $profile, but shouldn't get to the '---'
 
@@ -241,26 +316,54 @@ function ParseProfile($house, $device)
 	exit('ERROR: ParseProfile() - string --- not found in ' . $profile);
 
    $profile = substr($profile, 4 + $listStart);
+
+   // Flag that's set when we have found $device to prevent searching further. If we are not
+   // creating the temperature list file, we can return as soon as $device's details are loaded.
+   // If we are, we carry on in the loop for all the devices creating the file.
+
+   $gotTheProfile = false;
+
    while(NextLine($profile, $line))
    {
 	$thisLine = $line;
-	if(!NextName($line, $name))
+	
+	// Get the next name with the spaces in as we may need it in that form for the temperature
+        // list file.
+
+	if(!NextNameWithSpaces($line, $name))
 		exit('Error: ParseProfile() - first name on line missing.' . $thisLine);
 
-	// Is this the line for this device?
+	if($creatingTemperatureFile)
+		AddALineToTheTemperatureFile($house, $name);
 
-	if($name == $device)
+	// Now get rid of the spaces
+
+        $name = str_replace(' ', '', $name);
+
+	// If we haven't yet found $device, is this the line for it?
+
+	if(!$gotTheProfile && $name == $device)
 	{
 		if(!NextName($line, $thermometer))
 			exit('Error: ParseProfile() - thermometer name on line missing.' . $thisLine);
 
 		if($thermometer == $device)
 		{
+			// We are our own thermometer
+
 			$thermometer = false;
 		} else
 		{
-			GetTemperatureFromElsewhere($house, $thermometer);
+			// Someone else is our thermometer
+
+			$set = 0;
+			$on = false;
+			GetTemperatureFromElsewhere($house, $thermometer, $set, $on);
+                        if($debug)
+				$debugString = $debugString . '<br>(Another gives my temperature. Its t is ' . $thermometer . ', its set t is ' . $set . ' and it is: ' . $on . ')<br>';
 		}
+
+		// Am I responsible for turning myself off and on, or does someone else tell me to?
 
 		$slaveCount = 0;
 		$iAmMyOwnSlave = false;
@@ -319,23 +422,32 @@ function ParseProfile($house, $device)
 			$debugString = $debugString . '<br>';
 		}
 
-		// No more information needed from $profile, but it has to contain something.
+		// If we are not creating the list of temperatures, we can go home now.
+		// If we are we carry on in the loop, but stop looking for $device.
+		// At the end no more information is needed from $profile, but it has to contain something, hence 'X'.
 
-		$profile = 'X'; 
-		return;
+		if(!$creatingTemperatureFile)
+		{
+			$profile = 'X'; 
+			return;
+		} else
+			$gotTheProfile = true;
 	}
    }
    $profile = 'X';
 }
 
+// What it says...
+
 function SecondsSinceMidnight()
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
-	$summerTime, $onDelay, $offDelay;
+include 'globals.php';
 
-	return $unixTime % 86400; //(time() % 86400);
+	return $unixTime % 86400; // There are 86400 seconds in 24 hours
 }
+
+
+// Time as "hh:mm:ss"
 
 function ServerTime()
 {
@@ -351,9 +463,7 @@ function ServerTime()
 
 function SetTemperature($device) 
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
-	$summerTime, $onDelay, $offDelay;
+include 'globals.php';
 
     if(empty($profile)) // That's why $profile has to contain something...
 	exit('ERROR: SetTemperature() - profile not loaded');
@@ -403,9 +513,7 @@ function SetTemperature($device)
 
 function IAmAnOnSlave($house, $device)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
-	$summerTime, $onDelay, $offDelay;
+include 'globals.php';
 
     if(empty($profile))
 	exit('ERROR: IAmAnOnSlave() - profile not loaded');
@@ -427,9 +535,7 @@ function IAmAnOnSlave($house, $device)
 
 function TurnOnDependentList($house, $device)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
-	$summerTime, $onDelay, $offDelay;
+include 'globals.php';
 
     if(empty($profile))
 	exit('ERROR: TurnOnDependentList() - profile not loaded');
@@ -451,9 +557,7 @@ function TurnOnDependentList($house, $device)
 
 function SaveTemperature($house, $device, $act, $temp, $s)
 {
-   global $profile, $line, $debug, $debugString, $fileRoot, $fileExtension, $mySlaves, $iAmOn, $iAmMyOwnSlave, 
-	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
-	$summerTime, $onDelay, $offDelay;
+include 'globals.php';
 
     $fileName = $house . $fileRoot . $device . $fileExtension;
     $fileHandle = fopen($fileName, 'w');
@@ -470,8 +574,8 @@ function SaveTemperature($house, $device, $act, $temp, $s)
 // Gather data...
 
 // Get the query sring from the HTTP request.
-// This should be: "html://...../controllednode.php?location=where/what-the-device-is&temperature=the-device's-temperature[&debugOn=1]"
-// If the device does not have a temperature it can send -300.0 (impossible as below abs zero)
+// This should be: "html://...../controllednode.php?building=house&location=where/what-the-device-is&temperature=the-device's-temperature[&debugOn=1]"
+// If the device does not have a temperature it can send -300.0 (impossible, as below abs zero)
 
 parse_str($_SERVER['QUERY_STRING']);
 
@@ -536,16 +640,30 @@ if($action == 'ON')
 else
  $action = $action . ' ' . $offDelay; 	
 
-// Tell the device what to do
+// Tell the device what to do as the first line of the HTML <body> returned
 
 echo $action;
 
-// Send helpful info as well if we are debugging
+// Write the list of temperatures file if we are creating it.
+
+if($creatingTemperatureFile)
+{
+    $fileHandle = fopen($temperatureFileName, 'w');
+    if(!$fileHandle)
+	exit('ERROR: Creating list of temperatures - can not open file to write: '.$temperatureFileName); 
+    fwrite($fileHandle, $temperatureFileContents);
+    fclose($fileHandle);
+    if($debug)
+	$debugString = $debugString . '<br>Temperature list written.<br>';
+}
+
+// Send helpful info in the HTML <body> as well if we are debugging
 
 if($debug)
 {
   echo $debugString;
 }
+
 
 ?></body>
 </html>

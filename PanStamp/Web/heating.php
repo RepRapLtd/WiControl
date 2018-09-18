@@ -52,6 +52,8 @@ td {
 
 <script type="text/javascript">
 
+
+
 // Set these two for all scripts
 // building is one of 'aandc', 'sandb', or 'Workshop'
 
@@ -89,6 +91,7 @@ var deviceCount = -1;
 var rows = -1;
 var times = -1;
 var profileList;
+var newSystem = 0; // Set to 0 for old Panstamp system; 1 for ESP-8266
 
 var juneSolstice = new Date();
 juneSolstice.setMonth(5); // zero-based
@@ -252,6 +255,8 @@ function SecondsSinceMidnight(aTime)
 	} 
 	return t;
 }
+
+
 
 function GetTableLine(curline, i, result)
 {
@@ -637,8 +642,62 @@ function LoadProfileDirectory()
 
 
 
-function LoadTemperatures() 
+function LoadTemperaturesOld() 
 {
+    var arrLines = GetFileAsStringArray("temperatureFile", true);
+    for(var i = 0; i < arrLines.length; i++) 
+    {
+		if(arrLines[i].length > 2)
+		{
+			temperatureLocations[i] = RoomName(arrLines[i]);
+			var ts = DataStart(arrLines[i]);
+			//temperatures[i] = arrLines[i].substring(ts).match(/\d+/)[0];
+			temperatures[i] = parseFloat(arrLines[i].substring(ts), 10);
+         		//ts += temperatures[i].length+1;
+			ts += arrLines[i].substring(ts).indexOf(' ') + 1;
+         		//setTemperatures[i] = arrLines[i].substring(ts).match(/\d+/)[0];
+			setTemperatures[i] = parseFloat(arrLines[i].substring(ts), 10);
+			//ts += setTemperatures[i].length+1;
+			ts += arrLines[i].substring(ts).indexOf(' ') + 1;
+         		//heatOn[i] = arrLines[i].substring(ts).match(/\d+/)[0];
+			heatOn[i] = parseInt(arrLines[i].substring(ts), 10);
+			//alert(heatOn[i]);
+		}
+    }
+}
+
+/*
+  var url1 = "" + building.toLowerCase() + "-temperatures.dat?timestamp=" + Date.now();
+  document.write('<iframe id="temperatureFile" src="' + url1 + '" style="display: none;"></iframe>');
+*/
+
+function LoadTemperaturesNew() 
+{
+    var buildingDir = "../WiFiHeating/" + building.charAt(0).toUpperCase() + building.substr(1) + "/Data/";
+    var i = 0;
+    
+    for(j = deviceCount+1; j <= deviceCount+rows; j++)
+    {
+        curLine = controlFileLines[j];
+	temperatureLocations[i] = RoomName(curLine);
+	var fileName = buildingDir + temperatureLocations[i].replace(/\s/g, '') + ".dat?timestamp=" + Date.now();
+	alert("Loading temperatures for " + fileName);
+	document.write('<iframe id="temperatureFile"' + String(i) + ' src="' + fileName + '" style="display: none;"></iframe>');
+	//var lin = GetFileAsStringArray("temperatureFile" + String(i), true);
+	//var lin = window.frames["temperatureFile" + String(i)].document.body.innerHTML;
+	/*alert("Hello" + lin);
+	alert(lin[0]);
+	temperatures[i] = parseFloat(lin[0]);
+	lin[0] = lin[0].substring(1+lin[0].indexOf(" "));
+	setTemperatures[i] = parseFloat(lin[0]);
+	lin[0] = lin[0].substring(1+lin[0].indexOf(" "));
+	if(lin[0].indexOf("ON") >= 0)
+		heatOn[i] = 1;
+	else
+		heatOn[i] = 0;
+	i++;*/
+    } 
+/*
     var arrLines = GetFileAsStringArray("temperatureFile", true);
     for(var i = 0; i < arrLines.length; i++) 
     {
@@ -653,6 +712,16 @@ function LoadTemperatures()
          heatOn[i] = arrLines[i].substring(ts).match(/\d+/)[0];
 		}
     }
+*/
+}
+
+
+function LoadTemperatures()
+{
+	if(newSystem)
+		LoadTemperaturesNew();
+	else
+		LoadTemperaturesOld();
 }
 
 
@@ -664,21 +733,31 @@ function LoadFile()
         var curLine = controlFileLines[i];
         if(curLine == '---')
         {
-				deviceCount = i;
+		deviceCount = i;
         } else if(curLine == '')
         {
-		  } else if(deviceCount >= 0)
+	} else if(deviceCount >= 0)
         {
-				rows = i - deviceCount;
+	    rows = i - deviceCount;
             var t = timeCount(curLine);
             //alert("timecount: " + t);
-				if(t > times)
-					times = t
-		  } else
+	    if(t > times)
+		times = t
+	} else
         {
         }
     }
 
+
+
+}
+
+
+function AllLoaded()
+{
+	LoadFile();
+	LoadTemperatures();
+	LoadProfileDirectory();
 
     Header();
 
@@ -693,14 +772,6 @@ function LoadFile()
     //alert(Math.floor(Date.now() / 1000));
 
     SetButtons();
-}
-
-
-function AllLoaded()
-{
-	LoadTemperatures();
-	LoadProfileDirectory();
-	LoadFile();
 }
 
 
@@ -727,8 +798,11 @@ document.write('<iframe id="controlFile" src="' + url2 + '" onload="LoadFile();"
 
 */
 
-var url1 = "" + building.toLowerCase() + "-temperatures.dat?timestamp=" + Date.now();
-document.write('<iframe id="temperatureFile" src="' + url1 + '" style="display: none;"></iframe>');
+if(!newSystem)
+{
+  var url1 = "" + building.toLowerCase() + "-temperatures.dat?timestamp=" + Date.now();
+  document.write('<iframe id="temperatureFile" src="' + url1 + '" style="display: none;"></iframe>');
+}
 
 var url3 = "dirlist.php?dir=" + building.toLowerCase() + "-Profiles";
 document.write('<iframe id="profileFile" src="' + url3 + '" style="display: none;"></iframe>');
