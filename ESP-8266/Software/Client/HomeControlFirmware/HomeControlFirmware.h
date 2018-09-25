@@ -122,7 +122,7 @@ const char* password = "--------"; // Your WiFi network's password
 #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
 #define TOP_VOLTAGE 3.303           // The voltage at the top of the series resistor
 #define MAX_AD_VOLTAGE 1.0          // The voltage that gives full-range (i.e. AD_RANGE - see below) on the A->D converter
-#define T_CORRECTION 1.5            // Final fudge to get it just right/variation in beta from spec
+#define T_CORRECTION 0              // Final fudge to get it just right/variation in beta from spec. Added to T.
 #define DEBUG_PIN D5                // D5 Ground this pin to turn debugging on
 
 const long debugSampleTime = 15000;   // Milliseconds between server requests when debugging
