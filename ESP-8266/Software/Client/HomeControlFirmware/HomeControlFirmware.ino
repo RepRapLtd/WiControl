@@ -1,3 +1,4 @@
+
 /*
  * Program to run a node on the WiFi Home Control system.
  * 
@@ -104,21 +105,9 @@ void setup()
 
   if(debug)
   {
-    Serial.println();
-    Serial.println();
-    Serial.print("I control: ");
-    Load* load = loads;
-    while(load)
-    {
-      Serial.print(load->Location());
-      Serial.print(' ');
-      load = load->Next();
-    }
-    Serial.print("in ");
-    Serial.println(building);
-    Serial.println("Type a new location to become that (when debugging only).");    
+    Serial.println("Type a new location to become that (when debugging only); ? to print status.");
     Serial.print("Connecting to WiFi: ");
-    Serial.print(ssid);
+    Serial.print(ssid);   
   }
 
   // Needed for WiFi stability
@@ -128,6 +117,29 @@ void setup()
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP(ssid, password);
 
+  char wCount = 0;
+  do
+  {
+    delay(2000);
+    if(debug)
+    {
+      Serial.print(" .");
+      wCount++;
+      if(!wCount%50)
+      {
+        Serial.println();
+        wCount = 0;  
+      }
+    }
+  } while (WiFiMulti.run() != WL_CONNECTED);
+
+  if(debug)
+  {
+    Serial.println(" connected.");
+  }
+
+  PrintStatus();
+
   // Set up timings and LED behaviour
   
   blinkPattern = OFF;
@@ -135,7 +147,6 @@ void setup()
   seconds = nextBlink;
   nextReset = nextBlink + rebootTime;
 }
-
 
 // Decide the time delay before the next server request.  This is usually quick (~15s) for debugging
 // (so you can see what's going on), or slow (~60s) for normal operation. 
@@ -378,6 +389,51 @@ void SecondCounter()
   }
 }
 
+void PrintStatus()
+{
+  if(!debug)
+    return;
+    
+  Serial.println();
+  Serial.println();
+  Serial.print("Firmware version: ");
+  Serial.println(version);
+  Serial.print("I control: ");
+  Load* load = loads;
+  while(load)
+  {
+    Serial.print(load->Location());
+    Serial.print(' ');
+      load = load->Next();
+  }
+  Serial.print("in ");
+  Serial.println(building);
+
+  if(WiFiMulti.run() == WL_CONNECTED)
+  {
+    Serial.print("Connected to WiFi: ");
+    Serial.println(ssid);
+  } else
+  {
+    Serial.println("Not connected to WiFi.");
+  }
+
+  unsigned char MAC[6];
+
+  WiFi.macAddress(MAC);
+  Serial.print("MAC and IP addresses: ");
+  for(char i = 0; i < 6; i++)
+  {
+    Serial.print(MAC[i], HEX);
+    if(i < 5) Serial.print(":");
+  }
+  Serial.print(", ");
+  Serial.println(WiFi.localIP());
+
+  Serial.print("My temperature is: ");
+  Serial.println(Temperature());
+}
+
 
 // What it says...
 
@@ -417,14 +473,19 @@ void loop()
   if(Serial.available() > 0 && debug)
   {
     char c = (char)Serial.read();
-    if(c == '\n')
+    if(c == '?')
+    {
+      PrintStatus();
+      newLocation = "";
+      c = (char)Serial.read(); // Absorb the newline
+    } else if(c == '\n')
     {
       Serial.print("Changing location to ");
       Serial.println(newLocation);
       loads->ChangeLocation(newLocation);
       newLocation = "";
     } else
-    newLocation.concat(c);
+      newLocation.concat(c);
   }
 
 }
@@ -440,7 +501,7 @@ Load::Load(const String l, int p, Load* n)
   pinMode(pin, OUTPUT);
   digitalWrite(pin, 0);
   next = n;
-  nextTime = TillNextTime();
+  nextTime = (long)millis() + initialTime;
   iAmOn = false;
   onSeconds = -1;
   offSeconds = -1;
@@ -610,8 +671,9 @@ void Load::ActIfItsTime()
         
    } else
    {
-        if(debug)
-          Serial.println("\nNot WL_CONNECTED.");    
+      blinkPattern = DASH;
+      if(debug)
+        Serial.println("\nNot WL_CONNECTED.");    
    }
     
    nextTime = TillNextTime();

@@ -106,6 +106,12 @@ function NextLine(&$text, &$ln)
    }
 
    $ln = substr($text, 0, $lineEnd);
+
+   // If we are reading the header and we get to '---' we have got to the end of the header.
+
+   if(substr($ln, 0, 3) == '---')
+	return false;
+
    if(substr($ln, 0, 1) != $delimiter)
 	exit('ERROR - NextLine(): line does not start with a '.$delimiter.': ' . $ln);
    $text = substr($text, 1 + $lineEnd);
@@ -206,6 +212,11 @@ include 'globals.php';
    // ignored. The third is the delay in seconds before switching
    // on, the fourth the delay for switching off.
 
+   // The device may not exist in the header (if it all works by slaves).  Set some defaults.
+
+   $onDelay = 0;
+   $offDelay = 0;
+
    while(NextLine($profile, $line))
    {
         // Save the original line for the moment in case we need to report errors in it.
@@ -232,8 +243,6 @@ include 'globals.php';
            return;
 	}
    }
-
-   exit('ERROR: GetSwitchingDelays() - device ' . $device . ' not found.');
 }
 
 // This adds a line to the temperature record file for device $name.

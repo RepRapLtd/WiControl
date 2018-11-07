@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.2.1">
+<eagle version="7.5.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -15812,9 +15812,6 @@ Source: www.kingbright.com</description>
 <text x="20.32" y="55.88" size="1.778" layer="95">10K gives a min. 
 temp of -9 C.</text>
 <text x="54.61" y="46.355" size="1.778" layer="95">Max 1V.</text>
-<text x="5.08" y="104.14" size="1.778" layer="95">TODO: LED+220R on GPIO12</text>
-<text x="5.08" y="99.06" size="1.778" layer="95">TODO: Shott diodes on 3v3 pwr and USB pwr</text>
-<text x="-5.08" y="93.98" size="1.778" layer="95">TODO: Remove copper on top layer roung GND connection of C2 to make soldering easier.</text>
 </plain>
 <instances>
 <instance part="GND1" gate="1" x="142.24" y="71.12"/>
