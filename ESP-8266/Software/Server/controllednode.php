@@ -177,19 +177,37 @@ function NextNumber(&$text, &$num)
 // Some devices use another device ($therm) to measure the temperature they should be using.  This loads
 // that temperature from the little file recorded by the other device, overwriting $therm.  In addition it loads 
 // the set temperature and whether the device is ON or OFF, which allows it also to be used for constructing
-// the list-of-current-temperatures file.
+// the list-of-current-temperatures file.  If we are debugging it also checks that the little file has been
+// updated recently (in other words, it checks that its client device called this .php script within the last
+// three minutes to record a temperature).
 
 function GetTemperatureFromElsewhere($house, &$therm, &$set, &$on)
 {
 include 'globals.php';
 
    $thermName = $house . $fileRoot . $therm . $fileExtension;
+
+   if($debug)
+   {
+	    $t = filemtime($thermName);
+	    if(!$t)
+		exit('ERROR: GetTemperatureFromElsewhere() - temperature file not found: ' . $fileName);
+	    $fileTouched = 0 + $t;
+	    if($summerTime)
+	    	$fileTouched += 3600;
+	    $fileTouched = $unixTime - $fileTouched;
+	    if($fileTouched > 180)
+	    {
+	    	$debugString = $debugString . 'The file ' . $thermName . ' has not been updated for ' . $fileTouched .' seconds.<br>';
+	    }
+   }
+
    $thermContents = file_get_contents($thermName);
    EatSpaces($thermContents);
    if(!NextNumber($thermContents, $therm))
 	 exit('ERROR: GetTemperatureFromElsewhere() - current temperature not found:'.$thermContents);
    if(!NextNumber($thermContents, $set))
-	 exit('ERROR: GetTemperatureFromElsewhere() - set temperature not fo und:'.$thermContents);
+	 exit('ERROR: GetTemperatureFromElsewhere() - set temperature not found:'.$thermContents);
    if(substr($thermContents, 0, 3) == 'OFF')
 	$on = false;
    else if(substr($thermContents, 0, 2) == 'ON')
