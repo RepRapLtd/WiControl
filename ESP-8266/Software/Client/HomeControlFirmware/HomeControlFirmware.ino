@@ -697,10 +697,16 @@ void Flash::Clear()
 }
 
 // Add a single character to the flash array
-// NB does not check for buffer overflow; assumed to have been done.
 
 void Flash::CatByte(char c)
 {
+  if(1 + flashPointer >= 4*FLASH_TOP)
+  {
+    if(debug)
+      Serial.println("Error: byte exceeds maximum flash space; not written.");
+    return;
+  }
+  
   unsigned int i = flashPointer >> 2;
   unsigned int b = (flashPointer%4)*8;
   uint32 bits = c;
@@ -760,6 +766,9 @@ String Flash::NextString()
 
 void Flash::Save()
 {
+  // Flag end of data.
+  CatByte(0);
+  
   int e = spi_flash_erase_sector(FLASH_SECTOR);
   if(e && debug)
   {
