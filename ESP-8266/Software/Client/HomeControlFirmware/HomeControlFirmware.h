@@ -33,6 +33,9 @@
 #ifndef HOME_CONTROL_FIRMWARE
 #define HOME_CONTROL_FIRMWARE
 
+#include "Load.h"
+#include "Flash.h"
+
 #include <Arduino.h>
 
 #include <ESP8266WiFi.h>
@@ -134,7 +137,7 @@ const long initialTime = 5000;        // Milliseconds to first server request
 
 #define BAUD 9600     // Serial comms speed
 
-const int version = 3;
+const int version = 4;
 const String l0 = "MainBedroom";                        // What room/device(s) am I controlling?
 const String l1 = "";
 const String l2 = "";
@@ -146,6 +149,9 @@ const String pageRoot = "/WiFiHeating/";          // Where the .php script is on
 const String page = "controllednode.php";         // The script we need
 const String server = "adrianbowyer.com";         // Server IP address/URL
 const String backupServer = "192.168.1.171";      // Backup server IP address/URL
+
+
+//-----------------------------------------------------------------------------------------------------
 
 // Bits of HTML we need to know (both cases of these are tried in atempting matches)
 

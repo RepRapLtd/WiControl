@@ -39,7 +39,6 @@
  */
 
 #include "HomeControlFirmware.h"
-#include "Load.h"
 
 String currentServer = server;                    // The one in use
 
@@ -677,6 +676,116 @@ void Load::ActIfItsTime()
    }
     
    nextTime = TillNextTime();
+}
+
+//******************************************************************************************************
+
+// The Flash class that saves and loads things from permanent memory.
+
+Flash::Flash()
+{
+  Clear();
+}
+
+// Clear the flash array
+
+void Flash::Clear()
+{
+  for(int i = 0; i < FLASH_TOP; i++)
+    flash[i] = 0;
+  flashPointer = 0;
+}
+
+// Add a single character to the flash array
+// NB does not check for buffer overflow; assumed to have been done.
+
+void Flash::CatByte(char c)
+{
+  unsigned int i = flashPointer >> 2;
+  unsigned int b = (flashPointer%4)*8;
+  uint32 bits = c;
+  bits = bits << b;
+  uint32 mask = 0xff << b;
+  mask = ~mask;
+  flash[i] = (flash[i] & mask) | bits;
+  flashPointer++;
+}
+
+// Get the next single character from the flash array
+
+char Flash::GetByte()
+{
+  unsigned int i = flashPointer >> 2;
+  unsigned int b = (flashPointer%4)*8;
+  uint32 bits = flash[i];
+  bits = bits >> b;
+  char c = (char)(bits & 0x000000ff);
+  flashPointer++;
+  return c;
+}
+
+// Write a string to flash at the current flashPointer adding a trailing 0 so it's like a char array.
+
+void Flash::Cat(String s)
+{
+  int l = s.length();
+  
+  if(2 + flashPointer + l >= 4*FLASH_TOP) // 2 is defensive...
+  {
+    if(debug)
+      Serial.println("Error: string length exceeds maximum flash space; not written.");
+    return;
+  }
+  
+  for(int i = 0; i < l; i++)
+    CatByte(s.charAt(i));
+  CatByte(0);
+}
+
+
+
+// Get the next string from the flash array
+// The convention is that if this is "" that's the end of the lot.
+
+String Flash::NextString()
+{
+  String r = "";
+  char c;
+  while(c = GetByte())
+    r.concat(c);
+  return r;
+}
+
+// Actually save flash into the flash sector
+
+void Flash::Save()
+{
+  int e = spi_flash_erase_sector(FLASH_SECTOR);
+  if(e && debug)
+  {
+    Serial.print("Error erasing flash: ");
+    Serial.println(e);
+  }
+
+  e = spi_flash_write(FLASH_RW, flash, sizeof(flash));
+  if(e && debug)
+  {
+    Serial.print("Error writing flash: ");
+    Serial.println(e);
+  }  
+}
+
+// Load flash from the flash sector
+
+void Flash::Load()
+{
+  int e = spi_flash_read(FLASH_RW, flash, sizeof(flash));
+  if(e && debug)
+  {
+    Serial.print("Error reading flash: ");
+    Serial.println(e);
+  }
+  flashPointer = 0;    
 }
 
 
