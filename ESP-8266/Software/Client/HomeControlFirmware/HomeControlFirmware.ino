@@ -46,6 +46,12 @@ String currentServer = server;                    // The one in use
 
 bool debug = true;
 
+// Interactively set locations etc when true
+
+int setting = 0;
+
+// Flashing lights
+
 long nextBlink;
 byte blinkPattern;
 byte ledState;
@@ -53,7 +59,13 @@ byte ledState;
 // Text and messages
 
 String message = "";
-String newLocation = ""; // For debugging
+String building = "";    // Which building is the device in?
+String loadName = "";    // Temporary storage for load names
+int loadCount = 0;       // Used for saving and loading from flash
+
+// Saving and loading from flash memory
+
+Flash* flash;
 
 // Timing and resets
 
@@ -61,8 +73,8 @@ long nextReset;
 long seconds;
 
 ESP8266WiFiMulti WiFiMulti;
-Load* loads;
-
+Load* loads = (Load*)0;
+int outputs[] = {OUTPUT_PIN_0, OUTPUT_PIN_1, OUTPUT_PIN_2, OUTPUT_PIN_3, OUTPUT_PIN_4, OUTPUT_PIN_5};
 
 void setup() 
 {
@@ -87,28 +99,31 @@ void setup()
   debug = !digitalRead(DEBUG_PIN);
   randomSeed(analogRead(TEMP_SENSE_PIN));
 
-  // Set up the chain of loads (only 1 if you like).  Uncomment
-  // These from OUTPUT_PIN_1 in order. Don't forget to fill
-  // in l1, l2 etc in HomeControlFirmware.h .
+  setting = 0;
+  loadCount = 0;
 
-  loads = new Load(l0, OUTPUT_PIN_0, (Load*)NULL);
-  //loads = new Load(l1, OUTPUT_PIN_1, loads);
-  //loads = new Load(l2, OUTPUT_PIN_2, loads);
-  //loads = new Load(l3, OUTPUT_PIN_3, loads);
-  //loads = new Load(l4, OUTPUT_PIN_4, loads);
-  //loads = new Load(l5, OUTPUT_PIN_5, loads);
+  flash = new Flash();
+
+  loads = (Load*)0;
 
   Serial.begin(BAUD);
-
   while(!Serial);
+
+  // Absorb power-up/reset noise from the serial input.
+  
+  while(Serial.available() > 0)
+    Serial.read();
 
   if(debug)
   {
-    Serial.println("Type a new location to become that (when debugging only); ? to print status.");
+    Serial.println("Type L to load location(s) from flash, S to set location(s) in flash or ? to print status.");
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);   
+  } else
+  {
+    LoadSettings();
   }
-
+  
   // Needed for WiFi stability
   
   delay(4000);
@@ -137,14 +152,101 @@ void setup()
     Serial.println(" connected.");
   }
 
-  PrintStatus();
-
   // Set up timings and LED behaviour
   
   blinkPattern = OFF;
   nextBlink = (long)millis();
   seconds = nextBlink;
   nextReset = nextBlink + rebootTime;
+}
+
+// Load the settings from flash memory
+
+void LoadSettings()
+{
+  loadCount = 0;
+  flash->Load();
+  building = flash->NextString();
+  String l;
+  while((l = flash->NextString()) != "")
+  {
+    if(loadCount < MAX_LOADS)
+    {
+      loads = new Load(l, outputs[loadCount], loads);
+      loadCount++;
+    } else
+    {
+      if(debug)
+        Serial.println("LoadSettings() - maximum number of loads exceeded.");
+    }
+  }
+  flash->Clear();
+  PrintStatus();
+}
+
+// Save the settings to flash memory.  This takes
+// user input one byte at a time (the char parameter).
+
+void SaveSettings(char c)
+{
+  loadCount = 0;
+  
+  switch(setting)
+  {
+    case 1:
+      Serial.println("Type the name of the building.");
+      setting = 2;
+      building = "";
+      flash->Clear();
+      while(Serial.available() > 0)
+        Serial.read();
+      break;
+
+    case 2:
+      if(c == '\n')
+      {
+        flash->Cat(building);
+        loadCount = 0;
+        Serial.print("Type the name of load ");
+        Serial.println(loadCount);
+        loadName = "";
+        setting = 3;
+        while(Serial.available() > 0)
+          Serial.read();
+      } else
+      {
+        building.concat(c);
+      }
+      break;
+
+    case 3:
+      if(c == '\n')
+      {
+        flash->Cat(loadName);
+        loadCount++;
+        Serial.print("Type the name of load ");
+        Serial.print(loadCount);
+        Serial.println(" or # to save them all.");
+        loadName = "";
+        while(Serial.available() > 0)
+          Serial.read();
+      } else if (c == '#')
+      {
+        while(Serial.available() > 0)
+          Serial.read();
+        flash->Save();
+        LoadSettings();
+        setting = 0;
+      } else
+      {
+        loadName.concat(c);
+      }
+      break;
+
+    default:
+      Serial.print("Dud flash setting value: ");
+      Serial.println(setting); 
+  }
 }
 
 // Decide the time delay before the next server request.  This is usually quick (~15s) for debugging
@@ -467,24 +569,45 @@ void loop()
   
   SecondCounter();
 
-  // Is the user debugging and do they want to change the location?
+  // Is the user debugging and do they want to Load, Save, or get status?
   
   if(Serial.available() > 0 && debug)
   {
     char c = (char)Serial.read();
-    if(c == '?')
+    if(setting)
     {
-      PrintStatus();
-      newLocation = "";
-      c = (char)Serial.read(); // Absorb the newline
-    } else if(c == '\n')
-    {
-      Serial.print("Changing location to ");
-      Serial.println(newLocation);
-      loads->ChangeLocation(newLocation);
-      newLocation = "";
+      SaveSettings(c);
     } else
-      newLocation.concat(c);
+    {
+      c = (char)toupper(c);
+
+      // Absorb the newline plus any other rubbish
+       
+      while(Serial.available() > 0)
+        Serial.read();
+      
+      switch(c)
+      {
+        case 'S':
+          setting = 1;
+          SaveSettings(c);
+          break;
+        
+        case 'L':
+          LoadSettings();
+          break;
+          
+        case '?':
+          PrintStatus();
+          break;
+          
+        default:
+          Serial.print("Dud character received: ");
+          Serial.println(c);
+          Serial.println("Type L to load location(s) from flash, S to set location(s) in flash or ? to print status.");
+      }
+      
+    }
   }
 
 }
@@ -757,7 +880,7 @@ String Flash::NextString()
 {
   String r = "";
   char c;
-  while(c = GetByte())
+  while(c = GetByte()) // NB = not ==
     r.concat(c);
   return r;
 }
