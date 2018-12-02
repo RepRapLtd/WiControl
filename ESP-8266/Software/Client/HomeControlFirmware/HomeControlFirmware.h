@@ -47,18 +47,6 @@
 
 // User configuration area
 
-
-/*
-
-The file local_wifi.h included below should contain two lines:
-
-const char* ssid = "-------";      // The name of your WiFi network
-const char* password = "--------"; // Your WiFi network's password
-
-*/
-
-#include "local_wifi.h" // Separated to prevent passwords appearing on Github
-
 /*
   * WeMos D1 R1 pins from .arduino15/packages/esp8266/hardware/esp8266/2.4.2/variants/d1/pins_arduino.h
   * The numbers are GPIO numbers.
@@ -161,6 +149,9 @@ const String htmlBreak = "<br>";
 #define TEMP_SENSE_PIN 0           // Analogue pin number
 #define AD_RANGE 1023.0            // The A->D converter that measures temperatures gives an int this big as its max value
 
+// Charactrer buffers for strings; ssid and password need to be shorter than this
+
+#define BUF_LEN 100
 
 // LED control and blinking 
 

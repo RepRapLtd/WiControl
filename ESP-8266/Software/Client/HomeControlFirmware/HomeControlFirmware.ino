@@ -59,6 +59,8 @@ byte ledState;
 // Text and messages
 
 String message = "";
+String ssid = "";
+String password = "";
 String building = "";    // Which building is the device in?
 String loadName = "";    // Temporary storage for load names
 int loadCount = 0;       // Used for saving and loading from flash
@@ -115,21 +117,62 @@ void setup()
     Serial.read();
 
   if(debug)
+    Serial.println("Starting.");
+
+  // Needed for WiFi stability
+  
+  delay(4000);
+
+
+  if(debug)
   {
-    Serial.println("Type L to load location(s) from flash, S to set location(s) in flash or ? to print status.");
-    Serial.print("Connecting to WiFi: ");
-    Serial.print(ssid);   
+    Serial.println("Type L to load settings from flash or S to set new ones."); 
   } else
   {
     LoadSettings();
   }
   
-  // Needed for WiFi stability
+  // Set up timings and LED behaviour
   
-  delay(4000);
+  blinkPattern = OFF;
+  nextBlink = (long)millis();
+  seconds = nextBlink;
+  nextReset = nextBlink + rebootTime;
+}
 
+
+void Connect()
+{
+  if(debug)
+  {
+    Serial.print("Connecting to ");
+    Serial.print(ssid);
+  }
+
+  unsigned char sBuf[BUF_LEN] = {0x00};
+  unsigned char pBuf[BUF_LEN] = {0x00};
+  if(ssid.length() < BUF_LEN)
+  {
+    ssid.getBytes(sBuf, ssid.length());
+  } else
+  {
+    if(debug)
+      Serial.println("ssid is too long for the buffer.");
+  }
+  if(password.length() < BUF_LEN)
+  {
+    password.getBytes(pBuf, password.length());
+  } else
+  {
+    if(debug)
+      Serial.println("password is too long for the buffer.");
+  }   
+  
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP(ssid, password);
+
+  // These casts are a bit nasty...
+  
+  WiFiMulti.addAP((char*)sBuf, (char*)pBuf);
 
   char wCount = 0;
   do
@@ -150,14 +193,7 @@ void setup()
   if(debug)
   {
     Serial.println(" connected.");
-  }
-
-  // Set up timings and LED behaviour
-  
-  blinkPattern = OFF;
-  nextBlink = (long)millis();
-  seconds = nextBlink;
-  nextReset = nextBlink + rebootTime;
+  }  
 }
 
 // Load the settings from flash memory
@@ -166,9 +202,11 @@ void LoadSettings()
 {
   loadCount = 0;
   flash->Load();
+  ssid = flash->NextString();
+  password = flash->NextString();
   building = flash->NextString();
   String l;
-  while((l = flash->NextString()) != "")
+  while(!(l = flash->NextString()).equals(""))
   {
     if(loadCount < MAX_LOADS)
     {
@@ -181,6 +219,7 @@ void LoadSettings()
     }
   }
   flash->Clear();
+  Connect();
   PrintStatus();
 }
 
@@ -188,21 +227,43 @@ void LoadSettings()
 // user input one byte at a time (the char parameter).
 
 void SaveSettings(char c)
-{
-  loadCount = 0;
-  
+{  
   switch(setting)
   {
     case 1:
-      Serial.println("Type the name of the building.");
+      Serial.println("Type the name of the ssid.");
       setting = 2;
-      building = "";
+      ssid = "";
       flash->Clear();
-      while(Serial.available() > 0)
-        Serial.read();
       break;
-
+      
     case 2:
+      if(c == '\n')
+      {
+        flash->Cat(ssid);
+        Serial.println("Type the wifi password.");
+        password = "";
+        setting = 3;
+      } else
+      {
+        ssid.concat(c);
+      }
+      break; 
+
+    case 3:
+      if(c == '\n')
+      {
+        flash->Cat(password);
+        Serial.println("Type the name of the building.");
+        building = "";
+        setting = 4;
+      } else
+      {
+        password.concat(c);
+      }
+      break;    
+
+    case 4:
       if(c == '\n')
       {
         flash->Cat(building);
@@ -210,16 +271,14 @@ void SaveSettings(char c)
         Serial.print("Type the name of load ");
         Serial.println(loadCount);
         loadName = "";
-        setting = 3;
-        while(Serial.available() > 0)
-          Serial.read();
+        setting = 5;
       } else
       {
         building.concat(c);
       }
       break;
 
-    case 3:
+    case 5:
       if(c == '\n')
       {
         flash->Cat(loadName);
@@ -228,12 +287,8 @@ void SaveSettings(char c)
         Serial.print(loadCount);
         Serial.println(" or # to save them all.");
         loadName = "";
-        while(Serial.available() > 0)
-          Serial.read();
       } else if (c == '#')
       {
-        while(Serial.available() > 0)
-          Serial.read();
         flash->Save();
         LoadSettings();
         setting = 0;
@@ -495,9 +550,7 @@ void PrintStatus()
   if(!debug)
     return;
     
-  Serial.println();
-  Serial.println();
-  Serial.print("Firmware version: ");
+  Serial.print("\n\nFirmware version: ");
   Serial.println(version);
   Serial.print("I control: ");
   Load* load = loads;
@@ -533,6 +586,20 @@ void PrintStatus()
 
   Serial.print("My temperature is: ");
   Serial.println(Temperature());
+  Serial.println("Type ? to get the status again at any time.");
+}
+
+// Wait for \n with timeout
+
+void WaitForNewLine()
+{
+  long now = millis();
+  char c = ' ';
+  while(c != '\n' && millis() - (now + 500) < 0)
+  {
+    if(Serial.available() > 0)
+        c = (char)Serial.read();
+  }
 }
 
 
@@ -583,14 +650,12 @@ void loop()
 
       // Absorb the newline plus any other rubbish
        
-      while(Serial.available() > 0)
-        Serial.read();
+      WaitForNewLine();
       
       switch(c)
       {
         case 'S':
           setting = 1;
-          SaveSettings(c);
           break;
         
         case 'L':
