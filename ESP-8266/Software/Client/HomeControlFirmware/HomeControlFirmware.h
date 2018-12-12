@@ -129,12 +129,6 @@ const long initialTime = 5000;        // Milliseconds to first server request
 
 const int version = 4;
 
-const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
-const String page = "controllednode.php";         // The script we need
-const String server = "adrianbowyer.com";         // Server IP address/URL
-const String backupServer = "192.168.1.171";      // Backup server IP address/URL
-
-
 //-----------------------------------------------------------------------------------------------------
 
 // Bits of HTML we need to know (both cases of these are tried in atempting matches)

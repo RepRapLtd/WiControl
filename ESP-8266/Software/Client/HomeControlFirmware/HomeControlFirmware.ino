@@ -40,8 +40,6 @@
 
 #include "HomeControlFirmware.h"
 
-String currentServer = server;                    // The one in use
-
 // This is turned off and on when running by freeing/grounding DEBUG_PIN
 
 bool debug = true;
@@ -58,12 +56,37 @@ byte ledState;
 
 // Text and messages
 
-String message = "";
-String ssid = "";
-String password = "";
-String building = "";    // Which building is the device in?
-String loadName = "";    // Temporary storage for load names
-int loadCount = 0;       // Used for saving and loading from flash
+/*
+ * Typical format for these:
+ * 
+ * ssid          "MyHubName"
+ * password      "HubWiFiPassword"
+ * pageRoot      "/FolderUnder/  -  /var/www/html"
+ * page          "controllednode.php"
+ * server        "myDomain.com"
+ * backupServer  "192.168.local.server"
+ * 
+ */
+
+// Useful to have just one instance of this to prevent
+// constructors being called all over the place.
+
+const String blank = "";
+
+String message = blank;
+String ssid = blank;         // WiFi Hub
+String password = blank;     // WiFi password
+String pageRoot = blank;     // Where the .php script is on the server
+String page = blank;         // The script we need
+String server = blank;       // Server IP address/URL
+String backupServer = blank; // Backup server IP address/URL
+String building = blank;     // Which building is the device in?
+String loadName = blank;     // Temporary storage for load names
+int loadCount = 0;           // Used for saving and loading from flash
+
+String currentServer;                    // The one in use
+
+
 
 // Saving and loading from flash memory
 
@@ -99,14 +122,6 @@ void setup()
   pinMode(TEMP_SENSE_PIN, INPUT);
   pinMode(DEBUG_PIN, INPUT_PULLUP);
   debug = !digitalRead(DEBUG_PIN);
-  randomSeed(analogRead(TEMP_SENSE_PIN));
-
-  setting = 0;
-  loadCount = 0;
-
-  flash = new Flash();
-
-  loads = (Load*)0;
 
   Serial.begin(BAUD);
   while(!Serial);
@@ -118,6 +133,16 @@ void setup()
 
   if(debug)
     Serial.println("Starting.");
+
+  
+  randomSeed(analogRead(TEMP_SENSE_PIN));
+
+  setting = 0;
+  loadCount = 0;
+
+  flash = new Flash();
+
+  loads = (Load*)0;
 
   // Needed for WiFi stability
   
@@ -200,13 +225,20 @@ void Connect()
 
 void LoadSettings()
 {
-  loadCount = 0;
   flash->Load();
+  
   ssid = flash->NextString();
   password = flash->NextString();
+  server = flash->NextString();
+  currentServer = server;                    // The one in use
+  backupServer = flash->NextString();
+  pageRoot = flash->NextString();
+  page = flash->NextString();
   building = flash->NextString();
+  
   String l;
-  while(!(l = flash->NextString()).equals(""))
+  loadCount = 0;
+  while(!(l = flash->NextString()).equals(blank))
   {
     if(loadCount < MAX_LOADS)
     {
@@ -218,83 +250,107 @@ void LoadSettings()
         Serial.println("LoadSettings() - maximum number of loads exceeded.");
     }
   }
+  
   flash->Clear();
   Connect();
   PrintStatus();
 }
 
+// Build a single entry in the save-to-flash table.
+
+bool BuildSetting(const char c, String& current, String& next, const char* prompt1, const String& prompt2, const char* prompt3)
+{
+   if(c != '\n')
+   {
+     current.concat(c);
+     return false;        
+   } else
+   {
+     flash->Cat(current);
+     Serial.print(prompt1);
+     Serial.print(prompt2);
+     Serial.println(prompt3);
+     next = blank;
+   }
+   return true;
+}
+
 // Save the settings to flash memory.  This takes
-// user input one byte at a time (the char parameter).
+// user input one byte at a time (the char parameter)
+// in order to keep the main loop() function running
+// as this prevents the esp-8266 resetting itself.
 
 void SaveSettings(char c)
 {  
   switch(setting)
   {
     case 1:
-      Serial.println("Type the name of the ssid.");
+      Serial.println("Type the name of the WiFi ssid.");
       setting = 2;
-      ssid = "";
+      ssid = blank;
       flash->Clear();
       break;
       
     case 2:
-      if(c == '\n')
+      if(BuildSetting(c, ssid, password, "Type the WiFi password.", blank, ""))
       {
-        flash->Cat(ssid);
-        Serial.println("Type the wifi password.");
-        password = "";
         setting = 3;
-      } else
-      {
-        ssid.concat(c);
-      }
-      break; 
-
-    case 3:
-      if(c == '\n')
-      {
-        flash->Cat(password);
-        Serial.println("Type the name of the building.");
-        building = "";
-        setting = 4;
-      } else
-      {
-        password.concat(c);
-      }
-      break;    
-
-    case 4:
-      if(c == '\n')
-      {
-        flash->Cat(building);
-        loadCount = 0;
-        Serial.print("Type the name of load ");
-        Serial.println(loadCount);
-        loadName = "";
-        setting = 5;
-      } else
-      {
-        building.concat(c);
       }
       break;
 
-    case 5:
-      if(c == '\n')
+    case 3:
+      if(BuildSetting(c, password, server, "Type the server name in the form abc.com or as an IP like 123.56.1.39 .", blank, ""))
       {
-        flash->Cat(loadName);
-        loadCount++;
-        Serial.print("Type the name of load ");
-        Serial.print(loadCount);
-        Serial.println(" or # to save them all.");
-        loadName = "";
-      } else if (c == '#')
+        setting = 4;
+      }
+      break; 
+
+    case 4:
+      if(BuildSetting(c, server, backupServer, "Type the backup server name in the form def.net or as an IP like 78.242.0.27 .", blank, ""))
+      {
+        setting = 5;
+      }
+      break; 
+
+    case 5:
+      if(BuildSetting(c, backupServer, pageRoot, "Type the pageroot in the form /WiFiHeating/", blank, ""))
+      {
+        setting = 6;
+      }
+      break; 
+
+     case 6:
+      if(BuildSetting(c, pageRoot, page, "Type the page in the form controllednode.php .", blank, ""))
+      {
+        setting = 7;
+      }
+      break; 
+
+    case 7:
+      if(BuildSetting(c, page, building, "Type the name of the building.", blank, ""))
+      {
+        setting = 8;
+      }
+      break;    
+
+    case 8:
+      if(BuildSetting(c, building, loadName, "Type the name of load ", String(0), ""))
+      {
+        loadCount = 1;
+        loadName = blank;
+        setting = 9;
+      }
+      break;
+
+    case 9:
+      if (c == '#')
       {
         flash->Save();
         LoadSettings();
         setting = 0;
-      } else
+      } else if(BuildSetting(c, loadName, loadName, "Type the name of load ", String(loadCount), " or # to save them all."))
       {
-        loadName.concat(c);
+        loadCount++;
       }
       break;
 
@@ -943,7 +999,7 @@ void Flash::Cat(String s)
 
 String Flash::NextString()
 {
-  String r = "";
+  String r = blank;
   char c;
   while(c = GetByte()) // NB = not ==
     r.concat(c);
