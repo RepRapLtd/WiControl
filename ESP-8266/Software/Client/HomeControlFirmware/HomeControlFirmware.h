@@ -22,7 +22,6 @@
  * RepRap Ltd
  * http://reprapltd.com
  * 
- * Version 2
  * 5 September 2018
  * 
  * Licence: GPL
@@ -113,7 +112,7 @@
 #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
 #define TOP_VOLTAGE 3.303           // The voltage at the top of the series resistor
 #define MAX_AD_VOLTAGE 1.0          // The voltage that gives full-range (i.e. AD_RANGE - see below) on the A->D converter
-#define T_CORRECTION -2.1           // Final fudge to get it just right/variation in beta from spec. Added to T.
+#define DEFAULT_T_CORRECTION 0.0    // Final fudge to get it just right/variation in beta from spec. Added to T.
 #define DEBUG_PIN D5                // D5 Ground this pin to turn debugging on
 
 #define MAX_LOADS 6

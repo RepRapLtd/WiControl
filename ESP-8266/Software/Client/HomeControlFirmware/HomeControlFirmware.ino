@@ -23,7 +23,6 @@
  * RepRap Ltd
  * http://reprapltd.com
  * 
- * Version 2
  * 5 September 2018
  * 
  * Licence: GPL
@@ -32,10 +31,6 @@
  * 
  * *******************************************************************************************
  * 
- * To control multiple devices with one controller, set their names in l1, l2 etc in 
- * HomeControlFirmware.h then uncomment the lines chaining them in the setup() function below.
- * Note that if you use the last device (which uses the user LED pin to control
- * something) you must also set USER_LED_PIN to -1 in HomeControlFirmware.h.
  */
 
 #include "HomeControlFirmware.h"
@@ -86,7 +81,9 @@ int loadCount = 0;           // Used for saving and loading from flash
 
 String currentServer;                    // The one in use
 
+// Thermistor temperature correction
 
+double tCorrection = DEFAULT_T_CORRECTION;
 
 // Saving and loading from flash memory
 
@@ -235,6 +232,7 @@ void LoadSettings()
   pageRoot = flash->NextString();
   page = flash->NextString();
   building = flash->NextString();
+  tCorrection = (double)flash->NextString().toFloat();
   
   String l;
   loadCount = 0;
@@ -330,19 +328,28 @@ void SaveSettings(char c)
       if(BuildSetting(c, page, building, "Type the name of the building.", blank, ""))
       {
         setting = 8;
-      }
-      break;    
-
-    case 8:
-      if(BuildSetting(c, building, loadName, "Type the name of load ", String(0), ""))
-      {
-        loadCount = 1;
         loadName = blank;
+      }
+      break;
+
+    case 8:  // Note we use loadName as temporary storage for the temp offset
+      if(BuildSetting(c, building, loadName, "Type the temperature correction in the form -2.3 .", blank, ""))
+      {
         setting = 9;
       }
       break;
 
     case 9:
+      if(BuildSetting(c, loadName, loadName, "Type the name of load ", String(0), ""))
+      {
+        tCorrection = (double)loadName.toFloat();
+        loadCount = 1;
+        loadName = blank;
+        setting = 10;
+      }
+      break;
+
+    case 10:
       if (c == '#')
       {
         flash->Save();
@@ -453,7 +460,7 @@ void Blink()
 String Temperature()
 {
   double r = (double)analogRead(TEMP_SENSE_PIN);
-  r = T_CORRECTION + ABS_ZERO + THERMISTOR_BETA/log( (r*THERMISTOR_SERIES_R/(AD_RANGE*TOP_VOLTAGE/MAX_AD_VOLTAGE - r))/
+  r = tCorrection + ABS_ZERO + THERMISTOR_BETA/log( (r*THERMISTOR_SERIES_R/(AD_RANGE*TOP_VOLTAGE/MAX_AD_VOLTAGE - r))/
       ( THERMISTOR_25_R*exp(-THERMISTOR_BETA/(25.0 - ABS_ZERO)) ) );
   return String(r, 1);
 }
@@ -641,7 +648,10 @@ void PrintStatus()
   Serial.println(WiFi.localIP());
 
   Serial.print("My temperature is: ");
-  Serial.println(Temperature());
+  Serial.print(Temperature());
+  Serial.print(" (using a temperature correction of ");
+  Serial.print(tCorrection);
+  Serial.println(").");
   Serial.println("Type ? to get the status again at any time.");
 }
 
