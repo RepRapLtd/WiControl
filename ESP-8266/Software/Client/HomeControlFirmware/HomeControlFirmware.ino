@@ -250,8 +250,8 @@ void LoadSettings()
   }
   
   flash->Clear();
-  Connect();
   PrintStatus();
+  Connect();
 }
 
 // Build a single entry in the save-to-flash table.
