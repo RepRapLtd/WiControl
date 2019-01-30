@@ -5,4 +5,5 @@ sendtemps
 *~
 *.o
 local_wifi.h
+GCode/
 
