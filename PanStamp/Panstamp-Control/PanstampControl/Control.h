@@ -13,15 +13,15 @@
 
 // Name your heating zones here and uncomment one
 
-#define WORKSHOP
+//#define WORKSHOP
 //#define A_AND_C
-//#define S_AND_B
+#define S_AND_B
 
 // Define the Host Panstamp number and this device's name and number
 
-#define HOST 1
-#define PLACE "Office"
-#define MY_ADDRESS 2
+#define HOST 10
+#define PLACE "Living Room South"
+#define MY_ADDRESS 14
 
 // For each zone define a unique SYNCWORD and RFCHANNEL
 
