@@ -1,4 +1,3 @@
-
 /*
  * Program to run a node on the WiFi Home Control system.
  * 
@@ -11,7 +10,9 @@
  * 
  * where messageString is something like
  * 
- * building=Workshop&location=Office&temperature=20&debugOn=1
+ * [building=Workshop&location=Office&temperature=20&debugOn=1]
+ * 
+ * unit=8&load=2&temperature=20&debugOn=1
  * 
  * Select 
  * 
@@ -54,7 +55,7 @@ byte ledState;
 // Text and messages
 
 String message = "";
-String newLocation = ""; // For debugging
+int newNumber = 0; // For debugging
 
 // Timing and resets
 
@@ -89,15 +90,14 @@ void setup()
   randomSeed(analogRead(TEMP_SENSE_PIN));
 
   // Set up the chain of loads (only 1 if you like).  Uncomment
-  // These from OUTPUT_PIN_1 in order. Don't forget to fill
-  // in l1, l2 etc in HomeControlFirmware.h .
+  // These from OUTPUT_PIN_1 in order.
 
-  loads = new Load(l0, OUTPUT_PIN_0, (Load*)NULL);
-  //loads = new Load(l1, OUTPUT_PIN_1, loads);
-  //loads = new Load(l2, OUTPUT_PIN_2, loads);
-  //loads = new Load(l3, OUTPUT_PIN_3, loads);
-  //loads = new Load(l4, OUTPUT_PIN_4, loads);
-  //loads = new Load(l5, OUTPUT_PIN_5, loads);
+  loads = new Load(0, OUTPUT_PIN_0, (Load*)NULL);
+  //loads = new Load(1, OUTPUT_PIN_1, loads);
+  //loads = new Load(2, OUTPUT_PIN_2, loads);
+  //loads = new Load(3, OUTPUT_PIN_3, loads);
+  //loads = new Load(4, OUTPUT_PIN_4, loads);
+  //loads = new Load(5, OUTPUT_PIN_5, loads);
 
   Serial.begin(BAUD);
 
@@ -241,7 +241,7 @@ void Blink()
 String Temperature()
 {
   double r = (double)analogRead(TEMP_SENSE_PIN);
-  r = T_CORRECTION + ABS_ZERO + THERMISTOR_BETA/log( (r*THERMISTOR_SERIES_R/(AD_RANGE*TOP_VOLTAGE/MAX_AD_VOLTAGE - r))/
+  r = ABS_ZERO + THERMISTOR_BETA/log( (r*THERMISTOR_SERIES_R/(AD_RANGE*TOP_VOLTAGE/MAX_AD_VOLTAGE - r))/
       ( THERMISTOR_25_R*exp(-THERMISTOR_BETA/(25.0 - ABS_ZERO)) ) );
   return String(r, 1);
 }
@@ -255,10 +255,10 @@ void ComposeQuery(Load* load)
   message.concat(currentServer);
   message.concat(pageRoot);
   message.concat(page);
-  message.concat("?building=");
-  message.concat(building);
-  message.concat("&location=");
-  message.concat(load->Location());
+  message.concat("?unit=");
+  message.concat(unit);
+  message.concat("&load=");
+  message.concat(load->Number());
   message.concat("&temperature=");
   message.concat(Temperature());
   if(debug)
@@ -402,12 +402,12 @@ void PrintStatus()
   Load* load = loads;
   while(load)
   {
-    Serial.print(load->Location());
+    Serial.print(load->Number());
     Serial.print(' ');
       load = load->Next();
   }
-  Serial.print("in ");
-  Serial.println(building);
+  Serial.print("from unit ");
+  Serial.println(unit);
 
   if(WiFiMulti.run() == WL_CONNECTED)
   {
@@ -430,7 +430,7 @@ void PrintStatus()
   Serial.print(", ");
   Serial.println(WiFi.localIP());
 
-  Serial.print("My temperature is: ");
+  Serial.print("My uncorrected temperature is: ");
   Serial.println(Temperature());
 }
 
@@ -476,16 +476,18 @@ void loop()
     if(c == '?')
     {
       PrintStatus();
-      newLocation = "";
+      newNumber = 0;
       c = (char)Serial.read(); // Absorb the newline
     } else if(c == '\n')
     {
-      Serial.print("Changing location to ");
-      Serial.println(newLocation);
-      loads->ChangeLocation(newLocation);
-      newLocation = "";
+      Serial.print("Changing number to ");
+      Serial.println(newNumber);
+      loads->ChangeNumber(newNumber);
+      newNumber = 0;
     } else
-      newLocation.concat(c);
+    {
+      newNumber = 10*newNumber + (c - '0');
+    }
   }
 
 }
@@ -494,13 +496,13 @@ void loop()
 
 // The Load class
 
-Load::Load(const String l, int p, Load* n)
+Load::Load(const int n, const int p, Load* nxt)
 {
-  location = l;
+  number = n;
   pin = p;
   pinMode(pin, OUTPUT);
   digitalWrite(pin, 0);
-  next = n;
+  next = nxt;
   nextTime = (long)millis() + initialTime;
   iAmOn = false;
   onSeconds = -1;
@@ -511,9 +513,9 @@ Load* Load::Next() { return next; }
 
 long Load::NextTime() { return nextTime; }
 
-String Load::Location() { return location; }
+int Load::Number() { return number; }
 
-void Load::ChangeLocation(String l) { location = l; }
+void Load::ChangeNumber(const int n) { number = n; }
 
 void Load::SecondTick()
 {
@@ -525,7 +527,7 @@ void Load::SecondTick()
     if(debug)
     {
        Serial.print("Switching on ");
-       Serial.println(location);
+       Serial.println(number);
     }
     blinkPattern = ON;
     digitalWrite(pin, 1);
@@ -541,7 +543,7 @@ void Load::SecondTick()
     if(debug)
     {
        Serial.print("Switching off ");
-       Serial.println(location);
+       Serial.println(number);
     }
     blinkPattern = OFF;
     digitalWrite(pin, 0);
@@ -559,7 +561,7 @@ void Load::SwitchOnOrOff(bool on, long tim)
   if(debug)
   {
     Serial.print("Switching ");
-    Serial.print(location);
+    Serial.print(number);
   }
     
   if(on)
