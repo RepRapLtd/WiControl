@@ -10,9 +10,7 @@
  * 
  * where messageString is something like
  * 
- * [building=Workshop&location=Office&temperature=20&debugOn=1]
- * 
- * unit=8&load=2&temperature=20&debugOn=1
+ * unit=1&load=0&temperature=20&debugOn=1
  * 
  * Select 
  * 
@@ -24,7 +22,6 @@
  * RepRap Ltd
  * http://reprapltd.com
  * 
- * Version 2
  * 5 September 2018
  * 
  * Licence: GPL
@@ -33,8 +30,6 @@
  * 
  * *******************************************************************************************
  * 
- * To control multiple devices with one controller, set their names in l1, l2 etc in 
- * HomeControlFirmware.h then uncomment the lines chaining them in the setup() function below.
  * Note that if you use the last device (which uses the user LED pin to control
  * something) you must also set USER_LED_PIN to -1 in HomeControlFirmware.h.
  */
@@ -55,7 +50,6 @@ byte ledState;
 // Text and messages
 
 String message = "";
-int newNumber = 0; // For debugging
 
 // Timing and resets
 
@@ -89,15 +83,13 @@ void setup()
   debug = !digitalRead(DEBUG_PIN);
   randomSeed(analogRead(TEMP_SENSE_PIN));
 
-  // Set up the chain of loads (only 1 if you like).  Uncomment
-  // These from OUTPUT_PIN_1 in order.
+  // Set up the chain of loads (loadCount is only 1 usually).  
 
-  loads = new Load(0, OUTPUT_PIN_0, (Load*)NULL);
-  //loads = new Load(1, OUTPUT_PIN_1, loads);
-  //loads = new Load(2, OUTPUT_PIN_2, loads);
-  //loads = new Load(3, OUTPUT_PIN_3, loads);
-  //loads = new Load(4, OUTPUT_PIN_4, loads);
-  //loads = new Load(5, OUTPUT_PIN_5, loads);
+  loads = (Load*)NULL;
+  for(int l = 0; l < loadCount; l++)
+  {
+    loads = new Load(l, outputPins[l], loads);
+  }
 
   Serial.begin(BAUD);
 
@@ -105,7 +97,7 @@ void setup()
 
   if(debug)
   {
-    Serial.println("Type a new location to become that (when debugging only); ? to print status.");
+    Serial.println("? to print status.");
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);   
   }
@@ -258,7 +250,7 @@ void ComposeQuery(Load* load)
   message.concat("?unit=");
   message.concat(unit);
   message.concat("&load=");
-  message.concat(load->Number());
+  message.concat(load->LoadNumber());
   message.concat("&temperature=");
   message.concat(Temperature());
   if(debug)
@@ -398,16 +390,17 @@ void PrintStatus()
   Serial.println();
   Serial.print("Firmware version: ");
   Serial.println(version);
-  Serial.print("I control: ");
+  Serial.print("I am unit ");
+  Serial.println(unit);
+  Serial.print("I control load(s): ");
   Load* load = loads;
   while(load)
   {
-    Serial.print(load->Number());
+    Serial.print(load->LoadNumber());
     Serial.print(' ');
       load = load->Next();
   }
-  Serial.print("from unit ");
-  Serial.println(unit);
+  Serial.println();
 
   if(WiFiMulti.run() == WL_CONNECTED)
   {
@@ -468,7 +461,7 @@ void loop()
   
   SecondCounter();
 
-  // Is the user debugging and do they want to change the location?
+  // Is the user debugging and do they want to see what's going on?
   
   if(Serial.available() > 0 && debug)
   {
@@ -476,18 +469,8 @@ void loop()
     if(c == '?')
     {
       PrintStatus();
-      newNumber = 0;
       c = (char)Serial.read(); // Absorb the newline
-    } else if(c == '\n')
-    {
-      Serial.print("Changing number to ");
-      Serial.println(newNumber);
-      loads->ChangeNumber(newNumber);
-      newNumber = 0;
-    } else
-    {
-      newNumber = 10*newNumber + (c - '0');
-    }
+    } 
   }
 
 }
@@ -496,9 +479,9 @@ void loop()
 
 // The Load class
 
-Load::Load(const int n, const int p, Load* nxt)
+Load::Load(const int ln, const int p, Load* nxt)
 {
-  number = n;
+  loadNumber = ln;
   pin = p;
   pinMode(pin, OUTPUT);
   digitalWrite(pin, 0);
@@ -513,9 +496,9 @@ Load* Load::Next() { return next; }
 
 long Load::NextTime() { return nextTime; }
 
-int Load::Number() { return number; }
+int Load::LoadNumber() { return loadNumber; }
 
-void Load::ChangeNumber(const int n) { number = n; }
+void Load::ChangeNumber(const int ln) { loadNumber = ln; }
 
 void Load::SecondTick()
 {
@@ -526,8 +509,8 @@ void Load::SecondTick()
   {
     if(debug)
     {
-       Serial.print("Switching on ");
-       Serial.println(number);
+       Serial.print("Switching on load ");
+       Serial.println(loadNumber);
     }
     blinkPattern = ON;
     digitalWrite(pin, 1);
@@ -542,8 +525,8 @@ void Load::SecondTick()
   {
     if(debug)
     {
-       Serial.print("Switching off ");
-       Serial.println(number);
+       Serial.print("Switching off load ");
+       Serial.println(loadNumber);
     }
     blinkPattern = OFF;
     digitalWrite(pin, 0);
@@ -560,8 +543,8 @@ void Load::SwitchOnOrOff(bool on, long tim)
 {
   if(debug)
   {
-    Serial.print("Switching ");
-    Serial.print(number);
+    Serial.print("Switching load ");
+    Serial.print(loadNumber);
   }
     
   if(on)

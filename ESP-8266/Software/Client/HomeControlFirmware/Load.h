@@ -20,18 +20,18 @@ class Load
 {
   public:
   
-  Load(const int n, const int p, Load* nxt);
+  Load(const int ln, const int p, Load* nxt);
   Load* Next();
   long NextTime();
   void SecondTick();
-  int Number();
+  int LoadNumber();
   void SwitchOnOrOff(const bool on, const long tim);
   void ActIfItsTime();
   void ChangeNumber(const int n);
 
   private:
   
-  int number;
+  int loadNumber;
   int pin;
   long nextTime;
   bool iAmOn;

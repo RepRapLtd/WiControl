@@ -10,7 +10,7 @@
  * 
  * where messageString is something like
  * 
- * building=Workshop&location=Office&temperature=20&debugOn=1
+ * unit=1&load=0&temperature=20&debugOn=1
  * 
  * Select 
  * 
@@ -22,7 +22,6 @@
  * RepRap Ltd
  * http://reprapltd.com
  * 
- * Version 2
  * 5 September 2018
  * 
  * Licence: GPL
@@ -124,6 +123,9 @@ const char* password = "--------"; // Your WiFi network's password
 #define MAX_AD_VOLTAGE 1.0          // The voltage that gives full-range (i.e. AD_RANGE - see below) on the A->D converter
 #define DEBUG_PIN D5                // D5 Ground this pin to turn debugging on
 
+const int outputPins[6] = {OUTPUT_PIN_0, OUTPUT_PIN_1, OUTPUT_PIN_2, OUTPUT_PIN_3, OUTPUT_PIN_4, OUTPUT_PIN_5};
+const int loadCount = 1;
+
 const long debugSampleTime = 15000;   // Milliseconds between server requests when debugging
 const long debugRandomTime = 2000;    // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
 const long sampleTime = 60000;        // Milliseconds between server requests
@@ -136,10 +138,10 @@ const long initialTime = 5000;        // Milliseconds to first server request
 const int version = 5;
 
 const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
-const String page = "controllednode.php";         // The script we need
+const String page = "scontrollednode.php";        // The script we need
 const String server = "adrianbowyer.com";         // Server IP address/URL
 const String backupServer = "192.168.1.171";      // Backup server IP address/URL
-const int unit = 100;
+const int unit = 1;
 
 // Bits of HTML we need to know (both cases of these are tried in atempting matches)
 
