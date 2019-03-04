@@ -601,11 +601,47 @@ include 'globals.php';
     }
 }
 
+// If we are logging data, maybe add to the log file
+
+function MaybeUpdateLog($house, $device, $act, $temp, $s)
+{
+include 'globals.php';
+
+	// If there is no log file, we are not logging
+
+	$logFileName = $house . $fileRoot . 'Log' . $fileExtension;
+	if(!file_exists($logFileName))
+		return;
+
+	$fileName = $house . $fileRoot . $device . $fileExtension;
+	$lastState = file_get_contents($fileName);
+        if(!$lastState)
+		exit('ERROR: MaybeUpdateLog() - can not get file contents: '.$fileName);
+	
+	// If the state hasn't changed, do nothing.
+ 
+        if($act == 'OFF')
+        {
+		if(strpos($lastState, 'OFF'))
+			return;
+        }
+        if($act == 'ON')
+        {
+		if(strpos($lastState, 'ON'))
+			return;
+        }
+
+
+	file_put_contents($logFileName, $house.','.$device.','.$act.','.$temp.','.$unixTime."\n" , FILE_APPEND);
+}
+
 // Save the status of a master device in its .dat file.
 
 function SaveTemperature($house, $device, $act, $temp, $s)
 {
 include 'globals.php';
+
+    MaybeUpdateLog($house, $device, $act, $temp, $s);
 
     $fileName = $house . $fileRoot . $device . $fileExtension;
     $fileHandle = fopen($fileName, 'w');
