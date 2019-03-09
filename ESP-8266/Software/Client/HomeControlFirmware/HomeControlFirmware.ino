@@ -97,6 +97,8 @@ void setup()
 
   if(debug)
   {
+    Serial.print("I am unit ");
+    Serial.println(unit);
     Serial.println("? to print status.");
     Serial.print("Connecting to WiFi: ");
     Serial.print(ssid);   
