@@ -677,7 +677,7 @@ include 'globals.php';
 		if(!NextName($line, $building))
 			exit('ERROR: ReadUnit() - line does not have a delimited building name: '.$line1);
 		if(!NextName($line, $location))
-			exit('ERROR: ReadUnit() - line does not have a delimited building name: '.$line1);
+			exit('ERROR: ReadUnit() - line does not have a delimited room name: '.$line1);
 		if(!NextNumber($line, $temperatureOffset))
 			exit('ERROR: ReadUnit() - line does not have a temperature offset: '.$line1);
 		$temperatureOffset = 0 + $temperatureOffset;

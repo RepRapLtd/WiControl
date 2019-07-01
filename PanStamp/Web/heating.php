@@ -273,12 +273,12 @@ function GetTableLine(curline, i, result)
 		result.r += "1";
 	result.r += " ";
 
-	var boostTime = 3600;
+	var boostTime = 1800;
 
 	var thisDay = new Date();
 	if (thisDay.getTimezoneOffset() != winterOffset) 
 	{ 
-		boostTime = 2*boostTime; 
+		boostTime = 3600 + boostTime; 
 	}
 
 	if(boost[i])
