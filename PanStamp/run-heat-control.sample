@@ -33,6 +33,11 @@ then
 fi
 ./Pi-Control/bin/Heating -p /dev/ttyUSB0 -i profile.dat -o zone-1-temperatures.dat > Status 2>&1
 ./sendtemps
+grep "Turned Boiler on." Status > boilerOn
+if [ -s boilerOn ]
+then
+ wget --timeout=15 "http://$URL/WiFiHeating/heatsource.php?unit=0&load=0&debugOn=1" -O boilerResponse
+fi 
 if [ -f Log ]
 then
  cat Status >> Log

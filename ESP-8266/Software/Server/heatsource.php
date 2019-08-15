@@ -1,5 +1,5 @@
 <html>
-<head><title>controllednode</title></head>
+<head><title>heatsource</title></head>
 <body><?php
 
 /*
