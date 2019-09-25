@@ -14,7 +14,7 @@
  * Licence: GPL
  */
 
-// HTTP requests to this look like: http://host-url/WiFiHeating/controllednode.php?building=Building&location=Room&temperature=20[&debugOn=1]
+// Example HTTP request: http://currentServer/pageRoot/scontrollednode.php?unit=1&load=0&temperature=20&debugOn=1
 
 // Note to self: don't forget "\n" means newline; '\n' means \n...
 
