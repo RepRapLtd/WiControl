@@ -408,7 +408,15 @@ include 'globals.php';
 			$on = false;
 			GetTemperatureFromElsewhere($house, $thermometer, $set, $on);
                         if($debug)
-				$debugString = $debugString . '<br>(Another gives my temperature. Its t is ' . $thermometer . ', its set t is ' . $set . ' and it is: ' . $on . ')<br>';
+			{
+				$debugString = $debugString . '<br>(Another gives my temperature. Its t is ' . $thermometer . ', its set t is '
+ 					. $set . ' and it is ';
+				if($on)
+					$debugString = $debugString . 'ON';
+				else
+					$debugString = $debugString . 'OFF';
+				$debugString = $debugString . ')<br>';
+			}
 		}
 
 		// Am I responsible for turning myself off and on, or does someone else tell me to?
