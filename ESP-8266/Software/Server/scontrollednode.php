@@ -14,7 +14,7 @@
  * Licence: GPL
  */
 
-// HTTP requests to this look like: http://host-url/WiFiHeating/controllednode.php?building=Building&location=Room&temperature=20[&debugOn=1]
+// Example HTTP request: http://currentServer/pageRoot/scontrollednode.php?unit=1&load=0&temperature=20&debugOn=1
 
 // Note to self: don't forget "\n" means newline; '\n' means \n...
 
@@ -408,7 +408,15 @@ include 'globals.php';
 			$on = false;
 			GetTemperatureFromElsewhere($house, $thermometer, $set, $on);
                         if($debug)
-				$debugString = $debugString . '<br>(Another gives my temperature. Its t is ' . $thermometer . ', its set t is ' . $set . ' and it is: ' . $on . ')<br>';
+			{
+				$debugString = $debugString . '<br>(Another gives my temperature. Its t is ' . $thermometer . ', its set t is '
+ 					. $set . ' and it is ';
+				if($on)
+					$debugString = $debugString . 'ON';
+				else
+					$debugString = $debugString . 'OFF';
+				$debugString = $debugString . ')<br>';
+			}
 		}
 
 		// Am I responsible for turning myself off and on, or does someone else tell me to?

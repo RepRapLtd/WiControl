@@ -45,7 +45,7 @@
 
 // This number must be unique across the whole system
 
-const int unit = 7;
+const int unit = 35;
 
 /*
 
@@ -57,6 +57,11 @@ const char* password = "--------"; // Your WiFi network's password
 */
 
 #include "local_wifi.h" // Separated to prevent passwords appearing on Github
+
+const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
+const String page = "scontrollednode.php";        // The script we need
+const String server = "192.168.1.4";         // Server IP address/URL
+const String backupServer = "192.168.1.171";      // Backup server IP address/URL
 
 /*
   * WeMos D1 R1 pins from .arduino15/packages/esp8266/hardware/esp8266/2.4.2/variants/d1/pins_arduino.h
@@ -139,11 +144,6 @@ const long initialTime = 5000;        // Milliseconds to first server request
 #define BAUD 9600     // Serial comms speed
 
 const int version = 5;
-
-const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
-const String page = "scontrollednode.php";        // The script we need
-const String server = "adrianbowyer.com";         // Server IP address/URL
-const String backupServer = "192.168.1.171";      // Backup server IP address/URL
 
 // Bits of HTML we need to know (both cases of these are tried in atempting matches)
 
