@@ -45,8 +45,7 @@
 
 // This number must be unique across the whole system
 
-const int unit = 4
-;
+const int unit = 23;
 
 /*
 
@@ -61,8 +60,8 @@ const char* password = "--------"; // Your WiFi network's password
 
 const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
 const String page = "scontrollednode.php";        // The script we need
-//const String server = "192.168.1.4";         // Server IP address/URL
-const String server = "adrianbowyer.com";         // Server IP address/URL
+const String server = "192.168.1.4";         // Server IP address/URL
+//const String server = "adrianbowyer.com";         // Server IP address/URL
 const String backupServer = "192.168.1.171";      // Backup server IP address/URL
 
 /*
@@ -119,7 +118,8 @@ const String backupServer = "192.168.1.171";      // Backup server IP address/UR
   */
 
 #define ESP8266_LED_PIN LED_BUILTIN // GPIO2/D9 ESP8266 internal LED; D4 on Wemos D1 R2
-#define USER_LED_PIN D6             // GPIO12 - Front panel LED
+//#define USER_LED_PIN D6             // GPIO12 - Front panel LED
+#define USER_LED_PIN -1             // GPIO12 - Front panel LED
 #define OUTPUT_PIN_0 D3             // GPIO5 This is the switched MOSFET/relay
 #define OUTPUT_PIN_1 D2             // GPIO16
 #define OUTPUT_PIN_2 D7             // GPIO13
