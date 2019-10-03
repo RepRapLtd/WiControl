@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ $(( $(date +%s) - $(date +%s -r "/var/www/html/WiFiHeating/Aandc/Data/Boiler.dat") )) -le 120 ]; then
+    wget --timeout=15 "http://adrianbowyer.com/WiFiHeating/heatsource.php?unit=0&load=0" -O boilerResponse
+    echo "Boiler on"
+    exit 0
+else
+    echo "No boiler needed"
+    exit 0
+fi
+
