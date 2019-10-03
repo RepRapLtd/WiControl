@@ -45,7 +45,8 @@
 
 // This number must be unique across the whole system
 
-const int unit = 35;
+const int unit = 4
+;
 
 /*
 
@@ -60,7 +61,8 @@ const char* password = "--------"; // Your WiFi network's password
 
 const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
 const String page = "scontrollednode.php";        // The script we need
-const String server = "192.168.1.4";         // Server IP address/URL
+//const String server = "192.168.1.4";         // Server IP address/URL
+const String server = "adrianbowyer.com";         // Server IP address/URL
 const String backupServer = "192.168.1.171";      // Backup server IP address/URL
 
 /*
