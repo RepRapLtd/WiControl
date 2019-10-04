@@ -6,17 +6,15 @@
  * 
  * The general form of a request is (N.B. "/" caracters should be in the strings):
  * 
- * GET http://currentServer/pageRoot/page/?messageString
+ * GET http://server/pageRoot/page/?unit=1&load=0&temperature=20&debugOn=1
  * 
- * where messageString is something like
- * 
- * unit=1&load=0&temperature=20&debugOn=1
+ * See local_wifi.h below for where server, pageRoot, page and unit are defined.
  * 
  * Select 
  * 
  *   Board: WeMos D1 R1 
  * 
- * to compile.
+ * to compile in the Arduion IDE.
  * 
  * Adrian Bwowyer
  * RepRap Ltd
@@ -43,26 +41,30 @@
 
 // User configuration area
 
-// This number must be unique across the whole system
+// The unit number must be unique across the whole system
 
-const int unit = 23;
+const int unit = 24;
 
 /*
 
-The file local_wifi.h included below should contain two lines:
+The file local_wifi.h included below should contain five lines:
 
-const char* ssid = "-------";      // The name of your WiFi network
-const char* password = "--------"; // Your WiFi network's password
+const char* ssid = "-------";                 // The name of your WiFi network
+const char* password = "--------";            // Your WiFi network's password
+const String server = "myURL.com";            // Server IP address/URL
+const String pageRoot = "/WiFiHeating/";      // Where the .php script is on the server, usually [myURL.com]/WiFiHeating/
+const String backupServer = "192.168.1.100";  // Backup server IP address/URL
 
 */
 
 #include "local_wifi.h" // Separated to prevent passwords appearing on Github
 
-const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
-const String page = "scontrollednode.php";        // The script we need
-const String server = "192.168.1.4";         // Server IP address/URL
-//const String server = "adrianbowyer.com";         // Server IP address/URL
-const String backupServer = "192.168.1.171";      // Backup server IP address/URL
+const String page = "scontrollednode.php";        // The PHP script that interprets the heating tables and decides between ON or OFF
+const int loadCount = 1;                          // The number of loads this device drives; usually 1
+
+// End of user configuration area
+
+//-----------------------------------------------------------------------------------------------------
 
 /*
   * WeMos D1 R1 pins from .arduino15/packages/esp8266/hardware/esp8266/2.4.2/variants/d1/pins_arduino.h
@@ -118,14 +120,14 @@ const String backupServer = "192.168.1.171";      // Backup server IP address/UR
   */
 
 #define ESP8266_LED_PIN LED_BUILTIN // GPIO2/D9 ESP8266 internal LED; D4 on Wemos D1 R2
-//#define USER_LED_PIN D6             // GPIO12 - Front panel LED
-#define USER_LED_PIN -1             // GPIO12 - Front panel LED
+#define USER_LED_PIN D6             // GPIO12 - Front panel LED
+//#define USER_LED_PIN -1             // GPIO12 - Front panel LED
 #define OUTPUT_PIN_0 D3             // GPIO5 This is the switched MOSFET/relay
 #define OUTPUT_PIN_1 D2             // GPIO16
 #define OUTPUT_PIN_2 D7             // GPIO13
 #define OUTPUT_PIN_3 9              // GPIO9 - direct wire to top of ESP8266
 #define OUTPUT_PIN_4 10             // GPIO10 - direct wire to top of ESP8266 
-#define OUTPUT_PIN_5 D6             // GPIO12 - If you use this you must set USER_LED_PIN to -1
+#define OUTPUT_PIN_5 D6             // GPIO12 - If you use this (i.e. loadCount = 6) you must set USER_LED_PIN to -1
 #define THERMISTOR_BETA 3528.0      // thermistor: RS 538-0806
 #define THERMISTOR_SERIES_R 10000   // Ohms in series with the thermistor
 #define THERMISTOR_25_R 1000.0      // Thermistor ohms at 25 C = 298.15 K
@@ -134,7 +136,6 @@ const String backupServer = "192.168.1.171";      // Backup server IP address/UR
 #define DEBUG_PIN D5                // D5 Ground this pin to turn debugging on
 
 const int outputPins[6] = {OUTPUT_PIN_0, OUTPUT_PIN_1, OUTPUT_PIN_2, OUTPUT_PIN_3, OUTPUT_PIN_4, OUTPUT_PIN_5};
-const int loadCount = 1;
 
 const long debugSampleTime = 15000;   // Milliseconds between server requests when debugging
 const long debugRandomTime = 2000;    // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
@@ -145,7 +146,7 @@ const long initialTime = 5000;        // Milliseconds to first server request
 
 #define BAUD 9600     // Serial comms speed
 
-const int version = 5;
+const int version = 6;
 
 // Bits of HTML we need to know (both cases of these are tried in atempting matches)
 
