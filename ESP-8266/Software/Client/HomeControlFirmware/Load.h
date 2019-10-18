@@ -21,7 +21,9 @@ class Load
   public:
   
   Load(const int ln, const int p, Load* nxt);
-  Load* Next();
+  Load(const int ln, const int p);
+  //Load* Next();
+  //void SetNext(Load* n);
   long NextTime();
   void SecondTick();
   int LoadNumber();
@@ -37,8 +39,13 @@ class Load
   bool iAmOn;
   long onSeconds;
   long offSeconds;
-  Load* next;
+  //Load* next;
 };
+
+//inline void Load::SetNext(Load* n)
+//{
+//  next = n;
+//}
 
 
 #endif

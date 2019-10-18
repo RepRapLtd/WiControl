@@ -58,11 +58,22 @@ long nextReset;
 long seconds;
 
 ESP8266WiFiMulti WiFiMulti;
-Load* loads;
 
+//int loadsAdded;
+
+//Load load5(5, outputPins[5]);
+//Load load4(4, outputPins[4]);
+//Load load3(3, outputPins[3]);
+Load load2(2, outputPins[2]);
+Load load1(1, outputPins[1]);
+Load load0(0, outputPins[0]);
+Load* loads[MAX_LOADS] = {&load0, &load1, &load2};//, &load3, &load4, &load5};
 
 void setup() 
 {
+
+  //ESP.wdtDisable();
+  
    // I/O pins...
 
   if(ESP8266_LED_PIN >= 0)
@@ -78,39 +89,44 @@ void setup()
   }
   
   ledState = OFF;
+
+  yield();
     
   pinMode(TEMP_SENSE_PIN, INPUT);
   pinMode(DEBUG_PIN, INPUT_PULLUP);
   debug = !digitalRead(DEBUG_PIN);
   randomSeed(analogRead(TEMP_SENSE_PIN));
 
-  // Set up the chain of loads (loadCount is only 1 usually).  
-
-  loads = (Load*)NULL;
-  for(int l = 0; l < loadCount; l++)
-  {
-    loads = new Load(l, outputPins[l], loads);
-  }
-
   Serial.begin(BAUD);
 
-  while(!Serial);
+  while(!Serial) yield();
 
   if(debug)
   {
-    Serial.print("I am unit ");
+    Serial.print("Unit ");
     Serial.println(unit);
-    Serial.println("? to print status.");
-    Serial.print("Connecting to WiFi: ");
+    Serial.println("? for status.");
+    Serial.print("WiFi: ");
     Serial.print(ssid);   
   }
 
-  // Needed for WiFi stability
-  
-  delay(4000);
+  // 4s Needed for WiFi stability
+
+  yield();
+  delay(1000);
+  yield();
+  delay(1000);
+  yield();
+  delay(1000);
+  yield();
+  delay(1000);
+
+  yield();
 
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP(ssid, password);
+
+  yield();
 
   char wCount = 0;
   do
@@ -118,7 +134,7 @@ void setup()
     delay(2000);
     if(debug)
     {
-      Serial.print(" .");
+      Serial.print(".");
       wCount++;
       if(!wCount%50)
       {
@@ -126,15 +142,39 @@ void setup()
         wCount = 0;  
       }
     }
+    yield();
   } while (WiFiMulti.run() != WL_CONNECTED);
 
   if(debug)
   {
-    Serial.println(" connected.");
+    Serial.println("yes");
   }
+
+  yield();
+
+  // Set up the chain of loads (loadCount is only 1 usually).  
+
+//  loads = (Load*)NULL;
+//  loadsAdded = 0;
 
   PrintStatus();
 
+  yield();
+
+
+/*  int i = 1;
+  Load* l = loads;
+  Load* nextL;
+  while(l)
+  {
+    nextL = l->Next();
+    if(i >= loadCount)
+      l->SetNext((Load*)NULL);
+    i++;
+    l = nextL;
+    yield();          
+  }
+*/
   // Set up timings and LED behaviour
   
   blinkPattern = OFF;
@@ -156,9 +196,9 @@ long TillNextTime()
     
   if(debug)
   {
-    Serial.print("Next server request will be in ");
+    Serial.print("Next call: ");
     Serial.print(f);
-    Serial.println(" milliseconds.");
+    Serial.println(" ms.");
   }
   return (long)millis() + f;
 }
@@ -282,7 +322,7 @@ void PrintWebPageReturned(int bod)
       if(debug)
       {
         Serial.print(bodyEnd);
-        Serial.print(" not found in ");
+        Serial.print(" not in ");
         Serial.println(message);
       }
     }
@@ -302,9 +342,9 @@ void PrintWebPageReturned(int bod)
     temp.toUpperCase();
   message.replace(temp, "\n");
 
-  Serial.println("\n--------");
+  Serial.println("\n--");
   Serial.println(message);
-  Serial.println("--------\n");  
+  Serial.println("--\n");  
 }
 
 // This gets called once a second and
@@ -312,11 +352,9 @@ void PrintWebPageReturned(int bod)
 
 void TimedOnOrOff()
 {
-  Load* load = loads;
-  while(load)
+  for(int load = 0; load < loadCount; load++)
   {
-    load->SecondTick();
-    load = load->Next();
+    loads[load]->SecondTick();
   }
 }
 
@@ -339,7 +377,7 @@ void ParseMessage(Load* load)
       if(debug)
       {
         Serial.print(bodyStart);
-        Serial.print(" not found in ");
+        Serial.print(" not in ");
         Serial.println(message);
       }
       return;
@@ -357,7 +395,7 @@ void ParseMessage(Load* load)
       blinkPattern=DASH;
       if(debug)
       {
-        Serial.print("Neither ON nor OFF found in ");
+        Serial.print("Dud msg: ");
         Serial.println(message);
       }
       return;     
@@ -391,33 +429,34 @@ void PrintStatus()
     
   Serial.println();
   Serial.println();
-  Serial.print("Firmware version: ");
+  Serial.print("Ver: ");
   Serial.println(version);
-  Serial.print("I am unit ");
+  Serial.print("Unit ");
   Serial.println(unit);
-  Serial.print("I control load(s): ");
-  Load* load = loads;
-  while(load)
+  Serial.print("Load(s): ");
+  for(int load = 0; load < loadCount; load++)
   {
-    Serial.print(load->LoadNumber());
+    Serial.print(loads[load]->LoadNumber());
     Serial.print(' ');
-      load = load->Next();
   }
   Serial.println();
 
+  Serial.print("Heap: ");
+  Serial.println(ESP.getFreeHeap());
+
   if(WiFiMulti.run() == WL_CONNECTED)
   {
-    Serial.print("Connected to WiFi: ");
+    Serial.print("WiFi: ");
     Serial.println(ssid);
   } else
   {
-    Serial.println("Not connected to WiFi.");
+    Serial.println("No con.");
   }
 
   unsigned char MAC[6];
 
   WiFi.macAddress(MAC);
-  Serial.print("MAC and IP addresses: ");
+  Serial.print("MAC and IP: ");
   for(char i = 0; i < 6; i++)
   {
     Serial.print(MAC[i], HEX);
@@ -426,7 +465,7 @@ void PrintStatus()
   Serial.print(", ");
   Serial.println(WiFi.localIP());
 
-  Serial.print("My uncorrected temperature is: ");
+  Serial.print("Temp: ");
   Serial.println(Temperature());
 }
 
@@ -435,24 +474,31 @@ void PrintStatus()
 
 void loop() 
 {
+  //Serial.println("a");
+  
+  yield();
+      
   // Check for watchdog reset time
   
   if((long)millis() - nextReset > 0)
   {
     if(debug)
-      Serial.println("\n\n*** Watchdog reset.\n");
+      Serial.println("\n\n*** Reset.\n");
     delay(2000); // Allow the serial output buffer to flush
     ESP.restart();
   }
 
+    //Serial.println("b");
+
   // Time for a load to do something?
 
-  Load* load = loads;
-  while(load)
+  for(int load = 0; load < loadCount; load++)
   {
-    load->ActIfItsTime();
-    load = load->Next();
+    loads[load]->ActIfItsTime();
+    yield();
   }
+
+    //Serial.println("c");
 
   debug = !digitalRead(DEBUG_PIN);
 
@@ -460,11 +506,15 @@ void loop()
   
   Blink();
 
+    //Serial.println("d");
+
   // Timing by seconds
   
   SecondCounter();
 
   // Is the user debugging and do they want to see what's going on?
+
+    //Serial.println("e");
   
   if(Serial.available() > 0 && debug)
   {
@@ -476,26 +526,43 @@ void loop()
     } 
   }
 
+  // Add the loads one at a time to avoid watchdog reset.
+
+    //Serial.println("f");
+
+/*  if(loadsAdded < loadCount)
+  {
+    loads = new Load(loadsAdded, outputPins[loadsAdded], loads);
+    if(debug)
+    {
+      Serial.print("Added load ");
+      Serial.println(loadsAdded);
+    }
+    yield();
+    loadsAdded++;      
+  }
+  */
+
 }
 
 //***************************************************************************************************
 
 // The Load class
 
-Load::Load(const int ln, const int p, Load* nxt)
+Load::Load(const int ln, const int p)
 {
   loadNumber = ln;
   pin = p;
   pinMode(pin, OUTPUT);
   digitalWrite(pin, 0);
-  next = nxt;
+  //next = nxt;
   nextTime = (long)millis() + initialTime;
   iAmOn = false;
   onSeconds = -1;
   offSeconds = -1;
 }
 
-Load* Load::Next() { return next; }
+//Load* Load::Next() { return next; }
 
 long Load::NextTime() { return nextTime; }
 
@@ -512,7 +579,7 @@ void Load::SecondTick()
   {
     if(debug)
     {
-       Serial.print("Switching on load ");
+       Serial.print("Load on:");
        Serial.println(loadNumber);
     }
     blinkPattern = ON;
@@ -528,7 +595,7 @@ void Load::SecondTick()
   {
     if(debug)
     {
-       Serial.print("Switching off load ");
+       Serial.print("Load off:");
        Serial.println(loadNumber);
     }
     blinkPattern = OFF;
@@ -546,7 +613,7 @@ void Load::SwitchOnOrOff(bool on, long tim)
 {
   if(debug)
   {
-    Serial.print("Switching load ");
+    Serial.print("Load ");
     Serial.print(loadNumber);
   }
     
@@ -555,7 +622,7 @@ void Load::SwitchOnOrOff(bool on, long tim)
    if(onSeconds >= 0)
    {
     if(debug)
-      Serial.println(" **ON timer running");
+      Serial.println(" **ON timer");
     return;
    }
    onSeconds = tim;
@@ -563,7 +630,7 @@ void Load::SwitchOnOrOff(bool on, long tim)
    {
     Serial.print(" ON in ");
     Serial.print(onSeconds);
-    Serial.println(" seconds.");
+    Serial.println(" s");
    }
    return;    
   }
@@ -571,7 +638,7 @@ void Load::SwitchOnOrOff(bool on, long tim)
   if(offSeconds >= 0)
   {
     if(debug)
-      Serial.println(" **OFF timer running");
+      Serial.println(" **OFF timer");
     return;
   }
   offSeconds = tim;
@@ -579,7 +646,7 @@ void Load::SwitchOnOrOff(bool on, long tim)
   {
     Serial.print(" OFF in ");
     Serial.print(offSeconds);
-    Serial.println(" seconds.");
+    Serial.println(" s");
   }   
 }
 
@@ -592,7 +659,7 @@ void Load::ActIfItsTime()
   // If the HTTP request will be in 1 second, flash the LEDs...
  
   if((1000 + tim) - nextTime > 0)
-    blinkPattern=FLASH;
+    blinkPattern = FLASH;
 
   // Is it time to send another request to the server?
   
@@ -646,13 +713,13 @@ void Load::ActIfItsTime()
        {
          blinkPattern = DASH;
          if(debug)
-           Serial.println("\nReturned code not HTTP_CODE_OK");
+           Serial.println("\nNo HTTP_CODE_OK");
        }
      } else 
      {
        blinkPattern = DASH;
        if(debug)
-         Serial.printf("\nHTTP GET failed, error: %s\n", http.errorToString(httpCode).c_str());
+         Serial.printf("\nGET error: %s\n", http.errorToString(httpCode).c_str());
      }
     
      http.end();
