@@ -14,7 +14,7 @@
  * Licence: GPL
  */
 
-// Example HTTP request: http://currentServer/pageRoot/scontrollednode.php?unit=1&load=0&temperature=20&debugOn=1
+// HTTP requests to this look like:  http://currentServer/pageRoot/scontrollednode.php?unit=1&load=0&temperature=20[&debugOn=1]
 
 // Note to self: don't forget "\n" means newline; '\n' means \n...
 
@@ -304,7 +304,8 @@ include 'globals.php';
 
 	GetTemperatureFromElsewhere($house, $temp, $set, $on);
 
-	$temperatureFileContents = $temperatureFileContents . $delimiter . $name . $delimiter . ' ' . $temp . ' ' . $set;
+	//$temperatureFileContents = $temperatureFileContents . $delimiter . $name . $delimiter . ' ' . $temp . ' ' . $set;
+	$temperatureFileContents = $temperatureFileContents . $delimiter . $name . $delimiter . ' ' . round(0.0 + $temp) . ' ' . round(0.0 + $set);
 	if($on)
 		$temperatureFileContents = $temperatureFileContents . " 1\n";
 	else
