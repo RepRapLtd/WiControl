@@ -1,5 +1,5 @@
 <html>
-<head><title>controllednode</title></head>
+<head><title>scontrollednode</title></head>
 <body><?php
 
 /*
@@ -15,6 +15,12 @@
  */
 
 // HTTP requests to this look like:  http://currentServer/pageRoot/scontrollednode.php?unit=1&load=0&temperature=20[&debugOn=1]
+
+// If a log file exists on the server, this adds to it in CSV format.  A typical line in the file:
+
+// 2019-11-19,16:43:36,LivingRoom,19.05,22,Kitchen,18.6,12,Hall,18.95,20,Porch,16,18,MainBedroom,18.9,12,SpareBedroom,15.25,12
+
+// Date, time, then a list of rooms without spaces followed by the actual temperature and the set temperature of each.
 
 // Note to self: don't forget "\n" means newline; '\n' means \n...
 
@@ -40,11 +46,20 @@ $units = 'units';
 $delimiter = '*';
 $timeDelimiter = ':';
 
-// Occasional side effect when called - create the file of current temperatures about once a minute.
+// Occasional side effects when called - create the file of current temperatures about once a minute
+// and maybe append to a log file once every ten minutes.
 
 $creatingTemperatureFile = false;
 $temperatureFileContents = "";
 $temperatureFileName = "";
+$temperatureInterval = 60; // 1 minute
+
+$addingToLogFile = false;
+$logFileString = "";
+$logFileName = "";
+$loggingInterval = 600; // 10 minutes
+
+$secondsInADay = 86400;
 
 // Now
 
@@ -298,7 +313,8 @@ function AddALineToTheTemperatureFile($house, $name)
 {
 include 'globals.php';
 
-	$temp = str_replace(' ', '', $name);
+	$shortName = str_replace(' ', '', $name);
+	$temp = $shortName;
 	$set = 0;
 	$on = false;
 
@@ -310,6 +326,62 @@ include 'globals.php';
 		$temperatureFileContents = $temperatureFileContents . " 1\n";
 	else
 		$temperatureFileContents = $temperatureFileContents . " 0\n";
+
+	if(!$addingToLogFile)
+		return;
+
+	$logFileString = $logFileString . ',' . $shortName . ',' . $temp . ',' . $set;
+}
+
+// Find out if we should be updating the temperatures file and maybe also
+// the log file.
+
+function MaybeUpdateLogAndTemps($house)
+{
+include 'globals.php';
+
+   // Do we need to update the list of room temperatures for the web interface?
+   // Do this about once a minute.
+
+   $temperatureFileName = $house . $fileRoot . strtolower($house) . "-temperatures" . $fileExtension;
+   $t = filemtime($temperatureFileName);
+   if(!$t)
+	exit('ERROR: MaybeUpdateLogAndTemps() - temperature list file not found: ' . $temperatureFileName);
+   $fileTouched = 0 + $t;
+   if($summerTime)
+    	$fileTouched += 3600;
+   if(($unixTime - $fileTouched) > $temperatureInterval)
+   {
+   	if($debug)
+    		$debugString = $debugString . 'Updating the temperature list in ' . $temperatureFileName .'<br>';
+        $creatingTemperatureFile = true;
+	$temperatureFileContents = "";
+   } else
+   {
+	return; // Only add to the log file when we are also creating the temperatures file, as the
+                // function that does that is also the one that adds to the log.
+   }
+
+   $logFileName = $house . $fileRoot . 'Log' . $fileExtension;
+
+   // If there is no log file, we are not logging
+
+   if(!file_exists($logFileName))
+	return;
+
+   $t = filemtime($logFileName);
+   if(!$t)
+	exit("ERROR: MaybeUpdateLogAndTemps() - can't get time on log file: " . $logFileName);
+   $fileTouched = 0 + $t;
+   if($summerTime)
+    	$fileTouched += 3600;
+   if(($unixTime - $fileTouched) > $loggingInterval)
+   {
+   	if($debug)
+    		$debugString = $debugString . 'Updating the log file in ' . $logFileName .'<br>';
+        $addingToLogFile = true;
+	$logFileString = date('Y-m-d', $unixTime) . ',' . date('H:i:s', $unixTime);
+   }
 }
 
 // This parses the profile file which is written by the web interface.
@@ -334,25 +406,10 @@ include 'globals.php';
    $profileName = $house . $fileRoot . strtolower($house) . $profileText . strtolower(date('l')) . $fileExtension;
    $profile = file_get_contents($profileName);
 
-   // Do we need to update the list of room temperatures for the web interface?
-   // Do this about once a minute.
+   // See if we need to update the list of temperatures and the log
 
-   $temperatureFileName = $house . $fileRoot . strtolower($house) . "-temperatures" . $fileExtension;
-   $t = filemtime($temperatureFileName);
-   if(!$t)
-	exit('ERROR: ParseProfile() - temperature list file not found: ' . $temperatureFileName);
-   $fileTouched = 0 + $t;
-   if($summerTime)
-    	$fileTouched += 3600;
-   if(($unixTime - $fileTouched) > 60)
-   {
-   	if($debug)
-    		$debugString = $debugString . 'Updating the temperature list in ' . $temperatureFileName .'<br>';
-        $creatingTemperatureFile = true;
-	$temperatureFileContents = "";
-   }
+   MaybeUpdateLogAndTemps($house);
       
-
    // N.B. GetSwitchingDelays() will eat some of the start of $profile, but shouldn't get to the '---'
 
    GetSwitchingDelays($device);
@@ -470,9 +527,9 @@ include 'globals.php';
 			if($iAmMyOwnSlave)
 				$debugString = $debugString . 'It is its own slave <br>';
 
-			$debugString = $debugString . ' boost: '.$boostTime.' (Uxt: '.$unixTime.')<br> Ts&Ts:<br>';
+			$debugString = $debugString . ' boost: '.date('Y-m-d H:i:s', $boostTime).' (Uxt: '.date('Y-m-d H:i:s', $unixTime).')<br> Ts&Ts:<br>';
 			for($i = 0; $i < sizeof($times); $i++)
-				$debugString = $debugString . ' '.$times[$i].' '.$temps[$i].'<br>';
+				$debugString = $debugString . ' '.date('H:i:s', $secondsInADay*intval($unixTime/$secondsInADay) + $times[$i]).' '.$temps[$i].'<br>';
 			$debugString = $debugString . 'slaves:<br>';
 			for($i = 0; $i < sizeof($mySlaves); $i++)
 				$debugString = $debugString . ' '.$mySlaves[$i];
@@ -500,7 +557,7 @@ function SecondsSinceMidnight()
 {
 include 'globals.php';
 
-	return $unixTime % 86400; // There are 86400 seconds in 24 hours
+	return $unixTime % $secondsInADay;
 }
 
 
@@ -508,11 +565,14 @@ include 'globals.php';
 
 function ServerTime()
 {
-	$secondsSinceMidnight = SecondsSinceMidnight();
+include 'globals.php';
+/*	$secondsSinceMidnight = SecondsSinceMidnight();
         $h = intval($secondsSinceMidnight/3600);
         $m = intval(($secondsSinceMidnight - $h*3600)/60);
         $s = intval($secondsSinceMidnight - $h*3600 - $m*60);
         return '' . $h . ':' . $m . ':' . $s; 
+*/
+	return(date('H:i:s', $unixTime));
 }
 
 
@@ -583,7 +643,7 @@ include 'globals.php';
     if($summerTime)
     	$fileTouched += 3600;
     if($debug)
-    	$debugString = $debugString . 'File touched time: ' . $fileTouched . ', Unix time: ' . $unixTime .'<br>';
+    	$debugString = $debugString . 'File touched time: ' . date('Y-m-d H:i:s', $fileTouched) . ', Unix time: ' . date('Y-m-d H:i:s', $unixTime) .'<br>';
     return (($unixTime - $fileTouched) < 120);
 }
 
@@ -610,39 +670,6 @@ include 'globals.php';
     }
 }
 
-// If we are logging data, maybe add to the log file
-
-function MaybeUpdateLog($house, $device, $act, $temp, $s)
-{
-include 'globals.php';
-
-	// If there is no log file, we are not logging
-
-	$logFileName = $house . $fileRoot . 'Log' . $fileExtension;
-	if(!file_exists($logFileName))
-		return;
-
-	$fileName = $house . $fileRoot . $device . $fileExtension;
-	$lastState = file_get_contents($fileName);
-        if(!$lastState)
-		exit('ERROR: MaybeUpdateLog() - can not get file contents: '.$fileName);
-	
-	// If the state hasn't changed, do nothing.
- 
-        if($act == 'OFF')
-        {
-		if(strpos($lastState, 'OFF'))
-			return;
-        }
-        if($act == 'ON')
-        {
-		if(strpos($lastState, 'ON'))
-			return;
-        }
-
-
-	file_put_contents($logFileName, $house.','.$device.','.$act.','.$temp.','.$unixTime."\n" , FILE_APPEND);
-}
 
 // Save the status of a master device in its .dat file.
 
@@ -650,7 +677,7 @@ function SaveTemperature($house, $device, $act, $temp, $s)
 {
 include 'globals.php';
 
-    MaybeUpdateLog($house, $device, $act, $temp, $s);
+    //MaybeUpdateLog($house, $device, $act, $temp, $s);
 
     $fileName = $house . $fileRoot . $device . $fileExtension;
     $fileHandle = fopen($fileName, 'w');
@@ -789,6 +816,13 @@ if($creatingTemperatureFile)
     fclose($fileHandle);
     if($debug)
 	$debugString = $debugString . '<br>Temperature list written.<br>';
+}
+
+if($addingToLogFile)
+{
+    file_put_contents($logFileName, $logFileString."\n" , FILE_APPEND);
+    if($debug)
+	$debugString = $debugString . '<br>Log file appended to.<br>';
 }
 
 // Send helpful info in the HTML <body> as well if we are debugging
