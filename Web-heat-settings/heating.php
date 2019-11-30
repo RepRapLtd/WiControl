@@ -215,6 +215,12 @@ function Footer()
 
 	ProfileLoadFiles();
 	document.write('</form>');
+        var logString = '<br><a href = "printLog.php?building=';
+	logString = logString + building.charAt(0).toUpperCase() + building.substring(1);
+	logString = logString + '" target="_blank"><H2>Get the log</H2></a>';
+	document.write(logString);
+	document.write('<br><a href = "startLog.php" target="_blank"><H2>Start logging</H2></a>');
+	document.write('<br><a href = "stopLog.php" target="_blank"><H2>Stop logging and delete the log</H2></a>');
 }
 
 function ProfileLoadFiles()
@@ -824,3 +830,5 @@ window.onload = function()
 
 </body>
 </html>
+
+
