@@ -33,6 +33,7 @@ $debug = false;
 // Append debugging info to this string
 
 $debugString = '<br><br>';
+$errorString = '';
 
 // Where the files are.
 
@@ -149,7 +150,9 @@ function NextLine(&$text, &$ln)
 	return false;
 
    if(substr($ln, 0, 1) != $delimiter)
-	exit('ERROR - NextLine(): line does not start with a '.$delimiter.': ' . $ln);
+   {
+	$errorString = $errorString . 'ERROR - NextLine(): line does not start with a '.$delimiter.': ' . $ln . '<br>';
+   }
    $text = substr($text, 1 + $lineEnd);
    return true;
 }
@@ -227,7 +230,9 @@ include 'globals.php';
    {
 	    $t = filemtime($thermName);
 	    if(!$t)
-		exit('ERROR: GetTemperatureFromElsewhere() - temperature file not found: ' . $fileName);
+	    {
+		$errorString = $errorString . 'ERROR: GetTemperatureFromElsewhere() - temperature file not found: ' . $fileName . '<br>';
+	    }
 	    $fileTouched = 0 + $t;
 	    if($summerTime)
 	    	$fileTouched += 3600;
@@ -243,12 +248,12 @@ include 'globals.php';
    if(!NextNumber($thermContents, $therm))
    {
          $therm = 20;
-	 $debugString = $debugString . 'ERROR: GetTemperatureFromElsewhere() - current temperature not found:'.$thermContents;
+	 $errorString = $errorString . 'ERROR: GetTemperatureFromElsewhere() - current temperature not found:'.$thermContents . '<br>';
    }
    if(!NextNumber($thermContents, $set))
    {
-         $set = 20;
-	 $debugString = $debugString . 'ERROR: GetTemperatureFromElsewhere() - set temperature not found:'.$thermContents;
+         $set = 19;
+	 $errorString = $errorString . 'ERROR: GetTemperatureFromElsewhere() - set temperature not found:'.$thermContents . '<br>';
    }
    if(substr($thermContents, 0, 3) == 'OFF')
 	$on = false;
@@ -257,7 +262,7 @@ include 'globals.php';
    else
    {
         $on = false;
-	$debugString = $debugString . 'ERROR: GetTemperatureFromElsewhere() - device is neither ON nor OFF:'.$thermContents;
+	$errorString = $errorString . 'ERROR: GetTemperatureFromElsewhere() - device is neither ON nor OFF:'.$thermContents . '<br>';
    }
 }
 
@@ -287,21 +292,33 @@ include 'globals.php';
 	$thisLine = $line;
 
 	if(!NextName($line, $name))
-		exit('Error: ParseProfile() - first name on line missing.' . $thisLine);
+	{
+		$errorString = $errorString . 'Error: ParseProfile() - first name on line missing.' . $thisLine.'<br>';
+	}
 
 	// Is this the line for this device?
 
 	if($name == $device)
 	{
 	   if(!NextNumber($line, $number))
-		exit('ERROR: GetSwitchingDelays() - number 1 not found: '.$thisLine);
+	   {
+		$errorString = $errorString . 'ERROR: GetSwitchingDelays() - number 1 not found: '.$thisLine .'<br>';
+	   }
 	   if(!NextNumber($line, $number))
-		exit('ERROR: GetSwitchingDelays() - number 2 not found: '.$thisLine);
+	   {
+		$errorString = $errorString .'ERROR: GetSwitchingDelays() - number 2 not found: '.$thisLine.'<br>';
+	   }
 	   if(!NextNumber($line, $number))
-		exit('ERROR: GetSwitchingDelays() - number 3 not found: '.$thisLine);
+	   {
+		$number = 0;
+		$errorString = $errorString .'ERROR: GetSwitchingDelays() - number 3 not found: '.$thisLine.'<br>';
+	   }
            $onDelay = $number;
 	   if(!NextNumber($line, $number))
-		exit('ERROR: GetSwitchingDelays() - number 4 not found: '.$thisLine);
+	   {
+		$number = 0;
+		$errorString = $errorString .'ERROR: GetSwitchingDelays() - number 4 not found: '.$thisLine.'<br>';
+	   }
 	   $offDelay = $number;
            return;
 	}
@@ -380,7 +397,10 @@ include 'globals.php';
 
    $t = filemtime($logFileName);
    if(!$t)
-	exit("ERROR: MaybeUpdateLogAndTemps() - can't get time on log file: " . $logFileName);
+   {
+	$t = $unixTime;
+	$errorString = $errorString . "ERROR: MaybeUpdateLogAndTemps() - can't get time on log file: " . $logFileName. '<br>';
+   }
    $fileTouched = 0 + $t;
    if($summerTime)
     	$fileTouched += 3600;
@@ -446,7 +466,10 @@ include 'globals.php';
         // list file.
 
 	if(!NextNameWithSpaces($line, $name))
-		exit('Error: ParseProfile() - first name on line missing.' . $thisLine);
+	{
+		$name = '';
+		$errorString = $errorString . 'Error: ParseProfile() - first name on line missing.' . $thisLine.'<br>';
+	}
 
 	if($creatingTemperatureFile)
 		AddALineToTheTemperatureFile($house, $name);
@@ -460,7 +483,10 @@ include 'globals.php';
 	if(!$gotTheProfile && $name == $device)
 	{
 		if(!NextName($line, $thermometer))
-			exit('Error: ParseProfile() - thermometer name on line missing.' . $thisLine);
+		{
+			$thermometer = '';
+			$errorString = $errorString . 'Error: ParseProfile() - thermometer name on line missing.' . $thisLine. '<br>';
+		}
 
 		if($thermometer == $device)
 		{
@@ -503,11 +529,17 @@ include 'globals.php';
 		}
 
 		if(!NextNumber($line, $number))
-			exit('ERROR: ParseProfile() - on/off digit not found: '.$thisLine);
+		{
+			$number = 0;
+			$errorString = $errorString . 'ERROR: ParseProfile() - on/off digit not found: '.$thisLine. '<br>';
+		}
 		$iAmOn = ((0+$number) == 1);
 
 		if(!NextNumber($line, $number))
-			exit('ERROR: ParseProfile() - boost time not found: '.$thisLine);
+		{
+			$number = 0;
+			$errorString = $errorString . 'ERROR: ParseProfile() - boost time not found: '.$thisLine. '<br>';
+		}
 		$boostTime = 0 + $number;
 
 		$timeCount = 0;
@@ -515,7 +547,10 @@ include 'globals.php';
 		{
 			$times[$timeCount] = HMSToSeconds($time);
 			if(!NextNumber($line, $temp))
-				exit('ERROR: ParseProfile() - time without temp: '.$thisLine);
+			{
+				$temp = 20;
+				$errorString = $errorString . 'ERROR: ParseProfile() - time without temp: '.$thisLine . '<br>';
+			}
 			$temps[$timeCount] = 0 + $temp;
 			$timeCount++;
 		}
@@ -592,7 +627,9 @@ function SetTemperature($device)
 include 'globals.php';
 
     if(empty($profile)) // That's why $profile has to contain something...
-	exit('ERROR: SetTemperature() - profile not loaded');
+    {
+	$errorString = $errorString . 'ERROR: SetTemperature() - profile not loaded'. '<br>';
+    }
 
     $secondsSinceMidnight = SecondsSinceMidnight();
     
@@ -642,12 +679,16 @@ function IAmAnOnSlave($house, $device)
 include 'globals.php';
 
     if(empty($profile))
-	exit('ERROR: IAmAnOnSlave() - profile not loaded');
+    {
+	$errorString = $errorString . 'ERROR: IAmAnOnSlave() - profile not loaded'.'<br>';
+    }
 
     $fileName = $house . $fileRoot . $device . $fileExtension;
     $t = filemtime($fileName);
     if(!$t)
-	exit('ERROR: IAmAnOnSlave() - slave file not found: ' . $fileName);
+    {
+	$errorString = $errorString . 'ERROR: IAmAnOnSlave() - slave file not found: ' . $fileName.'<br>';
+    }
     $fileTouched = 0 + $t;
     if($summerTime)
     	$fileTouched += 3600;
@@ -664,7 +705,9 @@ function TurnOnDependentList($house, $device)
 include 'globals.php';
 
     if(empty($profile))
-	exit('ERROR: TurnOnDependentList() - profile not loaded');
+    {
+	$errorString = $errorString . 'ERROR: TurnOnDependentList() - profile not loaded'.'<br>';
+    }
 
     if(empty($mySlaves))
 	return;
@@ -691,7 +734,9 @@ include 'globals.php';
     $fileName = $house . $fileRoot . $device . $fileExtension;
     $fileHandle = fopen($fileName, 'w');
     if(!$fileHandle)
-	exit('ERROR: SaveTemperature() - can not open file to write: '.$fileName); 
+    {
+	$errorString = $errorString . 'ERROR: SaveTemperature() - can not open file to write: '.$fileName.'<br>';
+    }
     fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . ' Server time: ' . ServerTime() . "\n");
     fclose($fileHandle);
     if($debug)
@@ -710,26 +755,43 @@ include 'globals.php';
     $fileName = $units . $fileExtension;
     $allUnits = file_get_contents($fileName);
     if(empty($allUnits))
-	exit('ERROR: ReadUnits() - can not open file to read: '.$fileName);
+    {
+	$errorString = $errorString .'ERROR: ReadUnits() - can not open file to read: '.$fileName.'<br>';
+    }
     while(NextLineNoCheck($allUnits, $line))
     {
 	if(!NextNumber($line, $n1))
-		exit('ERROR: ReadUnit() - line does not start with a number: '.$line1);
+	{
+		$n1 = -1;
+		$errorString = $errorString .'ERROR: ReadUnit() - line does not start with a number: '.$line1.'<br>';
+	}
 	if(!NextNumber($line, $n2))
-		exit('ERROR: ReadUnit() - line does not start with two numbers: '.$line1);
+	{
+		$n2 = -1;
+		$errorString = $errorString .'ERROR: ReadUnit() - line does not start with two numbers: '.$line1.'<br>';
+	}
         if($n1 == $unit && $n2 == $load)
 	{
 		if(!NextName($line, $building))
-			exit('ERROR: ReadUnit() - line does not have a delimited building name: '.$line1);
+		{
+			$building = '';
+			$errorString = $errorString .'ERROR: ReadUnit() - line does not have a delimited building name: '.$line1.'<br>';
+		}
 		if(!NextName($line, $location))
-			exit('ERROR: ReadUnit() - line does not have a delimited room name: '.$line1);
+		{
+			$location = '';
+			$errorString = $errorString .'ERROR: ReadUnit() - line does not have a delimited room name: '.$line1.'<br>';
+		}
 		if(!NextNumber($line, $temperatureOffset))
-			exit('ERROR: ReadUnit() - line does not have a temperature offset: '.$line1);
+		{
+			$temperatureOffset = 0;
+			$errorString = $errorString .'ERROR: ReadUnit() - line does not have a temperature offset: '.$line1.'<br>';
+		}
 		$temperatureOffset = 0 + $temperatureOffset;
 		return;
 	}
     }
-    exit('ERROR: ReadUnit() - unit and load not found: '.$unit.', '.$load);
+    $errorString = $errorString .'ERROR: ReadUnit() - unit and load not found: '.$unit.', '.$load.'<br>';
 }
 
 //***************************************************************
@@ -745,11 +807,10 @@ parse_str($_SERVER['QUERY_STRING']);
 
 // Check we have a $device/$location and $temperature from the HTTP query...
 
-//if(empty($location) || empty($temperature) || empty($building))
-//	exit('ERROR - $location, $temperature or $building undefined');
-
 if(!strlen($unit) || !strlen($temperature) || !strlen($load))
-	exit('ERROR - $unit, $temperature or $load undefined');
+{
+	$errorString = $errorString .'ERROR - $unit, $temperature or $load undefined'.'<br>';
+}
 
 $debug = !empty($debugOn);
 
@@ -820,7 +881,9 @@ if($creatingTemperatureFile)
 {
     $fileHandle = fopen($temperatureFileName, 'w');
     if(!$fileHandle)
-	exit('ERROR: Creating list of temperatures - can not open file to write: '.$temperatureFileName); 
+    {
+	$errorString = $errorString .'ERROR: Creating list of temperatures - can not open file to write: '.$temperatureFileName.'<br>';
+    }
     fwrite($fileHandle, $temperatureFileContents);
     fclose($fileHandle);
     if($debug)
@@ -839,6 +902,7 @@ if($addingToLogFile)
 if($debug)
 {
   echo $debugString;
+  echo '<hr><br>' . $errorString;
 }
 
 
