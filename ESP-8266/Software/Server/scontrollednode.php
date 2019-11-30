@@ -241,15 +241,24 @@ include 'globals.php';
    $thermContents = file_get_contents($thermName);
    EatSpaces($thermContents);
    if(!NextNumber($thermContents, $therm))
-	 exit('ERROR: GetTemperatureFromElsewhere() - current temperature not found:'.$thermContents);
+   {
+         $therm = 20;
+	 $debugString = $debugString . 'ERROR: GetTemperatureFromElsewhere() - current temperature not found:'.$thermContents;
+   }
    if(!NextNumber($thermContents, $set))
-	 exit('ERROR: GetTemperatureFromElsewhere() - set temperature not found:'.$thermContents);
+   {
+         $set = 20;
+	 $debugString = $debugString . 'ERROR: GetTemperatureFromElsewhere() - set temperature not found:'.$thermContents;
+   }
    if(substr($thermContents, 0, 3) == 'OFF')
 	$on = false;
    else if(substr($thermContents, 0, 2) == 'ON')
 	$on = true;
    else
-	exit('ERROR: GetTemperatureFromElsewhere() - device is neither ON nor OFF:'.$thermContents);
+   {
+        $on = false;
+	$debugString = $debugString . 'ERROR: GetTemperatureFromElsewhere() - device is neither ON nor OFF:'.$thermContents;
+   }
 }
 
 
