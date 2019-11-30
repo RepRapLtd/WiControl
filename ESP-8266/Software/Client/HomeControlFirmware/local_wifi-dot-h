@@ -1,6 +1,7 @@
 // Put your wifi details here and rename this file local-wifi.h
 
-const char* ssid = "**********";
-const char* password = "**********";
-
-
+const char* ssid = "-------";                 // The name of your WiFi network
+const char* password = "--------";            // Your WiFi network's password
+const String server = "myURL.com";            // Server IP address/URL
+const String pageRoot = "/WiFiHeating/";      // Where the .php script is on the server, usually myURL.com/WiFiHeating/
+const String backupServer = "192.168.1.100";  // Backup server IP address/URL

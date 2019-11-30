@@ -43,7 +43,7 @@
 
 // The unit number must be unique across the whole system
 
-const int unit = 25;
+const int unit = 36;
 
 /*
 
@@ -60,7 +60,7 @@ const String backupServer = "192.168.1.100";  // Backup server IP address/URL
 #include "local_wifi.h" // Separated to prevent passwords appearing on Github
 
 const String page = "scontrollednode.php";        // The PHP script that interprets the heating tables and decides between ON or OFF
-const int loadCount = 2;                          // The number of loads this device drives; usually 1; must be 5 or less
+const int loadCount = 1;                          // The number of loads this device drives; usually 1; must be 5 or less
 
 // End of user configuration area
 
