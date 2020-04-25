@@ -62,6 +62,9 @@ const String backupServer = "192.168.1.100";  // Backup server IP address/URL
 const String page = "scontrollednode.php";        // The PHP script that interprets the heating tables and decides between ON or OFF
 const int loadCount = 1;                          // The number of loads this device drives; usually 1; must be 5 or less
 
+const int loadOn = 1;
+const int loadOff = 0;
+
 // End of user configuration area
 
 //-----------------------------------------------------------------------------------------------------

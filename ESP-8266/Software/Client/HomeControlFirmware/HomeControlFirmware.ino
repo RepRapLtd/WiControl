@@ -110,7 +110,7 @@ void setup()
     Serial.print(ssid);   
   }
 
-  // 4s Needed for WiFi stability
+  // 4 Needed for WiFi stability
 
   yield();
   delay(1000);
@@ -554,7 +554,7 @@ Load::Load(const int ln, const int p)
   loadNumber = ln;
   pin = p;
   pinMode(pin, OUTPUT);
-  digitalWrite(pin, 0);
+  digitalWrite(pin, loadOff);
   //next = nxt;
   nextTime = (long)millis() + initialTime;
   iAmOn = false;
@@ -583,7 +583,7 @@ void Load::SecondTick()
        Serial.println(loadNumber);
     }
     blinkPattern = ON;
-    digitalWrite(pin, 1);
+    digitalWrite(pin, loadOn);
     iAmOn = true;
     onSeconds = -1;
   }
@@ -599,7 +599,7 @@ void Load::SecondTick()
        Serial.println(loadNumber);
     }
     blinkPattern = OFF;
-    digitalWrite(pin, 0);
+    digitalWrite(pin, loadOff);
     iAmOn = false;
     offSeconds = -1;
   }      
@@ -733,6 +733,3 @@ void Load::ActIfItsTime()
     
    nextTime = TillNextTime();
 }
-
-
-
