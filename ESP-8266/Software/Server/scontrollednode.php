@@ -70,6 +70,7 @@ $summerTime = false;
 $unixTime = 0 + date_timestamp_get(date_create());
 if (date('I', time()))
 {
+//echo "Summer";
 	$unixTime += 3600;
 	$summerTime = true;
 }
@@ -718,6 +719,10 @@ include 'globals.php';
 	{
 		$fileName = $house . $fileRoot . $mySlaves[$i] . $fileExtension;
 		touch($fileName);
+                if($debug)
+                {
+                     $debugString = $debugString . '<br>Touching file: ' . $fileName .'<br>'; 
+                }
 	}
     }
 }
@@ -799,11 +804,18 @@ include 'globals.php';
 // Gather data...
 
 // Get the query sring from the HTTP request.
-// This should be: "html://...../controllednode.php?building=house&location=where/what-the-device-is&temperature=the-device's-temperature[&debugOn=1]"
+// This should be: " http://currentServer/pageRoot/scontrollednode.php?unit=1&load=0&temperature=20[&debugOn=1]"
 // If the device does not have a temperature it can send -300.0 (impossible, as below abs zero)
 
-parse_str($_SERVER['QUERY_STRING']);
+parse_str($_SERVER['QUERY_STRING'], $output);
 
+$unit = $output['unit'];
+$temperature = $output['temperature'];
+$load = $output['load'];
+if(array_key_exists('debugOn', $output))
+ $debugOn = true;
+else
+ $debugOn = false;
 
 // Check we have a $device/$location and $temperature from the HTTP query...
 
