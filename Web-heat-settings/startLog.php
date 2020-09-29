@@ -1,4 +1,6 @@
 
+application/x-httpd-php startLog.php
+HTML document text
 <html>
 <head><title>startLog</title></head>
 <body><?php
@@ -14,12 +16,16 @@
 // Note to self: don't forget "\n" means newline; '\n' means \n...
 
 
-parse_str($_SERVER['QUERY_STRING']);
+parse_str($_SERVER['QUERY_STRING'], $data);
 
-if(!strlen($building))
+//print_r($data);
+
+if(!strlen($data[building]))
 	exit('Error: no building specified for log.');
 
-$logFileName = dirname( dirname(__FILE__) ) . "/WiFiHeating/". $building . "/Data/Log.dat";
+$logFileName = dirname( dirname(__FILE__) ) . "/WiFiHeating/". $data[building] . "/Data/Log.dat";
+
+//echo($logFileName);
 
 if(file_exists($logFileName))
 {
@@ -27,13 +33,12 @@ if(file_exists($logFileName))
 } else
 {
 	touch($logFileName);
-	echo "Logging started.";
+	echo "<br>Logging started.<br>";
 }
 
 
 ?></body>
 </html>
-
 
 
 
