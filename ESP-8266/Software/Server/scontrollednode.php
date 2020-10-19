@@ -410,7 +410,7 @@ include 'globals.php';
    	if($debug)
     		$debugString = $debugString . 'Updating the log file in ' . $logFileName .'<br>';
         $addingToLogFile = true;
-	$logFileString = date('Y-m-d', $unixTime) . ',' . date('H:i:s', $unixTime);
+	$logFileString = date('Y-m-d', $unixTime) . ',' . date('H:i:s', $unixTime) . ',' . $unixTime;
    }
 }
 
