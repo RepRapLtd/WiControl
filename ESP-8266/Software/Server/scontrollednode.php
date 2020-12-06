@@ -1,3 +1,9 @@
+
+Currently editing: 
+/home/adrianbo/public_html/WiFiHeating/scontrollednode.php
+ Encoding: 
+utf-8
+  Switch to Code Editor    Save
 <html>
 <head><title>scontrollednode</title></head>
 <body><?php
@@ -564,7 +570,7 @@ include 'globals.php';
 			if($iAmOn)
 				$debugString = $debugString . 'active<br>';
 			else
-				$debugString = $debugString . 'inactive (10C)<br>';
+				$debugString = $debugString . 'inactive (5C)<br>';
 
 			if(!($thermometer === false))
 				$debugString = $debugString . 'Temperature from elsewhere: ' . $thermometer . '<br>';
@@ -648,7 +654,7 @@ include 'globals.php';
     // No.  Am I on?
 
     if(!$iAmOn)
-        return 10.0; // Just to prevent pipes freezing in cold weather...
+        return 5.0; // Just to prevent pipes freezing in cold weather...
 
     // Am I boosted?
 
@@ -920,4 +926,5 @@ if($debug)
 
 ?></body>
 </html>
+
 
