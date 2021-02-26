@@ -1,9 +1,3 @@
-
-Currently editing: 
-/home/adrianbo/public_html/WiFiHeating/scontrollednode.php
- Encoding: 
-utf-8
-  Switch to Code Editor    Save
 <html>
 <head><title>scontrollednode</title></head>
 <body><?php
@@ -701,7 +695,7 @@ include 'globals.php';
     	$fileTouched += 3600;
     if($debug)
     	$debugString = $debugString . 'File touched time: ' . date('Y-m-d H:i:s', $fileTouched) . ', Unix time: ' . date('Y-m-d H:i:s', $unixTime) .'<br>';
-    return (($unixTime - $fileTouched) < 120);
+    return (($unixTime - $fileTouched) < 180);
 }
 
 // Touch the .dat files of slave devices that also need to be turned on if 
@@ -750,6 +744,7 @@ include 'globals.php';
     }
     fwrite($fileHandle, $temp . ' ' . $s . ' ' . $act . ' Server time: ' . ServerTime() . "\n");
     fclose($fileHandle);
+    touch($fileName); // Horible datestamp workround
     if($debug)
 	$debugString = $debugString . $device . ' state: temp = ' . $temp . ', set = ' . $s;
 }

@@ -43,7 +43,7 @@
 
 // The unit number must be unique across the whole system
 
-const int unit = 36;
+const int unit = 39;
 
 /*
 
@@ -66,6 +66,44 @@ const int loadOn = 1;
 const int loadOff = 0;
 
 // End of user configuration area
+
+/*
+ * 
+
+0 0 *Sandb* *Boiler* 0.0
+1 0 *Sandb* *Hall* 0.95
+2 0 *Sandb* *Living Room* -5.15
+3 0 *Sandb* *Living Room South* -5.15
+4 0 *Sandb* *Main Bedroom* -3.5
+5 0 *Sandb* *Spare Bedroom* -0.65
+6 0 *Sandb* *Kitchen* 0.8
+7 0 *Sandb* *Porch* 0.0
+8 0 *Sandb* *Small Room* 0.0
+10 0 *Workshop* *Boiler* 0.0
+11 0 *Workshop* *Foyer* 0.0
+12 0 *Workshop* *Tackroom* -7.0
+13 0 *Workshop* *Office* 0.0
+14 0 *Workshop* *Workshop* 1.0
+15 0 *Workshop* *Chemistry Lab* 0.0
+16 0 *Workshop* *Electronics Lab* 3.0
+21 0 *Aandc* *Hall West* 0.0
+23 0 *Aandc* *Hall East* 0.0
+24 0 *Aandc* *UF Pump* 0.0
+24 1 *Aandc* *UF Utility* 0.0
+24 2 *Aandc* *UF Kitchen* 0.0
+25 0 *Aandc* *UF Living* 0.0
+25 1 *Aandc* *UF Dining* 0.0
+26 0 *Aandc* *Kitchen* 0.0
+29 0 *Aandc* *Living Room* 0.0
+31 0 *Aandc* *Dining Room* 0.0
+33 0 *Aandc* *Bathroom* 0.0
+34 0 *Aandc* *Main Bedroom* 0.0
+35 0 *Aandc* *Landing* 0.0
+36 0 *Aandc* *Dressing Room* 0.0
+37 0 *Aandc* *Spare Bedroom* 0.0
+38 0 *Aandc* *Studio* 0.0
+39 0 *Aandc* *Living Room 2* 0.0
+ */
 
 //-----------------------------------------------------------------------------------------------------
 
