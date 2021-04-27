@@ -1,0 +1,47 @@
+
+SiteGround Web Hosting
+Your Chat Transcript on 26/02/2021
+Adrian Bowyer: Hi, I think your cacheing system is not getting the timestamps on files right. I have a group of very small files in my public_html/WiFiHeating/Sandb/Data directory that get overwritten by a PHP script about once a minute. If I flush the cache by hand then the timestamps seem about right. But then they drift, and the times lag behind by five or ten minutes. How do I get accurate timestamps on files?
+Adrian Bowyer: This question is related to website: adrianbowyer.com
+Kostadin T.: Hi Adrian, glad to have you over the Live Chat
+Adrian Bowyer: Hello.
+Kostadin T.: May I know where exactly is the script that overrites the files in question?
+Adrian Bowyer: sure. It's in public_html/WiFiHeating/scontrollednode.php
+Adrian Bowyer: The script gets called automatically by components of my central heating system.
+Kostadin T.: Thanks and I would assume that the files in questions are the ones hall.dat, kitchen.dat and etc. right?
+Adrian Bowyer: Yes - that's right.
+Kostadin T.: Great, allow me a couple of minutes to check the script in question and better help
+Adrian Bowyer: OK - you'll need the correct arguments. Copy and paste:
+Adrian Bowyer: http://adrianbowyer.com/WiFiHeating/scontrollednode.php?unit=1&load=0&temperature=2&debugOn=1
+Kostadin T.: Perfect, thanks!
+Kostadin T.: Thanks for your patience!
+Adrian Bowyer: OK
+Kostadin T.: I just added a couple .htaccess files into the folders which each include cache blocking rules, can you please flush the cache and see if the issue has been resolved?
+Adrian Bowyer: Brilliant! Thanks. I have a problem flushing the cache, as this chat window (even when minimised) blocks the button...
+Kostadin T.: Most welcome! Can you try minimizing the chat by pressing the - button?
+Adrian Bowyer: Ah! I just managed to scroll it out of the way... Give me a minute to see what happens to the timestamps. Meanwhile, can you add the same .htaccess files to WiFiHeating/Workshop/Data
+Kostadin T.: Of course, it was just added. All we are doing is creating a new file called .htaccess and add the following command in it: Header set Cache-Control "no-cache"
+Adrian Bowyer: Cool. I understand. Yes - it seems to be working...
+Kostadin T.: Awesome, I made sure to add the .htaccess in all important folders such as public_html/WiFiHeating/scontrollednode.php where the script is, public_html/WiFiHeating/Sandb and public_html/WiFiHeating/Sandb/Data
+Adrian Bowyer: Thanks. Yes. Can I give you some feedback on the cPanel replacement?
+Kostadin T.: Of course, I will be happy to hear it even if it is negative so that we can improve
+Adrian Bowyer: 1. There seems to be no way to view a file; you can only edit it. 2. The edit window is surrounded by directory tree panels etc, making it very small. How do I get it to go (nearly) full screen? 3. The online chat obscures the edit window and other things, and can't be dragged elsewhere. It also appears in all tabs, which means you can't solve the problem by opening another tab.
+Kostadin T.: May I know what exactly do you mean view a file, so that we can better help? Would you like to execute it or see its content?
+Adrian Bowyer: Just see it's contents. I realise you can see them in an editor, but cPanel had separate View and Edit buttons. The former meant no danger of inadvertantly changing the file.
+Kostadin T.: I understand it and thanks so much for the feedback, you are right as there isn't such a function and the File Manager can't go full screen. I will be sure to forward the suggestions to our developers in order to consider implementing such features
+Adrian Bowyer: Thanks!
+Kostadin T.: In regards to the chat, I understand that because it can't be moved it can sometimes hide some of the content however an easy of resolving it is by either minimizing it by pressing the following button -> url:https://prnt.sc/107ic3j or zoom out your browser
+Kostadin T.: If you tell me which is the browser you are using, I can gladly give you the steps for that
+Adrian Bowyer: Thanks. I know how to do that. Zoom out would work (though I have 68-year-old eyes...).
+Adrian Bowyer: I'm using Brave, incidentally.
+Kostadin T.: Awesome, apart from this is there anything else we can help with?
+Adrian Bowyer: Oh. Also, as part of my experiments with the timestamp problem I turned NGINX Direct delivery off. Should I turn it back on?
+Kostadin T.: This is another caching service we also, while it is a good idea to keep it one in order to improve your website loading speed it might cause the same issue. I would advise temporary turning it on and if you notice the issue occurring again simply disable it
+Adrian Bowyer: OK - will do. Thanks for all your help.
+Kostadin T.: You are more than welcome Adrian, the pleasure was all mine
+Kostadin T.: Thanks for comming over and wish you a fantastic weekend ahead
+Adrian Bowyer: Have a good one yourself. Bye!
+Kostadin T.: Thanks! Cheers
+System: Kostadin T. has ended the chat
+SiteGround · Web Hosting · WordPress Hosting · Joomla Hosting
+
