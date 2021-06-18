@@ -76,7 +76,7 @@ Load load0(0, outputPins[0]);
 Load* loads[MAX_LOADS] = {&load0, &load1, &load2};
 int loadCount = 1;                          // The number of loads this device drives; usually 1; must be 3 or less
 
-Flash* flash = new Flash();
+Flash* flash;
 
 long debugSampleTime = 15000*loadCount;   // Milliseconds between server requests when debugging
 const long debugRandomTime = 2000;    // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
@@ -96,23 +96,46 @@ bool GetConfiguration()
     return false;
   }
 
-  ssid = flash->GetNextTag();
+  char* temp;
+
+  temp = flash->GetNextTag();
+  unit = atoi(temp);
+  if(debug)
+  {
+    Serial.print("\n\nUnit from EEPROM: ");
+    Serial.println(unit);
+  }
+
+  temp = flash->GetNextTag();
+  loadCount = atoi(temp);
+  if(debug)
+  {
+    Serial.print("loadCount from EEPROM: ");
+    Serial.println(loadCount);
+  }
+
+  temp = flash->GetNextTag();
+  int len = strlen(temp);
+  ssid = new char(len + 3);
+  strncpy(ssid, temp, len);
   if(debug)
   {
     Serial.print("ssid from EEPROM: ");
     Serial.println(ssid);
   }
   
-  password = flash->GetNextTag();
+  temp = flash->GetNextTag();
+  len = strlen(temp);
+  password = new char(len + 3);
+  strncpy(password, temp, len);
   if(debug)
   {
     Serial.print("password from EEPROM: ");
     Serial.println(password);
   }
 
-  char* server = flash->GetNextTag();
-  currentServer = String(server);
-  delete[] server;
+  temp = flash->GetNextTag();
+  currentServer = String(temp);
   if(debug)
   {
     Serial.print("server from EEPROM: ");
@@ -157,6 +180,8 @@ void setup()
   Serial.setTimeout(10000);
 
   while(!Serial) yield();
+
+  flash = new Flash();
 
   if(!GetConfiguration())
   {
@@ -546,6 +571,22 @@ void PrintStatus()
   Serial.println(Temperature());
 }
 
+int GetSerialLine(char* buf, int len)
+{
+  char c = ' ';
+  int a = 0;
+  while(c != '\n' && a < len - 1)
+  {
+    while(!Serial.available());
+    c = (char)Serial.read();
+    buf[a] = c;
+    a++;
+  }
+  a--;
+  buf[a] = 0;
+  return a;
+}
+
 void SetConfiguration()
 {
   char buf[MAX_EEPROM];
@@ -570,27 +611,21 @@ void SetConfiguration()
   flash->PutNextTag(buf);
   
   Serial.print("ssid: ");
-  while(!Serial.available());
-  int len = Serial.readBytesUntil('\n', buf, MAX_EEPROM - 3);
-  buf[len - 1] = 0;
+  int len = GetSerialLine(buf, MAX_EEPROM - 3);
   ssid = new char(len + 3);
   strncpy(ssid, buf, len);
   Serial.println(ssid);
   flash->PutNextTag(ssid);
   
   Serial.print("Password: ");
-  while(!Serial.available());
-  len = Serial.readBytesUntil('\n', buf, MAX_EEPROM - 3);
-  buf[len - 1] = 0;
+  len = GetSerialLine(buf, MAX_EEPROM - 3);
   password = new char(len + 3);
   strncpy(password, buf, len);
   Serial.println(password);
   flash->PutNextTag(password);
 
   Serial.print("Server in the form xyz.com: ");
-  while(!Serial.available());
-  len = Serial.readBytesUntil('\n', buf, MAX_EEPROM - 3);
-  buf[len - 1] = 0;
+  len = GetSerialLine(buf, MAX_EEPROM - 3);
   currentServer = String(buf);
   Serial.println(currentServer);
   flash->PutNextTag(currentServer);
@@ -870,7 +905,7 @@ bool Flash::Get()
   }
 
   for(address = 0; address < MAX_EEPROM; address++)
-    buf[address] = char(EEPROM.read(address));
+    buf[address] = (char)EEPROM.read(address);
   
   Reset();
 
