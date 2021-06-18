@@ -1,0 +1,14 @@
+cp empty.kicad_wks ../V3-Design/empty.kicad_wks
+cp fp-info-cache ../V3-Design/fp-info-cache
+cp fp-lib-table ../V3-Design/fp-lib-table
+cp sym-lib-table ../V3-Design/sym-lib-table
+cp wifiboard-v2-cache.lib ../V3-Design/wifiboard-v3-cache.lib
+cp wifiboard-v2-eagle-import.bck ../V3-Design/wifiboard-v3-eagle-import.bck
+cp wifiboard-v2-eagle-import.dcm ../V3-Design/wifiboard-v3-eagle-import.dcm
+cp wifiboard-v2-eagle-import.lib ../V3-Design/wifiboard-v3-eagle-import.lib
+cp wifiboard-v2.kicad_pcb ../V3-Design/wifiboard-v3.kicad_pcb
+cp wifiboard-v2.kicad_pcb-bak ../V3-Design/wifiboard-v3.kicad_pcb-bak
+cp wifiboard-v2.net ../V3-Design/wifiboard-v3.net
+cp wifiboard-v2.pro ../V3-Design/wifiboard-v3.pro
+cp wifiboard-v2.sch ../V3-Design/wifiboard-v3.sch
+cp wifiboard-v2.sch-bak ../V3-Design/wifiboard-v3.sch-bak

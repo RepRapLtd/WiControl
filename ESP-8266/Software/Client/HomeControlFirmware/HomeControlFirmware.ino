@@ -35,10 +35,20 @@
  * something) you must also set USER_LED_PIN to -1 in HomeControlFirmware.h.
  */
 
-#include "HomeControlFirmware.h"
-#include "Load.h"
 
-String currentServer = server;                    // The one in use
+#include "HomeControlFirmware.h"
+
+
+String currentServer = "";                    // The one in use
+
+// Local WiFi
+
+char* ssid = "";
+char* password = "";
+
+// The unit number must be unique across the whole system
+
+int unit = 1;
 
 // This is turned off and on when running by freeing/grounding DEBUG_PIN
 
@@ -57,17 +67,63 @@ String message = "";
 long nextReset;
 long seconds;
 
+
 ESP8266WiFiMulti WiFiMulti;
 
-//int loadsAdded;
-
-//Load load5(5, outputPins[5]);
-//Load load4(4, outputPins[4]);
-//Load load3(3, outputPins[3]);
 Load load2(2, outputPins[2]);
 Load load1(1, outputPins[1]);
 Load load0(0, outputPins[0]);
-Load* loads[MAX_LOADS] = {&load0, &load1, &load2};//, &load3, &load4, &load5};
+Load* loads[MAX_LOADS] = {&load0, &load1, &load2};
+int loadCount = 1;                          // The number of loads this device drives; usually 1; must be 3 or less
+
+Flash* flash = new Flash();
+
+long debugSampleTime = 15000*loadCount;   // Milliseconds between server requests when debugging
+const long debugRandomTime = 2000;    // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
+const long sampleTime = 60000;        // Milliseconds between server requests
+const long randomTime = 5000;         // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
+const long rebootTime = 3600000;      // Milliseconds between resets.
+const long initialTime = 5000;        // Milliseconds to first server request
+
+//*********************************************************************************************************
+
+// Get the configuration from EEPROM
+
+bool GetConfiguration()
+{ 
+  if(!flash->Get())
+  {
+    return false;
+  }
+
+  ssid = flash->GetNextTag();
+  if(debug)
+  {
+    Serial.print("ssid from EEPROM: ");
+    Serial.println(ssid);
+  }
+  
+  password = flash->GetNextTag();
+  if(debug)
+  {
+    Serial.print("password from EEPROM: ");
+    Serial.println(password);
+  }
+
+  char* server = flash->GetNextTag();
+  currentServer = String(server);
+  delete[] server;
+  if(debug)
+  {
+    Serial.print("server from EEPROM: ");
+    Serial.println(currentServer);
+  }
+
+  flash->Reset();
+
+  return true;
+}
+
 
 void setup() 
 {
@@ -98,16 +154,30 @@ void setup()
   randomSeed(analogRead(TEMP_SENSE_PIN));
 
   Serial.begin(BAUD);
+  Serial.setTimeout(10000);
 
   while(!Serial) yield();
+
+  if(!GetConfiguration())
+  {
+    if(debug)
+      Serial.println("\nUse the w command to set the configuration then reboot.");
+    ssid = "";
+    password = "";
+    currentServer = "";    
+  }
+
+  debugSampleTime = 15000*loadCount;
 
   if(debug)
   {
     Serial.print("Unit ");
-    Serial.println(unit);
-    Serial.println("? for status.");
-    Serial.print("WiFi: ");
-    Serial.print(ssid);   
+    Serial.print(unit);
+    Serial.print(", WiFi: ");
+    Serial.print(ssid);
+    Serial.print(", server: ");
+    Serial.print(currentServer);    
+    Serial.println("\n? for status; w to setup.\n");   
   }
 
   // 4 Needed for WiFi stability
@@ -128,26 +198,33 @@ void setup()
 
   yield();
 
+  bool wiFiNotConnected = true;
+
   char wCount = 0;
   do
   {
-    delay(2000);
+    Leds(ON);
+    delay(100);
+    Leds(OFF);
+    delay(1900);
     if(debug)
     {
       Serial.print(".");
-      wCount++;
-      if(!wCount%50)
-      {
-        Serial.println();
-        wCount = 0;  
-      }
     }
+    wCount++;
     yield();
-  } while (WiFiMulti.run() != WL_CONNECTED);
+    wiFiNotConnected = (WiFiMulti.run() != WL_CONNECTED);
+  } while ( (wCount < maxWiFiTries) && wiFiNotConnected);
 
   if(debug)
   {
-    Serial.println("yes");
+    if(wiFiNotConnected)
+    {
+      Serial.println("\nWiFi not connected. Entering main loop anyway.");
+    } else
+    {
+      Serial.println("yes");
+    }
   }
 
   yield();
@@ -244,7 +321,7 @@ void Blink()
       }
       break;
       
-    case FLASH:
+    case FLASHING:
       if(ledState == ON)
       {
         Leds(OFF);
@@ -444,13 +521,13 @@ void PrintStatus()
   Serial.print("Heap: ");
   Serial.println(ESP.getFreeHeap());
 
+  Serial.print("WiFi: ");
   if(WiFiMulti.run() == WL_CONNECTED)
   {
-    Serial.print("WiFi: ");
     Serial.println(ssid);
   } else
   {
-    Serial.println("No con.");
+    Serial.println("no connection.");
   }
 
   unsigned char MAC[6];
@@ -469,12 +546,63 @@ void PrintStatus()
   Serial.println(Temperature());
 }
 
+void SetConfiguration()
+{
+  char buf[MAX_EEPROM];
+  
+  while(Serial.available())
+    Serial.read();
+      
+  Serial.println("\n\nSet the configuration\n");
+
+  Serial.print("Unit number (must be unique across the whole system): ");
+  while(!Serial.available());
+  unit = Serial.parseInt();
+  sprintf(buf, "%d", unit);
+  Serial.println(unit);
+  flash->PutNextTag(buf);
+
+  Serial.print("Number of loads controlled between 1 and 3 (usually 1): ");
+  while(!Serial.available());
+  loadCount = Serial.parseInt();
+  sprintf(buf, "%d", loadCount);
+  Serial.println(loadCount);
+  flash->PutNextTag(buf);
+  
+  Serial.print("ssid: ");
+  while(!Serial.available());
+  int len = Serial.readBytesUntil('\n', buf, MAX_EEPROM - 3);
+  buf[len - 1] = 0;
+  ssid = new char(len + 3);
+  strncpy(ssid, buf, len);
+  Serial.println(ssid);
+  flash->PutNextTag(ssid);
+  
+  Serial.print("Password: ");
+  while(!Serial.available());
+  len = Serial.readBytesUntil('\n', buf, MAX_EEPROM - 3);
+  buf[len - 1] = 0;
+  password = new char(len + 3);
+  strncpy(password, buf, len);
+  Serial.println(password);
+  flash->PutNextTag(password);
+
+  Serial.print("Server in the form xyz.com: ");
+  while(!Serial.available());
+  len = Serial.readBytesUntil('\n', buf, MAX_EEPROM - 3);
+  buf[len - 1] = 0;
+  currentServer = String(buf);
+  Serial.println(currentServer);
+  flash->PutNextTag(currentServer);
+
+  flash->Put();
+}
+
 
 // What it says...
 
 void loop() 
 {
-  //Serial.println("a");
   
   yield();
       
@@ -488,7 +616,6 @@ void loop()
     ESP.restart();
   }
 
-    //Serial.println("b");
 
   // Time for a load to do something?
 
@@ -498,23 +625,17 @@ void loop()
     yield();
   }
 
-    //Serial.println("c");
-
   debug = !digitalRead(DEBUG_PIN);
 
   // Entertain the user
   
   Blink();
 
-    //Serial.println("d");
-
   // Timing by seconds
   
   SecondCounter();
 
-  // Is the user debugging and do they want to see what's going on?
-
-    //Serial.println("e");
+  // Is the user debugging and do they want to see what's going on or change the settings?
   
   if(Serial.available() > 0 && debug)
   {
@@ -523,25 +644,13 @@ void loop()
     {
       PrintStatus();
       c = (char)Serial.read(); // Absorb the newline
-    } 
-  }
-
-  // Add the loads one at a time to avoid watchdog reset.
-
-    //Serial.println("f");
-
-/*  if(loadsAdded < loadCount)
-  {
-    loads = new Load(loadsAdded, outputPins[loadsAdded], loads);
-    if(debug)
-    {
-      Serial.print("Added load ");
-      Serial.println(loadsAdded);
     }
-    yield();
-    loadsAdded++;      
+    if(c == 'w')
+    {
+      c = (char)Serial.read(); // Absorb the newline
+      SetConfiguration();
+    }  
   }
-  */
 
 }
 
@@ -561,8 +670,6 @@ Load::Load(const int ln, const int p)
   onSeconds = -1;
   offSeconds = -1;
 }
-
-//Load* Load::Next() { return next; }
 
 long Load::NextTime() { return nextTime; }
 
@@ -659,7 +766,7 @@ void Load::ActIfItsTime()
   // If the HTTP request will be in 1 second, flash the LEDs...
  
   if((1000 + tim) - nextTime > 0)
-    blinkPattern = FLASH;
+    blinkPattern = FLASHING;
 
   // Is it time to send another request to the server?
   
@@ -732,4 +839,150 @@ void Load::ActIfItsTime()
    }
     
    nextTime = TillNextTime();
+}
+
+//*********************************************************************************************************
+
+// The EEPROM Flash class
+
+Flash::Flash()
+{
+  EEPROM.begin(MAX_EEPROM);
+  Reset();    
+}
+
+void Flash::Reset()
+{
+  writing = false;
+  reading = false;
+  address = 0;   
+}
+
+bool Flash::Get()
+{
+  if(reading || writing)
+  {
+    if(debug)
+    {
+      Serial.println("Flash error - attempt to load while reading or writing tags.");
+    }
+    return false;
+  }
+
+  for(address = 0; address < MAX_EEPROM; address++)
+    buf[address] = char(EEPROM.read(address));
+  
+  Reset();
+
+  char* checkString = GetNextTag();
+
+  if(strncmp(checkString, eCheckString, MAX_EEPROM))
+  {
+    if(debug)
+      Serial.println("Load from flash - checkstring invalid.");
+    Reset();
+    return false;
+  }
+  
+  return true;
+}
+
+void Flash::Put()
+{
+  if(reading)
+  {
+    if(debug)
+    {
+      Serial.println("Flash error - attempt to save while reading tags.");
+    }
+    return;
+  }
+  
+  for(address = 0; address < MAX_EEPROM; address++)
+    EEPROM.write(address, buf[address]);
+  EEPROM.commit();
+  
+  Reset();
+}
+
+char* Flash::GetNextTag()
+{
+  if(writing)
+  {
+    if(debug)
+    {
+      Serial.println("Flash error - attempt to read while writing tags.");
+    }
+    return "";
+  }
+  
+  reading = true;
+  int a = address;
+  while(buf[address] && address < MAX_EEPROM)
+    address++;
+  if(address >= MAX_EEPROM - 1)
+  {
+    if(debug)
+    {
+      Serial.println("Flash error - attempt to read past end of buffer.");
+    }
+  } else
+  {
+    address++;
+  }
+  
+  return &buf[a];    
+}
+
+void Flash::PutNextTag(const char* tag)
+{
+  if(reading)
+  {
+    if(debug)
+    {
+      Serial.println("Flash error - attempt to write while reading tags.");
+    }
+    return;
+  }
+
+  // First one? Yes - first write the checkstring.
+  
+  if(!writing)
+  {
+    Reset();
+    writing = true;
+    PutNextTag(eCheckString);
+  }
+  
+  writing = true;
+  int tp = 0;
+  while(tag[tp] && address < MAX_EEPROM)
+  {
+    buf[address] = tag[tp];
+    address++;
+    tp++;  
+  }
+  if(address >= MAX_EEPROM - 1)
+  {
+    if(debug)
+    {
+      Serial.println("Flash error - attempt to write past end of buffer.");
+    }
+    buf[MAX_EEPROM - 1] = 0;
+  } else
+  {
+    buf[address] = 0;
+    address++;
+  }
+}
+
+void Flash::PutNextTag(const String tag)
+{
+  int len = tag.length();
+  char* temp = new char[len+1];
+  for(int tp = 0; tp < len; tp++)
+    temp[tp] = tag.charAt(tp);
+  temp[len] = 0;
+  PutNextTag(temp);
+  delete[] temp;  
 }

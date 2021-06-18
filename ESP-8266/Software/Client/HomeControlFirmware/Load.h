@@ -16,14 +16,15 @@
 #ifndef LOAD
 #define LOAD
 
+const int loadOn = 1;
+const int loadOff = 0;
+
 class Load 
 {
   public:
   
   Load(const int ln, const int p, Load* nxt);
   Load(const int ln, const int p);
-  //Load* Next();
-  //void SetNext(Load* n);
   long NextTime();
   void SecondTick();
   int LoadNumber();
@@ -39,13 +40,7 @@ class Load
   bool iAmOn;
   long onSeconds;
   long offSeconds;
-  //Load* next;
 };
-
-//inline void Load::SetNext(Load* n)
-//{
-//  next = n;
-//}
 
 
 #endif

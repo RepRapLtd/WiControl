@@ -37,13 +37,12 @@
 
 #include <ESP8266HTTPClient.h>
 
-//-----------------------------------------------------------------------------------------------------
+#include <EEPROM.h>
 
-// User configuration area
+#include "Load.h"
+#include "Flash.h"
 
-// The unit number must be unique across the whole system
-
-const int unit = 39;
+#include "local_wifi.h" // Separated to prevent passwords appearing on Github
 
 /*
 
@@ -57,15 +56,8 @@ const String backupServer = "192.168.1.100";  // Backup server IP address/URL
 
 */
 
-#include "local_wifi.h" // Separated to prevent passwords appearing on Github
 
-const String page = "scontrollednode.php";        // The PHP script that interprets the heating tables and decides between ON or OFF
-const int loadCount = 1;                          // The number of loads this device drives; usually 1; must be 5 or less
 
-const int loadOn = 1;
-const int loadOff = 0;
-
-// End of user configuration area
 
 /*
  * 
@@ -163,7 +155,8 @@ const int loadOff = 0;
 #define MAX_LOADS 3
 #define ESP8266_LED_PIN LED_BUILTIN // GPIO2/D9 ESP8266 internal LED; D4 on Wemos D1 R2
 #define USER_LED_PIN D6             // GPIO12 - Front panel LED
-//#define USER_LED_PIN -1             // GPIO12 - Front panel LED
+//#define USER_LED_PIN D4             // Sally's new PCB.
+//#define USER_LED_PIN -1           // GPIO12 - Front panel LED
 #define OUTPUT_PIN_0 D3             // GPIO5 This is the switched MOSFET/relay
 #define OUTPUT_PIN_1 D2             // GPIO16
 #define OUTPUT_PIN_2 D7             // GPIO13
@@ -177,19 +170,20 @@ const int loadOff = 0;
 #define MAX_AD_VOLTAGE 1.0          // The voltage that gives full-range (i.e. AD_RANGE - see below) on the A->D converter
 #define DEBUG_PIN D5                // D5 Ground this pin to turn debugging on
 
+
 const int outputPins[MAX_LOADS] = {OUTPUT_PIN_0, OUTPUT_PIN_1, OUTPUT_PIN_2};//, OUTPUT_PIN_3, OUTPUT_PIN_4, OUTPUT_PIN_5};
 
-const long debugSampleTime = 15000*loadCount;   // Milliseconds between server requests when debugging
-const long debugRandomTime = 2000;    // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
-const long sampleTime = 60000;        // Milliseconds between server requests
-const long randomTime = 5000;         // +/- Milliseconds (must be < sampleTime) used to randomise requests to reduce clashes
-const long rebootTime = 3600000;      // Milliseconds between resets.
-const long initialTime = 5000;        // Milliseconds to first server request
+const int maxWiFiTries = 10;          // How many times to try to connect before giving up
 
 //#define BAUD 115200                   // Serial comms speed
 #define BAUD 9600
 
-const int version = 7;
+// Where to go on the server
+
+const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
+const String page = "scontrollednode.php";        // The PHP script that interprets the heating tables and decides between ON or OFF
+
+const int version = 8;
 
 // Bits of HTML we need to know (both cases of these are tried in atempting matches)
 
@@ -210,7 +204,7 @@ const String htmlBreak = "<br>";
 #define ON 0
 #define DOT 2
 #define DASH 3
-#define FLASH 4
+#define FLASHING 4
 const int dotOn = 100;
 const int dotOff = 500;
 const int dashOn = 500;
