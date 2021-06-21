@@ -43,8 +43,8 @@ String currentServer = "";                    // The one in use
 
 // Local WiFi
 
-char* ssid = "";
-char* password = "";
+char* ssid = noText;
+char* password = noText;
 
 // The unit number must be unique across the whole system
 
@@ -60,7 +60,7 @@ byte ledState;
 
 // Text and messages
 
-String message = "";
+String message = noText;
 
 // Timing and resets
 
@@ -116,8 +116,9 @@ bool GetConfiguration()
 
   temp = flash->GetNextTag();
   int len = strlen(temp);
-  ssid = new char(len + 3);
+  ssid = new char[len + 3];
   strncpy(ssid, temp, len);
+  ssid[len] = 0;
   if(debug)
   {
     Serial.print("ssid from EEPROM: ");
@@ -126,8 +127,9 @@ bool GetConfiguration()
   
   temp = flash->GetNextTag();
   len = strlen(temp);
-  password = new char(len + 3);
+  password = new char[len + 3];
   strncpy(password, temp, len);
+  password[len] = 0;
   if(debug)
   {
     Serial.print("password from EEPROM: ");
@@ -187,9 +189,9 @@ void setup()
   {
     if(debug)
       Serial.println("\nUse the w command to set the configuration then reboot.");
-    ssid = "";
-    password = "";
-    currentServer = "";    
+    ssid = noText;
+    password = noText;
+    currentServer = noText;    
   }
 
   debugSampleTime = 15000*loadCount;
@@ -254,29 +256,10 @@ void setup()
 
   yield();
 
-  // Set up the chain of loads (loadCount is only 1 usually).  
-
-//  loads = (Load*)NULL;
-//  loadsAdded = 0;
-
   PrintStatus();
 
   yield();
 
-
-/*  int i = 1;
-  Load* l = loads;
-  Load* nextL;
-  while(l)
-  {
-    nextL = l->Next();
-    if(i >= loadCount)
-      l->SetNext((Load*)NULL);
-    i++;
-    l = nextL;
-    yield();          
-  }
-*/
   // Set up timings and LED behaviour
   
   blinkPattern = OFF;
@@ -444,9 +427,12 @@ void PrintWebPageReturned(int bod)
     temp.toUpperCase();
   message.replace(temp, "\n");
 
-  Serial.println("\n--");
-  Serial.println(message);
-  Serial.println("--\n");  
+  if(debug)
+  {
+    Serial.println("\n--");
+    Serial.println(message);
+    Serial.println("--\n");
+  }  
 }
 
 // This gets called once a second and
@@ -559,7 +545,7 @@ void PrintStatus()
 
   WiFi.macAddress(MAC);
   Serial.print("MAC and IP: ");
-  for(char i = 0; i < 6; i++)
+  for(int i = 0; i < 6; i++)
   {
     Serial.print(MAC[i], HEX);
     if(i < 5) Serial.print(":");
@@ -587,6 +573,8 @@ int GetSerialLine(char* buf, int len)
   return a;
 }
 
+// NB - calling this repeatedly will result in a memory leak.
+
 void SetConfiguration()
 {
   char buf[MAX_EEPROM];
@@ -600,35 +588,42 @@ void SetConfiguration()
   while(!Serial.available());
   unit = Serial.parseInt();
   sprintf(buf, "%d", unit);
-  Serial.println(unit);
   flash->PutNextTag(buf);
+  Serial.println(buf);
 
   Serial.print("Number of loads controlled between 1 and 3 (usually 1): ");
   while(!Serial.available());
   loadCount = Serial.parseInt();
   sprintf(buf, "%d", loadCount);
-  Serial.println(loadCount);
   flash->PutNextTag(buf);
+  Serial.println(buf);
+
+  Serial.print("dummy: ");
+  int len = GetSerialLine(buf, MAX_EEPROM - 3);
+  Serial.println(buf);
   
   Serial.print("ssid: ");
-  int len = GetSerialLine(buf, MAX_EEPROM - 3);
-  ssid = new char(len + 3);
+  len = GetSerialLine(buf, MAX_EEPROM - 3);
+  ssid = new char[len + 3];
   strncpy(ssid, buf, len);
-  Serial.println(ssid);
+  ssid[len] = 0;
   flash->PutNextTag(ssid);
+  Serial.println(ssid);
+  
   
   Serial.print("Password: ");
   len = GetSerialLine(buf, MAX_EEPROM - 3);
-  password = new char(len + 3);
+  password = new char[len + 3];
   strncpy(password, buf, len);
-  Serial.println(password);
+  password[len] = 0;
   flash->PutNextTag(password);
+  Serial.println(password);
 
   Serial.print("Server in the form xyz.com: ");
   len = GetSerialLine(buf, MAX_EEPROM - 3);
   currentServer = String(buf);
-  Serial.println(currentServer);
   flash->PutNextTag(currentServer);
+  Serial.println(currentServer);
 
   flash->Put();
 }
@@ -675,16 +670,24 @@ void loop()
   if(Serial.available() > 0 && debug)
   {
     char c = (char)Serial.read();
-    if(c == '?')
+    switch(c)
     {
-      PrintStatus();
-      c = (char)Serial.read(); // Absorb the newline
+      case '\n':
+        break;
+
+      case '?':
+        PrintStatus();
+        break;
+
+      case 'w':
+        SetConfiguration();
+        break;
+
+      default:
+        Serial.print("Unrecognised command: ");
+        Serial.println(c);
+        break;      
     }
-    if(c == 'w')
-    {
-      c = (char)Serial.read(); // Absorb the newline
-      SetConfiguration();
-    }  
   }
 
 }
@@ -948,7 +951,7 @@ char* Flash::GetNextTag()
     {
       Serial.println("Flash error - attempt to read while writing tags.");
     }
-    return "";
+    return noText;
   }
   
   reading = true;

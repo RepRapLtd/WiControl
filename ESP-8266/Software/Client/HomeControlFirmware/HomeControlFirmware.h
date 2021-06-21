@@ -154,8 +154,8 @@ const String backupServer = "192.168.1.100";  // Backup server IP address/URL
 
 #define MAX_LOADS 3
 #define ESP8266_LED_PIN LED_BUILTIN // GPIO2/D9 ESP8266 internal LED; D4 on Wemos D1 R2
-#define USER_LED_PIN D6             // GPIO12 - Front panel LED
-//#define USER_LED_PIN D4             // Sally's new PCB.
+//#define USER_LED_PIN D6             // GPIO12 - Front panel LED
+#define USER_LED_PIN D4             // Sally's new PCB.
 //#define USER_LED_PIN -1           // GPIO12 - Front panel LED
 #define OUTPUT_PIN_0 D3             // GPIO5 This is the switched MOSFET/relay
 #define OUTPUT_PIN_1 D2             // GPIO16
@@ -182,6 +182,7 @@ const int maxWiFiTries = 10;          // How many times to try to connect before
 
 const String pageRoot = "/WiFiHeating/";          // Where the .php script is on the server
 const String page = "scontrollednode.php";        // The PHP script that interprets the heating tables and decides between ON or OFF
+char noText[2] = "";                              // Empty string
 
 const int version = 8;
 
