@@ -70,6 +70,8 @@ long seconds;
 
 ESP8266WiFiMulti WiFiMulti;
 
+WiFiClient wifiClient;
+
 Load load2(2, outputPins[2]);
 Load load1(1, outputPins[1]);
 Load load0(0, outputPins[0]);
@@ -833,7 +835,7 @@ void Load::ActIfItsTime()
        Serial.println(message);
      }
      
-     http.begin(message);
+     http.begin(wifiClient, message);
         
      // start connection and send HTTP header
         
