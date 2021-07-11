@@ -96,6 +96,21 @@ bool GetConfiguration()
   if(!flash->Get())
   {
     return false;
+  } else
+  {
+    if(debug)
+    {
+      while(Serial.available())
+        Serial.read();
+      Serial.print("\n\nType 1 to erase flash memory, 0 not to: ");
+      while(!Serial.available());
+      int erase = Serial.parseInt();
+      if(erase)
+      {
+        flash->Erase();
+        return false;
+      }
+    }
   }
 
   char* temp;
@@ -943,6 +958,17 @@ void Flash::Put()
   EEPROM.commit();
   
   Reset();
+}
+
+void Flash::Erase()
+{
+  for(address = 0; address < MAX_EEPROM; address++)
+  {
+    buf[address] = 0;
+    EEPROM.write(address, buf[address]);
+  }
+  EEPROM.commit();
+  Reset();  
 }
 
 char* Flash::GetNextTag()

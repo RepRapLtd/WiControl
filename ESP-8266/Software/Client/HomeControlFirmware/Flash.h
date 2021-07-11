@@ -20,6 +20,7 @@ public:
   char* GetNextTag();
   void PutNextTag(const char* tag);
   void PutNextTag(const String tag);
+  void Erase();
 
 private:
   bool writing;
