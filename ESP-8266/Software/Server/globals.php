@@ -3,5 +3,5 @@
 	$boostTime, $times, $temps, $profileText, $unixTime, $delimiter, $timeDelimiter, $thermometer, 
 	$summerTime, $onDelay, $offDelay, $creatingTemperatureFile, $temperatureFileContents, $temperatureFileName,
         $temperatureInterval, $logFileName, $addingToLogFile, $logFileString, $loggingInterval, $units, $building, $location, 
-        $secondsInADay, $temperatureOffset, $errorString;
+        $secondsInADay, $temperatureOffset, $errorString, $hysterisis, $allreadyOn;
 ?>

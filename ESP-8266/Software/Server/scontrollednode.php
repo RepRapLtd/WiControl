@@ -1,5 +1,5 @@
 <html>
-<head><title>scontrollednode</title></head>
+<head><title>scontrollednode-test</title></head>
 <body><?php
 
 /*
@@ -727,6 +727,45 @@ include 'globals.php';
     }
 }
 
+// Get the last thing I did
+
+function GetPreviousAction($house, $device)
+{
+include 'globals.php';
+
+    $fileName = $house . $fileRoot . $device . $fileExtension;
+	
+	// Get the current file to see if the device is already on
+
+	$myOldDatFile = file_get_contents($fileName);
+    if(!NextLineNoCheck($myOldDatFile, $line))
+	{
+		$errorString = $errorString . 'ERROR: Can not get status from '.$fileName.'<br>';
+	}
+	
+    if(!NextNumber($line, $n1))
+	{
+		$n1 = -1;
+		$errorString = $errorString .'ERROR: SaveTemperature() - line does not start with a number: '.$line1.'<br>';
+	}
+	if(!NextNumber($line, $n2))
+	{
+		$n2 = -1;
+		$errorString = $errorString .'ERROR: SaveTemperature() - line does not start with two numbers: '.$line1.'<br>';
+	}
+	//echo $line;
+	$myState = substr($line, 0, 2);
+
+	$allreadyOn = (strcmp($myState, "ON") === 0);
+	if($debug)
+	{
+	  $debugString = $debugString . '<br>My previous state was: ';
+	  if($allreadyOn)
+	   $debugString = $debugString .'ON'.'<br>';
+	  else
+	   $debugString = $debugString .'OFF'.'<br>';
+	}
+}
 
 // Save the status of a master device in its .dat file.
 
@@ -737,6 +776,9 @@ include 'globals.php';
     //MaybeUpdateLog($house, $device, $act, $temp, $s);
 
     $fileName = $house . $fileRoot . $device . $fileExtension;
+	
+	// Now write the new state to it
+
     $fileHandle = fopen($fileName, 'w');
     if(!$fileHandle)
     {
@@ -793,6 +835,11 @@ include 'globals.php';
 			$temperatureOffset = 0;
 			$errorString = $errorString .'ERROR: ReadUnit() - line does not have a temperature offset: '.$line1.'<br>';
 		}
+		if(!NextNumber($line, $hysterisis))
+		{
+			$hysterisis = 0;
+			$errorString = $errorString .'ERROR: ReadUnit() - line does not have a hysterisis: '.$line1.'<br>';
+		}
 		$temperatureOffset = 0 + $temperatureOffset;
 		return;
 	}
@@ -828,6 +875,8 @@ if(!strlen($unit) || !strlen($temperature) || !strlen($load))
 $debug = !empty($debugOn);
 
 ReadUnit($unit, $load);
+if($debug)
+	     $debugString = $debugString . ' My hysterisis is ' . $hysterisis . '.<br>';
 
 $temperature = $temperature+$temperatureOffset;
 
@@ -867,7 +916,16 @@ if($set < -280.0)
 {
 	// $location is a master device
 
-	if($set > $t)
+	GetPreviousAction($building, $location);
+
+	if($allreadyOn)
+	 $setH = $set + $hysterisis*0.5;
+	else
+	 $setH = $set - $hysterisis*0.5;
+
+	//echo "t: ".$t." setH: ".$setH."<br>";
+
+	if($t < $setH)
 	{
 	    TurnOnDependentList($building, $location);
 	    if($iAmMyOwnSlave)
@@ -883,10 +941,6 @@ if($action == 'ON')
  $action = $action . ' ' . $onDelay;
 else
  $action = $action . ' ' . $offDelay; 	
-
-// Tell the device what to do as the first line of the HTML <body> returned
-
-echo $action;
 
 // Write the list of temperatures file if we are creating it.
 
@@ -909,6 +963,10 @@ if($addingToLogFile)
     if($debug)
 	$debugString = $debugString . '<br>Log file appended to.<br>';
 }
+
+// Tell the device what to do as the first line of the HTML <body> returned
+
+echo $action;
 
 // Send helpful info in the HTML <body> as well if we are debugging
 
