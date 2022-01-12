@@ -70,6 +70,8 @@ long seconds;
 
 ESP8266WiFiMulti WiFiMulti;
 
+WiFiClient wifiClient;
+
 Load load2(2, outputPins[2]);
 Load load1(1, outputPins[1]);
 Load load0(0, outputPins[0]);
@@ -94,6 +96,21 @@ bool GetConfiguration()
   if(!flash->Get())
   {
     return false;
+  } else
+  {
+    if(debug)
+    {
+      while(Serial.available())
+        Serial.read();
+      Serial.print("\n\nType 1 to erase flash memory, 0 not to: ");
+      while(!Serial.available());
+      int erase = Serial.parseInt();
+      if(erase)
+      {
+        flash->Erase();
+        return false;
+      }
+    }
   }
 
   char* temp;
@@ -833,7 +850,7 @@ void Load::ActIfItsTime()
        Serial.println(message);
      }
      
-     http.begin(message);
+     http.begin(wifiClient, message);
         
      // start connection and send HTTP header
         
@@ -941,6 +958,17 @@ void Flash::Put()
   EEPROM.commit();
   
   Reset();
+}
+
+void Flash::Erase()
+{
+  for(address = 0; address < MAX_EEPROM; address++)
+  {
+    buf[address] = 0;
+    EEPROM.write(address, buf[address]);
+  }
+  EEPROM.commit();
+  Reset();  
 }
 
 char* Flash::GetNextTag()
