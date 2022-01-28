@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name wifiboard-v2-eagle-import)(type Legacy)(uri ${KIPRJMOD}/wifiboard-v2-eagle-import.lib)(options "")(descr ""))
+  (lib (name wifiboard-v3-rescue)(type Legacy)(uri ${KIPRJMOD}/wifiboard-v3-rescue.lib)(options "")(descr ""))
+)
