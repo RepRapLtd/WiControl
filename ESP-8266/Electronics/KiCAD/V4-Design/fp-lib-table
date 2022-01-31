@@ -1,3 +1,0 @@
-(fp_lib_table
-  (lib (name wifiboard-v2)(type KiCad)(uri "$(KIPRJMOD)/wifiboard-v2.pretty")(options "")(descr ""))
-)
