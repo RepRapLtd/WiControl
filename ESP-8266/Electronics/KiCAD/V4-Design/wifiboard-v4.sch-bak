@@ -601,8 +601,6 @@ F 3 "" H 7475 4400 50  0001 C CNN
 	1    7475 4400
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7475 4275 7475 4325
 Connection ~ 5675 5100
 Wire Wire Line
 	6050 4600 6050 4075
@@ -664,8 +662,6 @@ F 3 "~" H 7475 3225 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	7475 3750 7475 3875
-Wire Wire Line
 	7475 3450 7475 3375
 $Comp
 L power:+12V #PWR?
@@ -678,35 +674,44 @@ F 3 "" H 7475 2975 50  0001 C CNN
 	1    7475 2975
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7475 2975 7475 3025
 $Comp
 L Connector:Conn_01x03_Male J?
 U 1 1 620106EE
-P 8975 3850
-F 0 "J?" H 8947 3782 50  0000 R CNN
-F 1 "Conn_01x03_Male" H 8947 3873 50  0000 R CNN
-F 2 "" H 8975 3850 50  0001 C CNN
-F 3 "~" H 8975 3850 50  0001 C CNN
-	1    8975 3850
+P 8200 3850
+F 0 "J?" H 8172 3782 50  0000 R CNN
+F 1 "OUT" H 8172 3873 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 8200 3850 50  0001 C CNN
+F 3 "~" H 8200 3850 50  0001 C CNN
+	1    8200 3850
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	7475 3025 8775 3025
-Wire Wire Line
-	8775 3025 8775 3750
-Connection ~ 7475 3025
-Wire Wire Line
-	7475 3025 7475 3075
-Wire Wire Line
-	7475 4325 8775 4325
-Wire Wire Line
-	8775 4325 8775 3950
-Connection ~ 7475 4325
-Wire Wire Line
-	7475 4325 7475 4400
+	8000 4325 8000 3950
 Wire Wire Line
 	6075 3600 6075 3700
 Wire Wire Line
 	5675 3600 5675 4400
+Wire Wire Line
+	7475 3750 7475 3850
+Wire Wire Line
+	8000 3025 8000 3750
+Wire Wire Line
+	7475 2975 7475 3025
+Wire Wire Line
+	7475 4275 7475 4325
+Wire Wire Line
+	8000 3025 7475 3025
+Connection ~ 7475 3025
+Wire Wire Line
+	7475 3025 7475 3075
+Wire Wire Line
+	8000 3850 7475 3850
+Connection ~ 7475 3850
+Wire Wire Line
+	7475 3850 7475 3875
+Wire Wire Line
+	8000 4325 7475 4325
+Connection ~ 7475 4325
+Wire Wire Line
+	7475 4325 7475 4400
 $EndSCHEMATC

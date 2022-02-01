@@ -601,8 +601,6 @@ F 3 "" H 7475 4400 50  0001 C CNN
 	1    7475 4400
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7475 4275 7475 4325
 Connection ~ 5675 5100
 Wire Wire Line
 	6050 4600 6050 4075
@@ -676,71 +674,109 @@ F 3 "" H 7475 2975 50  0001 C CNN
 	1    7475 2975
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7475 2975 7475 3025
 $Comp
 L Connector:Conn_01x03_Male J?
 U 1 1 620106EE
-P 8975 3850
-F 0 "J?" H 8947 3782 50  0000 R CNN
-F 1 "Conn_01x03_Male" H 8947 3873 50  0000 R CNN
-F 2 "" H 8975 3850 50  0001 C CNN
-F 3 "~" H 8975 3850 50  0001 C CNN
-	1    8975 3850
+P 8200 3850
+F 0 "J?" H 8172 3782 50  0000 R CNN
+F 1 "OUT" H 8172 3873 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 8200 3850 50  0001 C CNN
+F 3 "~" H 8200 3850 50  0001 C CNN
+	1    8200 3850
 	-1   0    0    1   
 $EndComp
-Connection ~ 7475 3025
 Wire Wire Line
-	7475 3025 7475 3075
-Wire Wire Line
-	7475 4325 8775 4325
-Wire Wire Line
-	8775 4325 8775 3950
-Connection ~ 7475 4325
-Wire Wire Line
-	7475 4325 7475 4400
+	8000 4325 8000 3950
 Wire Wire Line
 	6075 3600 6075 3700
 Wire Wire Line
 	5675 3600 5675 4400
 Wire Wire Line
-	7475 3025 7825 3025
+	7475 3750 7475 3850
 Wire Wire Line
-	8775 3025 8775 3450
+	8000 3025 8000 3475
 Wire Wire Line
-	7475 3750 7475 3800
+	7475 2975 7475 3025
+Wire Wire Line
+	7475 4275 7475 4325
+Wire Wire Line
+	8000 3025 7475 3025
+Connection ~ 7475 3025
+Wire Wire Line
+	7475 3025 7475 3075
+Wire Wire Line
+	8000 3850 7775 3850
+Connection ~ 7475 3850
+Wire Wire Line
+	7475 3850 7475 3875
+Wire Wire Line
+	8000 4325 7475 4325
+Connection ~ 7475 4325
+Wire Wire Line
+	7475 4325 7475 4400
 $Comp
-L Relay:SILxx-1Axx-71x K?
-U 1 1 6204C4EE
-P 8275 3650
-F 0 "K?" V 7708 3650 50  0000 C CNN
-F 1 "SIL12-1A72-71L" V 7799 3650 50  0000 C CNN
-F 2 "Relay_THT:Relay_SPST_StandexMeder_SIL_Form1A" H 8625 3600 50  0001 L CNN
-F 3 "https://standexelectronics.com/wp-content/uploads/datasheet_reed_relay_SIL.pdf" H 8275 3650 50  0001 C CNN
-	1    8275 3650
-	0    1    1    0   
+L cpc1966y:CPC1966Y K?
+U 1 1 61FAC409
+P 8275 3075
+F 0 "K?" V 8813 2647 50  0000 R CNN
+F 1 "CPC1966Y" V 8722 2647 50  0000 R CNN
+F 2 "reprapltd-kicad:CPC1966Y" H 9325 3175 50  0001 L CNN
+F 3 "https://datasheet.datasheetarchive.com/originals/distributors/Datasheets_SAMA/4bd38bcd53ac06cbf93d43ee226943fd.pdf" H 9325 3075 50  0001 L CNN
+F 4 "IXYS 3 A rms SPNO Solid State Relay, Zero Crossing, PCB Mount SCR, 240 V ac Maximum Load" H 9325 2975 50  0001 L CNN "Description"
+F 5 "10" H 9325 2875 50  0001 L CNN "Height"
+F 6 "LITTELFUSE" H 9325 2775 50  0001 L CNN "Manufacturer_Name"
+F 7 "CPC1966Y" H 9325 2675 50  0001 L CNN "Manufacturer_Part_Number"
+F 8 "849-CPC1966Y" H 9325 2575 50  0001 L CNN "Mouser Part Number"
+F 9 "https://www.mouser.co.uk/ProductDetail/IXYS-Integrated-Circuits/CPC1966Y?qs=8uBHJDVwVqxNfAOiNv29Iw%3D%3D" H 9325 2475 50  0001 L CNN "Mouser Price/Stock"
+F 10 "CPC1966Y" H 9325 2375 50  0001 L CNN "Arrow Part Number"
+F 11 "https://www.arrow.com/en/products/cpc1966y/ixys" H 9325 2275 50  0001 L CNN "Arrow Price/Stock"
+	1    8275 3075
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 61FAD78C
+P 8375 3325
+F 0 "R?" H 8445 3371 50  0000 L CNN
+F 1 "1K" H 8445 3280 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 8305 3325 50  0001 C CNN
+F 3 "~" H 8375 3325 50  0001 C CNN
+	1    8375 3325
+	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8575 3450 8775 3450
-Connection ~ 8775 3450
+	8375 3075 8375 3175
 Wire Wire Line
-	8775 3450 8775 3750
+	8375 3475 8000 3475
+Connection ~ 8000 3475
 Wire Wire Line
-	7975 3450 7675 3450
+	8000 3475 8000 3750
 Wire Wire Line
-	7675 3450 7675 3800
+	8275 3075 8275 3250
 Wire Wire Line
-	7675 3800 7475 3800
-Connection ~ 7475 3800
+	8275 3250 7775 3250
 Wire Wire Line
-	7475 3800 7475 3875
+	7775 3250 7775 3850
+Connection ~ 7775 3850
 Wire Wire Line
-	7975 3850 7825 3850
+	7775 3850 7475 3850
+$Comp
+L Connector:Screw_Terminal_01x02 J?
+U 1 1 61FBF554
+P 9275 3125
+F 0 "J?" H 9355 3117 50  0000 L CNN
+F 1 "mains" H 9355 3026 50  0000 L CNN
+F 2 "TerminalBlock:TerminalBlock_bornier-2_P5.08mm" H 9275 3125 50  0001 C CNN
+F 3 "~" H 9275 3125 50  0001 C CNN
+	1    9275 3125
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
-	7825 3850 7825 3025
-Connection ~ 7825 3025
+	9075 3125 8575 3125
 Wire Wire Line
-	7825 3025 8775 3025
+	8575 3125 8575 3075
 Wire Wire Line
-	8575 3850 8775 3850
+	8475 3075 8475 3225
+Wire Wire Line
+	8475 3225 9075 3225
 $EndSCHEMATC

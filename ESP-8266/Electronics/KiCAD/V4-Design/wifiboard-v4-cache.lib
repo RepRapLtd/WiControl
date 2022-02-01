@@ -140,6 +140,29 @@ X Pin_7 7 200 -300 150 L 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
+# Connector_Screw_Terminal_01x02
+#
+DEF Connector_Screw_Terminal_01x02 J 0 40 Y N 1 F N
+F0 "J" 0 100 50 H V C CNN
+F1 "Connector_Screw_Terminal_01x02" 0 -200 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ TerminalBlock*:*
+$ENDFPLIST
+DRAW
+C 0 -100 25 1 1 6 N
+C 0 0 25 1 1 6 N
+S -50 50 50 -150 1 1 10 f
+P 2 1 1 6 -21 -87 13 -120 N
+P 2 1 1 6 -21 13 13 -20 N
+P 2 1 1 6 -14 -80 20 -113 N
+P 2 1 1 6 -14 20 20 -13 N
+X Pin_1 1 -200 0 150 R 50 50 1 1 P
+X Pin_2 2 -200 -100 150 R 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
 # Device_C
 #
 DEF Device_C C 0 10 N Y 1 F N
@@ -218,37 +241,6 @@ X ~ 2 0 -150 50 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Relay_SILxx-1Axx-71x
-#
-DEF Relay_SILxx-1Axx-71x K 0 20 Y Y 1 F N
-F0 "K" 350 150 50 H V L CNN
-F1 "Relay_SILxx-1Axx-71x" 350 50 50 H V L CNN
-F2 "Relay_THT:Relay_SPST_StandexMeder_SIL_Form1A" 350 -50 50 H I L CNN
-F3 "" 0 0 50 H I C CNN
-$FPLIST
- Relay*SPST*StandexMeder*SIL*Form1A*
-$ENDFPLIST
-DRAW
-S -400 200 300 -200 0 1 10 f
-S -325 75 -75 -75 0 1 10 N
-P 4 0 0 0 200 200 200 100 175 125 200 150 N
-P 2 0 1 10 -300 -75 -100 75 N
-P 2 0 1 0 -200 -200 -200 -75 N
-P 2 0 1 0 -200 200 -200 75 N
-P 2 0 1 10 -75 0 -50 0 N
-P 2 0 1 10 -25 0 0 0 N
-P 2 0 1 10 25 0 50 0 N
-P 2 0 1 10 75 0 100 0 N
-P 2 0 1 10 125 0 150 0 N
-P 2 0 1 20 200 -100 125 150 N
-P 2 0 1 0 200 -100 200 -200 N
-X ~ 1 200 -300 100 U 50 50 1 1 P
-X ~ 3 -200 -300 100 U 50 50 1 1 P
-X ~ 5 -200 300 100 D 50 50 1 1 P
-X ~ 7 200 300 100 D 50 50 1 1 P
-ENDDRAW
-ENDDEF
-#
 # Switch_SW_Push
 #
 DEF Switch_SW_Push SW 0 40 N N 1 F N
@@ -321,6 +313,30 @@ P 2 1 0 0 300 100 -300 100 N
 X VI 1 -400 0 100 R 40 40 1 1 I
 X VO 2 400 0 100 L 40 40 1 1 P
 X GND 3 0 -300 100 U 40 40 1 1 P
+ENDDRAW
+ENDDEF
+#
+# cpc1966y_CPC1966Y
+#
+DEF cpc1966y_CPC1966Y K 0 30 Y Y 1 F N
+F0 "K" 1050 300 50 H V L CNN
+F1 "cpc1966y_CPC1966Y" 1050 200 50 H V L CNN
+F2 "CPC1966Y" 1050 100 50 H I L CNN
+F3 "https://datasheet.datasheetarchive.com/originals/distributors/Datasheets_SAMA/4bd38bcd53ac06cbf93d43ee226943fd.pdf" 1050 0 50 H I L CNN
+F4 "IXYS 3 A rms SPNO Solid State Relay, Zero Crossing, PCB Mount SCR, 240 V ac Maximum Load" 1050 -100 50 H I L CNN "Description"
+F5 "10" 1050 -200 50 H I L CNN "Height"
+F6 "LITTELFUSE" 1050 -300 50 H I L CNN "Manufacturer_Name"
+F7 "CPC1966Y" 1050 -400 50 H I L CNN "Manufacturer_Part_Number"
+F8 "849-CPC1966Y" 1050 -500 50 H I L CNN "Mouser Part Number"
+F9 "https://www.mouser.co.uk/ProductDetail/IXYS-Integrated-Circuits/CPC1966Y?qs=8uBHJDVwVqxNfAOiNv29Iw%3D%3D" 1050 -600 50 H I L CNN "Mouser Price/Stock"
+F10 "CPC1966Y" 1050 -700 50 H I L CNN "Arrow Part Number"
+F11 "https://www.arrow.com/en/products/cpc1966y/ixys" 1050 -800 50 H I L CNN "Arrow Price/Stock"
+DRAW
+P 5 0 1 6 200 100 1000 100 1000 -400 200 -400 200 100 N
+X -LED 1 0 0 200 R 50 50 0 0 P
+X +LED 2 0 -100 200 R 50 50 0 0 P
+X AC_LOAD_1 3 0 -200 200 R 50 50 0 0 P
+X AC_LOAD_2 4 0 -300 200 R 50 50 0 0 P
 ENDDRAW
 ENDDEF
 #
