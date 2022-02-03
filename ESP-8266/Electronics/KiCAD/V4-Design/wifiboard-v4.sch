@@ -311,17 +311,6 @@ Connection ~ 4000 3575
 Wire Wire Line
 	4000 3575 4000 3600
 $Comp
-L adafruit-new:7805DT IC1
-U 1 1 61F84DB3
-P 2500 3300
-F 0 "IC1" H 2500 3554 45  0000 C CNN
-F 1 "78033AF" H 2500 3470 45  0000 C CNN
-F 2 "Package_TO_SOT_SMD:TO-252-2" H 2530 3450 20  0001 C CNN
-F 3 "" H 2500 3300 50  0001 C CNN
-	1    2500 3300
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:R R1
 U 1 1 61F855E5
 P 1900 3125
@@ -332,8 +321,6 @@ F 3 "~" H 1900 3125 50  0001 C CNN
 	1    1900 3125
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2100 3300 1900 3300
 Wire Wire Line
 	1900 3300 1900 3275
 $Comp
@@ -347,8 +334,6 @@ F 3 "" H 2500 3675 50  0001 C CNN
 	1    2500 3675
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2500 3600 2500 3625
 $Comp
 L power:+12V #PWR0110
 U 1 1 61F88262
@@ -382,9 +367,6 @@ Wire Wire Line
 	1300 3025 1300 3625
 Wire Wire Line
 	1300 3625 1900 3625
-Connection ~ 2500 3625
-Wire Wire Line
-	2500 3625 2500 3650
 $Comp
 L power:+3.3V #PWR0111
 U 1 1 61F8DBBE
@@ -396,8 +378,6 @@ F 3 "" H 3000 3300 50  0001 C CNN
 	1    3000 3300
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2900 3300 3000 3300
 $Comp
 L Device:CP C1
 U 1 1 61F9006A
@@ -409,17 +389,9 @@ F 3 "~" H 1900 3475 50  0001 C CNN
 	1    1900 3475
 	1    0    0    -1  
 $EndComp
-Connection ~ 1900 3625
-Wire Wire Line
-	1900 3625 2500 3625
 Wire Wire Line
 	1900 3300 1900 3325
 Connection ~ 1900 3300
-Wire Wire Line
-	3000 3650 2500 3650
-Connection ~ 2500 3650
-Wire Wire Line
-	2500 3650 2500 3675
 Wire Wire Line
 	3000 3350 3000 3300
 Connection ~ 3000 3300
@@ -564,8 +536,6 @@ Wire Wire Line
 	5875 6025 5875 6125
 Wire Wire Line
 	5675 4600 6050 4600
-Wire Wire Line
-	6050 4075 6625 4075
 $Comp
 L Device:R R9
 U 1 1 61FE2D1A
@@ -826,31 +796,58 @@ Wire Wire Line
 	7025 5300 7025 5400
 Wire Wire Line
 	7025 5700 7025 5825
-$Comp
-L Connector:Conn_01x01_Male J10
-U 1 1 62042A4C
-P 7025 4725
-F 0 "J10" V 7087 4769 50  0000 L CNN
-F 1 "Conn_01x01_Male" V 7178 4769 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 7025 4725 50  0001 C CNN
-F 3 "~" H 7025 4725 50  0001 C CNN
-	1    7025 4725
-	0    1    1    0   
-$EndComp
 Wire Wire Line
 	7025 4925 7025 5000
 $Comp
-L Connector:Conn_01x01_Male J9
-U 1 1 62057289
-P 6625 3875
-F 0 "J9" V 6687 3919 50  0000 L CNN
-F 1 "Conn_01x01_Male" V 6778 3919 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 6625 3875 50  0001 C CNN
-F 3 "~" H 6625 3875 50  0001 C CNN
-	1    6625 3875
-	0    1    1    0   
+L Connector:Conn_01x02_Male J9
+U 1 1 61FC195B
+P 7100 4550
+F 0 "J9" H 7208 4731 50  0000 C CNN
+F 1 "led-select" H 7208 4640 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 7100 4550 50  0001 C CNN
+F 3 "~" H 7100 4550 50  0001 C CNN
+	1    7100 4550
+	-1   0    0    1   
 $EndComp
-Connection ~ 6625 4075
 Wire Wire Line
-	6625 4075 6775 4075
+	6050 4075 6675 4075
+Wire Wire Line
+	6675 4075 6675 4450
+Wire Wire Line
+	6675 4450 6900 4450
+Connection ~ 6675 4075
+Wire Wire Line
+	6675 4075 6775 4075
+Wire Wire Line
+	7025 4925 6900 4925
+Wire Wire Line
+	6900 4925 6900 4550
+$Comp
+L Regulator_Linear:L7805 U2
+U 1 1 61FDBAF2
+P 2500 3300
+F 0 "U2" H 2500 3542 50  0000 C CNN
+F 1 "78033" H 2500 3451 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:TO-252-2" H 2525 3150 50  0001 L CIN
+F 3 "http://www.st.com/content/ccc/resource/technical/document/datasheet/41/4f/b3/b0/12/d4/47/88/CD00000444.pdf/files/CD00000444.pdf/jcr:content/translations/en.CD00000444.pdf" H 2500 3250 50  0001 C CNN
+	1    2500 3300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1900 3300 2200 3300
+Wire Wire Line
+	2800 3300 3000 3300
+Wire Wire Line
+	2500 3600 2500 3625
+Wire Wire Line
+	3000 3650 2500 3650
+Connection ~ 2500 3650
+Wire Wire Line
+	2500 3650 2500 3675
+Wire Wire Line
+	1900 3625 2500 3625
+Connection ~ 1900 3625
+Connection ~ 2500 3625
+Wire Wire Line
+	2500 3625 2500 3650
 $EndSCHEMATC
