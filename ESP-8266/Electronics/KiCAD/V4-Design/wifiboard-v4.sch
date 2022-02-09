@@ -588,7 +588,7 @@ F 3 "~" H 5875 5525 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L esp-8266:ESP-12E U1
+L wifiboard-v4-rescue:ESP-12E-esp-8266 U1
 U 1 1 61F7D88E
 P 4775 4700
 F 0 "U1" H 4775 5465 50  0000 C CNN
@@ -662,7 +662,7 @@ Connection ~ 7475 4325
 Wire Wire Line
 	7475 4325 7475 4400
 $Comp
-L cpc1966y:CPC1966Y K1
+L wifiboard-v4-rescue:CPC1966Y-cpc1966y K1
 U 1 1 61FAC409
 P 8275 3075
 F 0 "K1" V 8813 2647 50  0000 R CNN
@@ -814,14 +814,14 @@ Wire Wire Line
 Wire Wire Line
 	6675 4075 6675 4450
 Wire Wire Line
-	6675 4450 6900 4450
+	6675 4450 6725 4450
 Connection ~ 6675 4075
 Wire Wire Line
 	6675 4075 6775 4075
 Wire Wire Line
 	7025 4925 6900 4925
 Wire Wire Line
-	6900 4925 6900 4550
+	6900 4925 6900 4750
 $Comp
 L Regulator_Linear:L7805 U2
 U 1 1 61FDBAF2
@@ -850,4 +850,23 @@ Connection ~ 1900 3625
 Connection ~ 2500 3625
 Wire Wire Line
 	2500 3625 2500 3650
+$Comp
+L Jumper:SolderJumper_2_Bridged JP1
+U 1 1 61FD9520
+P 6725 4600
+F 0 "JP1" V 6679 4668 50  0000 L CNN
+F 1 "SolderJumper_2_Bridged" V 6770 4668 50  0000 L CNN
+F 2 "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm" H 6725 4600 50  0001 C CNN
+F 3 "~" H 6725 4600 50  0001 C CNN
+	1    6725 4600
+	0    1    1    0   
+$EndComp
+Connection ~ 6725 4450
+Wire Wire Line
+	6725 4450 6900 4450
+Wire Wire Line
+	6725 4750 6900 4750
+Connection ~ 6900 4750
+Wire Wire Line
+	6900 4750 6900 4550
 $EndSCHEMATC
