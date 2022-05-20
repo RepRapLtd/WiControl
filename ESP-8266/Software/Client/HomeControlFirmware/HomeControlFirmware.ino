@@ -197,8 +197,11 @@ void setup()
 
   Serial.begin(BAUD);
   Serial.setTimeout(10000);
-
+  
   while(!Serial) yield();
+  
+  if(debug)
+      Serial.println("\nWiControl node starting...");
 
   flash = new Flash();
 
