@@ -155,7 +155,7 @@ function Header()
 	else if(building == "aandc")
 		document.write('Adrian and Christine\'s');
 	else
-		document.write('Sally and Tom\'s');
+		document.write('Sally\'s');
 	document.write(' Heating Settings</H1><br>');
 
 	document.write('<a href="index.html"><H2>Home</H2></a><br><br>');
