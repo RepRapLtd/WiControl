@@ -2,6 +2,10 @@
 
 SWA1 Smart Switch Web Server
 
+This turns a SWA1 smart switch into a web server on your network. You can
+then load the page it serves in a browser on your PC or phone and turn 
+the switch on or off from that page.
+
 RepRap Ltd
 https://reprapltd.com
 
