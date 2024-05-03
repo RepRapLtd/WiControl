@@ -2,7 +2,13 @@
 
 SWA1 Smart Switch Web Server
 
-Written by GPT4
+RepRap Ltd
+https://reprapltd.com
+
+
+Written by GPT4 (code) and Adrian Bowyer (comments)
+
+Licence: GPL
 
 
 **** UNPLUG THE SMART SWITCH FROM THE MAINS FOR ALL BUT THE VERY END OF THIS. ****
