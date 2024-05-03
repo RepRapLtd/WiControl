@@ -29,7 +29,7 @@ Edit the code below to put your network's WiFi SSID and password in.
 Dismantle the smart switch (5 Phillips screws on mine). 
 
 The SWA1 Smart Switch has an ESP8266 internally which you can access
-through a 5-pin connector on it's PCB. (You may have to solder that connector in - it's 
+through a 5-pin connector on its PCB. (You may have to solder that connector in - it's 
 not fitted on all devices.)
 
 The pins are (counting pin 1 as the pin nearest the edge of the PCB):
