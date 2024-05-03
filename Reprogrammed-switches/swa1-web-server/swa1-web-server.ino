@@ -66,7 +66,7 @@ usually works. If you don't catch it, the ESP8266 just retains whatever firmware
 it before. Try again.
 
 When the IDE has completely finished programming the device (don't do this too early) you can
-can reboot the ESP8266 by cycling it's power again. It should then give a series of dots as it connects 
+can reboot the ESP8266 by cycling its power again. It should then give a series of dots as it connects 
 to your network and then tell you the IP address it's been allocated.
 
 Put that IP address into a web browser and you will get a page that allows you to
@@ -74,7 +74,7 @@ turn the switch on and off. Pushing the button on the front of the switch achiev
 the same.
 
 Tell your internet hub to always use that IP address for the device then put it
-all back together. Plug it into a socket and you have a web-page controlled mains switch.
+all back together. Plug it into a socket and you have a web-page-controlled mains switch.
 
 
 */
